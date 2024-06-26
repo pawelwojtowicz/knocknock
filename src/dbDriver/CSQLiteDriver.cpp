@@ -16,7 +16,19 @@ bool CSQLiteDriver::Open( const std::string& dbFilename)
     fprintf(stderr, "Opened database successfully\n");
   }
 
-return false;
+  std::string sql = "DELETE from COMPANY where ID=2; " \
+                    "SELECT * from COMPANY";
+
+   char *zErrMsg = 0;
+   const char* data = "Callback function called";
+
+  auto functionForSQLite = [](void *data, int argc, char **argv, char **azColName) {
+    return 0;
+  };
+
+  rc = sqlite3_exec(m_pDBEngine, sql.c_str(), functionForSQLite, (void*)data, &zErrMsg);
+
+  return false;
 }
 
 void CSQLiteDriver::Close()
