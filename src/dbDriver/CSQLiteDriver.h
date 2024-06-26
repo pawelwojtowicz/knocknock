@@ -14,5 +14,7 @@ private:
   void Close() override;
 
 
+private:
+  sqlite3 *m_pDBEngine;
 };
 }
