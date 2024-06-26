@@ -1,5 +1,6 @@
 #pragma once
 #include "IDBDriver.h"
+#include <sqlite3.h>
 
 namespace DBDriver
 {
@@ -9,8 +10,8 @@ class CSQLiteDriver : public IDBDriver
   virtual ~CSQLiteDriver() = default;
   
 private:
-bool Open( const std::string& dbFilename) override;
-void Close() override;
+  bool Open( const std::string& dbFilename) override;
+  void Close() override;
 
 
 };
