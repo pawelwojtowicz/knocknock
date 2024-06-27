@@ -3,6 +3,8 @@ project( dbDriver )
 SET( OUTPUT_NAME dbDriver )
 
 add_library( ${OUTPUT_NAME} STATIC
+CDatabase.cpp
+CDatabase.h
 CSQLiteDriver.cpp
 CSQLiteDriver.h
 IDBDriver.h

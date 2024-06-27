@@ -1,6 +1,6 @@
 #include "CSQLiteDriver.h"
 
-namespace DBDriver
+namespace DBAccess
 {
 
 bool CSQLiteDriver::Open( const std::string& dbFilename)

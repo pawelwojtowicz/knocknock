@@ -2,7 +2,7 @@
 #include "IDBDriver.h"
 #include <sqlite3.h>
 
-namespace DBDriver
+namespace DBAccess
 {
 class CSQLiteDriver : public IDBDriver
 {

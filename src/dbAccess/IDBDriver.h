@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace DBDriver
+namespace DBAccess
 {
 
 //callback from the driver is the SQLITE thingie - will be changed sometime, or not.
