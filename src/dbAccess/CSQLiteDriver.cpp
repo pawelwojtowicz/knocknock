@@ -1,4 +1,5 @@
 #include "CSQLiteDriver.h"
+#include <iostream>
 
 namespace DBAccess
 {
@@ -27,10 +28,34 @@ bool CSQLiteDriver::ExecuteSQLCommand( const std::string& command, tSQLiteCallba
   char *zErrMsg = 0;
   const char* data = "Callback function called";
 
-  rc = sqlite3_exec(m_pDBEngine, command.c_str(), callbackFunction, (void*)data, &zErrMsg);
+  auto commandCallback = [](void *data, int argc, char **argv, char **azColName) {
+    CSQLiteDriver* driver = (CSQLiteDriver*)data;
+    driver->m_data.clear();
+    std::vector<std::string> row;
+    for( int i = 0 ; i < argc ; ++i)
+    {
+      row.push_back(std::string(argv[i]));
+      std::cout << "temp" << std::endl;
+    }
+    if ( row.size() > 0 )
+    {
+      std::cout << "adaduka" << std::endl;
 
+      driver->m_data.push_back( row );
+    }
+    return 0;
+  };
+
+  rc = sqlite3_exec(m_pDBEngine, command.c_str(), commandCallback, (void*)this, &zErrMsg);
+
+  std::cout << "["<<command << "To jest result " << rc << std::endl;
   if ( 0 == rc )
   {
+    for ( auto& row : m_data )
+    {
+#pragma message ("shitty for now")
+      callbackFunction(row);
+    }
     return true;
   }
   return false;

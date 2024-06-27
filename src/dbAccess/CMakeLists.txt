@@ -1,12 +1,16 @@
-project( dbDriver )
+project( dbAccess )
 
-SET( OUTPUT_NAME dbDriver )
+SET( OUTPUT_NAME dbAccess )
 
 add_library( ${OUTPUT_NAME} STATIC
 CDatabase.cpp
 CDatabase.h
+CDBStructureBuilder.cpp
+CDBStructureBuilder.h
 CSQLiteDriver.cpp
 CSQLiteDriver.h
+CSystemParamData.cpp
+CSystemParamData.h
 IDBDriver.h
 )
 

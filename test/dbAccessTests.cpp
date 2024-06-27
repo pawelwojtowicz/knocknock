@@ -1,11 +1,18 @@
 #include <gtest/gtest.h>
-#include <CSQLiteDriver.h>
+#include <CDatabase.h>
 
 TEST( CSQLiteDriver, Basic)
 {
-  DBAccess::CSQLiteDriver sqliteDBDriver;
-  DBAccess::IDBDriver& driver(sqliteDBDriver);
+  DBAccess::CDatabase database;
 
-  driver.Open( "test.db");
-  driver.Close();
+  database.OpenDatabase("text.db");
+
+  std::string key = "dbInterface";
+  std::string value = "1.0";
+
+  database.GetSystemParamData().AddSystemParam(key,value);
+
+  EXPECT_EQ( value, database.GetSystemParamData().GetSystemParam(key));
+
+  database.Close();
 }

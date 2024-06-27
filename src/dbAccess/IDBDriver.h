@@ -1,11 +1,14 @@
 #pragma once
 #include <string>
+#include <vector>
+#include <functional>
 
 namespace DBAccess
 {
 
 //callback from the driver is the SQLITE thingie - will be changed sometime, or not.
-typedef int (tSQLiteCallback)(void *data, int argc, char **argv, char **azColName);
+using tSQLiteCallback = std::function<int(std::vector<std::string>)>;
+//typedef int (tSQLiteCallback)(void *data, int argc, char **argv, char **azColName);
 
 class IDBDriver
 {
@@ -17,7 +20,6 @@ public:
   virtual void Close() = 0;
 
   virtual bool ExecuteSQLCommand( const std::string& command, tSQLiteCallback callbackFunction ) = 0;
-
 };
 
 }

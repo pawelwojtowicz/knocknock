@@ -9,14 +9,16 @@ class CSQLiteDriver : public IDBDriver
 public:
   CSQLiteDriver() = default;
   virtual ~CSQLiteDriver() = default;
-  
-private:
+
   bool Open( const std::string& dbFilename) override;
   void Close() override;
 
+private:
   bool ExecuteSQLCommand( const std::string& command, tSQLiteCallback callbackFunction ) override;
 
 private:
   sqlite3 *m_pDBEngine = nullptr;
+
+  std::vector<std::vector<std::string>> m_data;
 };
 }

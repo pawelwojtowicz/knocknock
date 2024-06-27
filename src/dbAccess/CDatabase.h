@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 #include <memory>
-#include <CSQLiteDriver.h>
+#include "CSQLiteDriver.h"
+#include "CSystemParamData.h"
 
 namespace DBAccess
 {
@@ -15,8 +16,14 @@ public:
   void OpenDatabase( const std::string& dbFilename );
   void Close( );
 
+  CSystemParamData& GetSystemParamData() {
+    return m_sysParamData;
+  }
+
 private:
-  std::unique_ptr<IDBDriver> m_dbDriver;
+  CSQLiteDriver m_dbDriver;
+
+  CSystemParamData m_sysParamData;
 };
 
 }
