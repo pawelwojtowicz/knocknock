@@ -7,13 +7,13 @@ bool CSQLiteDriver::Open( const std::string& dbFilename)
 {
   int rc = { 0 };
 
-  rc = sqlite3_open("test.db", &m_pDBEngine);
+  rc = sqlite3_open(dbFilename.c_str(), &m_pDBEngine);
 
   if( rc ) {
     fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(m_pDBEngine));
     return( false );
   }
-  return false;
+  return true;
 }
 
 void CSQLiteDriver::Close()

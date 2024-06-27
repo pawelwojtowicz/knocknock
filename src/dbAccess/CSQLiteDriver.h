@@ -17,6 +17,6 @@ private:
   bool ExecuteSQLCommand( const std::string& command, tSQLiteCallback callbackFunction ) override;
 
 private:
-  sqlite3 *m_pDBEngine;
+  sqlite3 *m_pDBEngine = nullptr;
 };
 }
