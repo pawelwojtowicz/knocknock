@@ -14,11 +14,9 @@ public:
   void Close() override;
 
 private:
-  bool ExecuteSQLCommand( const std::string& command, tSQLiteCallback callbackFunction ) override;
+  bool ExecuteSQLCommand( const std::string& command, tSQLiteCallback callbackFunction, void* data ) override;
 
 private:
   sqlite3 *m_pDBEngine = nullptr;
-
-  std::vector<std::vector<std::string>> m_data;
 };
 }

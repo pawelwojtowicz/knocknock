@@ -20,11 +20,11 @@ bool CSystemParamData::AddSystemParam( const std::string& key, const std::string
 
   const std::string sqlQuery = "INSERT INTO SYSTEM_PARAMS (VALUE_KEY, VALUE) VALUES ('"+key+"','"+value+"');";
 
-  auto insertValueCallback = [](std::vector<std::string> row) {
+  auto insertValueCallback = [](void *data, int argc, char **argv, char **azColName) {
     return 0;
   };
 
-  int rc = m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback );
+  int rc = m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 );
 
 
   return 0 == rc ;
@@ -35,21 +35,27 @@ bool CSystemParamData::AddSystemParam( const std::string& key, const std::string
 
 std::optional<std::string> CSystemParamData::GetSystemParam( const std::string& key)
 {
-  std::string outputString;
-  const std::string sqlQuery = "SELECT VALUE FROM SYSTEM_PARAMS WHERE VALUE_KEY = '" + key + "';";
+  using tSystemParameter = std::pair<std::string, std::string>;
+  tSystemParameter retVal;
 
-  auto getValueCallback = [&outputString](std::vector<std::string> row) {
-    if ( 1 == row.size() )
+  const std::string sqlQuery = "SELECT * FROM SYSTEM_PARAMS WHERE VALUE_KEY = '" + key + "';";
+
+  auto readingCallback = [](void *data, int argc, char **argv, char **azColName)
+  {
+    tSystemParameter* retValPtr = (tSystemParameter*)data;
+
+    if ( 2 == argc )
     {
-      outputString = row[0];
+      *retValPtr = std::make_pair(argv[0],argv[1]);
     }
+
     return 0;
   };
 
-  m_rDBDriver.ExecuteSQLCommand( sqlQuery, getValueCallback );
+  m_rDBDriver.ExecuteSQLCommand( sqlQuery, readingCallback, &retVal );
 
 
-  return outputString;
+  return retVal.second;
 }
 
 

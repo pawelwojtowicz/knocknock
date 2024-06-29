@@ -21,11 +21,11 @@ bool CDBStructureBuilder::PrepareDatabaseStructure()
 //    "KEY TEXT PRIMARY KEY     NOT NULL," \
 //    "VALUE TEXT );"};
 
-  auto executionCallback = [](std::vector<std::string> row) {
+  auto executionCallback = [](void *data, int argc, char **argv, char **azColName) {
     return 0;
   };
 
-  m_rDBDriver.ExecuteSQLCommand( "CREATE TABLE SYSTEM_PARAMS ( VALUE_KEY TEXT PRIMARY KEY NOT NULL, VALUE TEXT);", executionCallback );
+  m_rDBDriver.ExecuteSQLCommand( "CREATE TABLE SYSTEM_PARAMS ( VALUE_KEY TEXT PRIMARY KEY NOT NULL, VALUE TEXT);", executionCallback, 0 );
 
   return true;
 }
