@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <CDatabase.h>
+#include "CUser.h"
 
 std::string dbInterfaceKey = "dbInterface";
 std::string dbInterfaceValue = "1.0";
@@ -46,6 +47,20 @@ TEST( CSQLiteDriver, SysParam_GetAllParams)
   EXPECT_EQ( 2, allParamsMap.size() );
   EXPECT_EQ( value, allParamsMap[key]);
   EXPECT_EQ( dbInterfaceValue, allParamsMap[dbInterfaceKey]);
+
+  database.Close();
+}
+
+TEST( CSQLiteDriver, Users_AddingDuplicate )
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  knocknock::CUser user("don","John","Doe","1234567890");
+
+  ASSERT_TRUE(database.GetUserData().AddUser(user) );
+  ASSERT_FALSE(database.GetUserData().AddUser(user) );
 
   database.Close();
 }

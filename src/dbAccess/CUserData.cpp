@@ -1,4 +1,6 @@
 #include "CUserData.h"
+#include "IDBDriver.h"
+#include <iostream>
 
 namespace DBAccess
 {
@@ -10,7 +12,17 @@ CUserData::CUserData( IDBDriver& rDBDriver )
 
 bool CUserData::AddUser( const knocknock::CUser& user )
 {
-  return true;
+  const std::string sqlQuery = "INSERT INTO USERS (USER_ID, FIRST_NAME , LAST_NAME , PASS_HASH) VALUES ('"+user.getUserId() +"','"+user.getFirstName()+"','"+user.getLastName()+"','"+user.getPasswordHash()+"');";
+
+  std::cout << sqlQuery << std::endl;
+
+  auto insertValueCallback = [](void *data, int argc, char **argv, char **azColName) {
+    return 0;
+  };
+
+  int rc = m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 );
+
+  return ( 0 != rc ) ;
 }
 
 bool CUserData::UpdateUser( const knocknock::CUser& user )
