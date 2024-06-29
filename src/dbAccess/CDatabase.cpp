@@ -8,13 +8,9 @@ namespace DBAccess
 CDatabase::CDatabase()
 : m_dbDriver()
 , m_sysParamData(m_dbDriver)
+, m_userData(m_dbDriver)
 {
 
-}
-
-CDatabase::~CDatabase()
-{
-  
 }
 
 void CDatabase::OpenDatabase( const std::string& dbFilename )

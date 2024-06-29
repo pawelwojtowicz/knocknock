@@ -4,11 +4,11 @@
 
 namespace knocknock
 {
-class User
+class CUser
 {
 public:
-  User();
-  User( const std::string& userId, const std::string& userName, const std::string& userLastName,const std::string& passHash );
+  CUser() = default;
+  CUser( const std::string& userId, const std::string& userFirstName, const std::string& userLastName,const std::string& passHash );
 
   const std::string& getUserId() const;
   const std::string& getFirstName() const;
@@ -16,11 +16,11 @@ public:
   const std::string& getPasswordHash() const;
 
 private:
-  std::string m_userId;
-  std::string m_firstName;
-  std::string m_lastName;
-  std::string m_passwordHash;
+  std::string m_userId = {};
+  std::string m_firstName = {};
+  std::string m_lastName = {};
+  std::string m_passwordHash = {};
 };
 
-using tUserArray = std::vector<User>
+using tUserArray = std::vector<CUser>;
 }

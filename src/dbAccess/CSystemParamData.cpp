@@ -10,11 +10,6 @@ CSystemParamData::CSystemParamData( IDBDriver& rDBDriver)
 
 }
 
-CSystemParamData::~CSystemParamData()
-{
-
-}
-
 bool CSystemParamData::AddSystemParam( const std::string& key, const std::string& value)
 {
 

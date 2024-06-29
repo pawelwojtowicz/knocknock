@@ -13,7 +13,7 @@ class CSystemParamData
 {
 public:
   CSystemParamData(IDBDriver& rDBDriver);
-  virtual ~CSystemParamData();
+  virtual ~CSystemParamData() = default;
 
   bool AddSystemParam( const std::string& key, const std::string& value);
 
