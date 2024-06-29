@@ -35,28 +35,50 @@ bool CSystemParamData::AddSystemParam( const std::string& key, const std::string
 
 std::optional<std::string> CSystemParamData::GetSystemParam( const std::string& key)
 {
-  using tSystemParameter = std::pair<std::string, std::string>;
-  tSystemParameter retVal;
+  std::string paramValue = {};
 
-  const std::string sqlQuery = "SELECT * FROM SYSTEM_PARAMS WHERE VALUE_KEY = '" + key + "';";
+  const std::string sqlQuery = "SELECT VALUE FROM SYSTEM_PARAMS WHERE VALUE_KEY = '" + key + "';";
 
   auto readingCallback = [](void *data, int argc, char **argv, char **azColName)
   {
-    tSystemParameter* retValPtr = (tSystemParameter*)data;
+    std::string* paramValuePtr = (std::string*)data;
 
-    if ( 2 == argc )
+    if ( 1 == argc )
     {
-      *retValPtr = std::make_pair(argv[0],argv[1]);
+      *paramValuePtr = std::string(argv[0]);
     }
 
     return 0;
   };
 
-  m_rDBDriver.ExecuteSQLCommand( sqlQuery, readingCallback, &retVal );
+  m_rDBDriver.ExecuteSQLCommand( sqlQuery, readingCallback, &paramValue );
 
 
-  return retVal.second;
+  return !paramValue.empty() ? std::optional<std::string>(paramValue) : std::nullopt;
 }
+
+tSystemParameters CSystemParamData::GetAllSystemParams()
+{
+  tSystemParameters systemParameters = {};
+
+  const std::string sqlQuery = "SELECT * FROM SYSTEM_PARAMS;";
+
+  auto readingCallback = [](void *data, int argc, char **argv, char **azColName)
+  {
+    tSystemParameters* systemParamsMapPtr = (tSystemParameters*)data;
+
+    if ( 2 == argc )
+    {
+      systemParamsMapPtr->insert(tSystemParameters::value_type(argv[0],argv[1]));
+    }
+    return 0;
+  };
+
+  m_rDBDriver.ExecuteSQLCommand( sqlQuery, readingCallback, &systemParameters );
+
+  return systemParameters;
+}
+
 
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 namespace knocknock
 {
@@ -20,4 +21,6 @@ private:
   std::string m_lastName;
   std::string m_passwordHash;
 };
+
+using tUserArray = std::vector<User>
 }

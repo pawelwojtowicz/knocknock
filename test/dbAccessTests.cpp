@@ -1,18 +1,51 @@
 #include <gtest/gtest.h>
 #include <CDatabase.h>
 
-TEST( CSQLiteDriver, Basic)
+std::string dbInterfaceKey = "dbInterface";
+std::string dbInterfaceValue = "1.0";
+
+
+TEST( CSQLiteDriver, SysParam_GetParameter)
 {
   DBAccess::CDatabase database;
 
-  database.OpenDatabase("text.db");
+  database.OpenDatabase("test.db");
 
-  std::string key = "dbInterface";
-  std::string value = "1.0";
+
+  database.GetSystemParamData().AddSystemParam(dbInterfaceKey,dbInterfaceValue);
+
+  {
+    auto systemParamOpt = database.GetSystemParamData().GetSystemParam(dbInterfaceKey); 
+
+    ASSERT_TRUE( systemParamOpt );
+    EXPECT_EQ( dbInterfaceValue, systemParamOpt.value() );
+  }
+
+  {
+    auto systemParamOpt = database.GetSystemParamData().GetSystemParam("not_existing"); 
+
+    ASSERT_FALSE( systemParamOpt );
+  }
+
+  database.Close();
+}
+
+TEST( CSQLiteDriver, SysParam_GetAllParams)
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  std::string key = "device";
+  std::string value = "bayraktar";
 
   database.GetSystemParamData().AddSystemParam(key,value);
 
-  EXPECT_EQ( value, database.GetSystemParamData().GetSystemParam(key));
+  auto allParamsMap = database.GetSystemParamData().GetAllSystemParams();
+
+  EXPECT_EQ( 2, allParamsMap.size() );
+  EXPECT_EQ( value, allParamsMap[key]);
+  EXPECT_EQ( dbInterfaceValue, allParamsMap[dbInterfaceKey]);
 
   database.Close();
 }
