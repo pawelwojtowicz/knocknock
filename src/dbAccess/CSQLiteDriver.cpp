@@ -29,7 +29,7 @@ bool CSQLiteDriver::ExecuteSQLCommand( const std::string& command, tSQLiteCallba
 
   rc = sqlite3_exec(m_pDBEngine, command.c_str(), callbackFunction, data, &zErrMsg);
 
-  return 0 == rc;
+  return SQLITE_OK == rc;
 }
 
 }

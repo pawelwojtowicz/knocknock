@@ -6,14 +6,24 @@ std::string dbInterfaceKey = "dbInterface";
 std::string dbInterfaceValue = "1.0";
 
 
-TEST( CSQLiteDriver, SysParam_GetParameter)
+TEST( CSQLiteDriver, SysParam_AddDuplicates)
 {
   DBAccess::CDatabase database;
 
   database.OpenDatabase("test.db");
 
 
-  database.GetSystemParamData().AddSystemParam(dbInterfaceKey,dbInterfaceValue);
+  EXPECT_TRUE(database.GetSystemParamData().AddSystemParam(dbInterfaceKey,dbInterfaceValue));
+  EXPECT_FALSE(database.GetSystemParamData().AddSystemParam(dbInterfaceKey,dbInterfaceValue));
+  database.Close();
+}
+
+
+TEST( CSQLiteDriver, SysParam_GetParameter)
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
 
   {
     auto systemParamOpt = database.GetSystemParamData().GetSystemParam(dbInterfaceKey); 

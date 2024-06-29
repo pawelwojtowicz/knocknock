@@ -14,15 +14,11 @@ bool CUserData::AddUser( const knocknock::CUser& user )
 {
   const std::string sqlQuery = "INSERT INTO USERS (USER_ID, FIRST_NAME , LAST_NAME , PASS_HASH) VALUES ('"+user.getUserId() +"','"+user.getFirstName()+"','"+user.getLastName()+"','"+user.getPasswordHash()+"');";
 
-  std::cout << sqlQuery << std::endl;
-
   auto insertValueCallback = [](void *data, int argc, char **argv, char **azColName) {
     return 0;
   };
 
-  int rc = m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 );
-
-  return ( 0 != rc ) ;
+  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 ) ;
 }
 
 bool CUserData::UpdateUser( const knocknock::CUser& user )

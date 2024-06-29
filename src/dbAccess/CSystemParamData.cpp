@@ -19,13 +19,7 @@ bool CSystemParamData::AddSystemParam( const std::string& key, const std::string
     return 0;
   };
 
-  int rc = m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 );
-
-
-  return 0 == rc ;
-
-
-
+  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 ) ;
 }
 
 std::optional<std::string> CSystemParamData::GetSystemParam( const std::string& key)
