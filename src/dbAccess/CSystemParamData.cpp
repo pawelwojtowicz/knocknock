@@ -42,7 +42,6 @@ std::optional<std::string> CSystemParamData::GetSystemParam( const std::string& 
 
   m_rDBDriver.ExecuteSQLCommand( sqlQuery, readingCallback, &paramValue );
 
-
   return !paramValue.empty() ? std::optional<std::string>(paramValue) : std::nullopt;
 }
 

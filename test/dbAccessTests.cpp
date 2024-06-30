@@ -74,3 +74,58 @@ TEST( CSQLiteDriver, Users_AddingDuplicate )
 
   database.Close();
 }
+
+TEST( CSQLiteDriver, Users_GetUserById_Existing )
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  auto user = database.GetUserData().GetUserByUserId( "don");
+
+  ASSERT_TRUE( user );
+  EXPECT_EQ( "John", user->getFirstName());
+  EXPECT_EQ( "Doe", user->getLastName());
+  EXPECT_EQ( "1234567890", user->getPasswordHash() );
+
+  database.Close();
+}
+
+TEST( CSQLiteDriver, Users_GetUserById_NonExisting )
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+  auto user = database.GetUserData().GetUserByUserId( "padre");
+  ASSERT_FALSE( user );
+  database.Close();
+}
+
+TEST( CSQLiteDriver, Users_UpdateUser_Existing )
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+  std::string userId("testUser");
+  std::string firstNameBeforeUpdate("Pablo");
+  std::string lastNameBeforeUpdate("Morales");
+  std::string passHashBeforeChange("1234567890");
+  std::string firstNameAfterUpdate("Pietro");
+  std::string lastNameAfterUpdate("Desantis");
+  std::string passHashAfterChange("0987654321");
+  {
+    knocknock::CUser user( userId, firstNameBeforeUpdate,lastNameBeforeUpdate,passHashBeforeChange);
+    database.GetUserData().AddUser( user );
+  }
+  {
+    knocknock::CUser user( userId, firstNameAfterUpdate,lastNameAfterUpdate,passHashAfterChange);
+    ASSERT_TRUE(database.GetUserData().UpdateUser( user) );
+  }
+
+  auto user = database.GetUserData().GetUserByUserId( userId );
+  ASSERT_TRUE( user );
+  EXPECT_EQ( firstNameAfterUpdate, user->getFirstName() );
+  EXPECT_EQ( lastNameAfterUpdate, user->getLastName() );
+  EXPECT_EQ( passHashAfterChange, user->getPasswordHash() );
+  database.Close();
+}
