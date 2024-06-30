@@ -14,7 +14,7 @@ public:
 
   bool AddUser( const knocknock::CUser& user );
   bool UpdateUser( const knocknock::CUser& user );
-  bool DeleteUser( const std::string& userId );
+  void DeleteUser( const std::string& userId );
   std::optional<knocknock::CUser> GetUserByUserId( const std::string& userId);
   knocknock::tUserArray GetAllUsers();
 

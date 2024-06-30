@@ -129,3 +129,28 @@ TEST( CSQLiteDriver, Users_UpdateUser_Existing )
   EXPECT_EQ( passHashAfterChange, user->getPasswordHash() );
   database.Close();
 }
+
+TEST( CSQLiteDriver, Users_GetAllUsers )
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+  const auto users = database.GetUserData().GetAllUsers();
+
+  EXPECT_EQ( 2, users.size() );
+  database.Close();
+}
+
+TEST( CSQLiteDriver, Users_DeleteUser )
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+  database.GetUserData().DeleteUser("testUser");
+  auto users = database.GetUserData().GetAllUsers();
+  EXPECT_EQ( 1, users.size() );
+  database.GetUserData().DeleteUser("don");
+  users = database.GetUserData().GetAllUsers();
+  EXPECT_EQ( 0, users.size() );  
+  database.Close();
+}

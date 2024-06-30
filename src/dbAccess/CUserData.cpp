@@ -31,9 +31,15 @@ bool CUserData::UpdateUser( const knocknock::CUser& user )
   return m_rDBDriver.ExecuteSQLCommand( sqlQuery, updateValueCallback, 0 ) ;
 }
 
-bool CUserData::DeleteUser( const std::string& userId )
+void CUserData::DeleteUser( const std::string& userId )
 {
-  return true;
+  const std::string sqlQuery = "DELETE FROM USERS WHERE USER_ID='"+userId+"';";
+
+  auto deleteCallback = [](void *data, int argc, char **argv, char **azColName) {
+    return 0;
+  };
+
+  m_rDBDriver.ExecuteSQLCommand( sqlQuery, deleteCallback, 0 ) ;
 }
 
 std::optional<knocknock::CUser> CUserData::GetUserByUserId( const std::string& userId)

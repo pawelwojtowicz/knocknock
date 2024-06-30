@@ -27,7 +27,7 @@ bool CSQLiteDriver::ExecuteSQLCommand( const std::string& command, tSQLiteCallba
   int rc = { 0 };
   char *zErrMsg = 0;
 
-  std::cout << command << std::endl;  
+  //std::cout << command << std::endl;  
 
   rc = sqlite3_exec(m_pDBEngine, command.c_str(), callbackFunction, data, &zErrMsg);
 
