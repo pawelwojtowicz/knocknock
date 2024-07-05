@@ -1,9 +1,21 @@
 #include <gtest/gtest.h>
 #include <CDatabase.h>
+#include <filesystem>
 #include "CUser.h"
 
 std::string dbInterfaceKey = "dbInterface";
 std::string dbInterfaceValue = "1.0";
+
+std::string testDBFileName = "test.db";
+
+TEST( DBFileCleanup, DeletingTestFile)
+{
+  if (std::filesystem::exists(testDBFileName))
+  {
+    std::filesystem::remove( testDBFileName );
+  }
+  ASSERT_FALSE(std::filesystem::exists(testDBFileName));
+}
 
 
 TEST( CSQLiteDriver, SysParam_AddDuplicates)
@@ -11,7 +23,6 @@ TEST( CSQLiteDriver, SysParam_AddDuplicates)
   DBAccess::CDatabase database;
 
   database.OpenDatabase("test.db");
-
 
   EXPECT_TRUE(database.GetSystemParamData().AddSystemParam(dbInterfaceKey,dbInterfaceValue));
   EXPECT_FALSE(database.GetSystemParamData().AddSystemParam(dbInterfaceKey,dbInterfaceValue));
