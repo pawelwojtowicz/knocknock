@@ -5,4 +5,6 @@ TEST( CAuthenticationChallengeTools, GenerateAuthenticationChallenge )
 {
   using namespace knocknock;
   std::string authChallenge = CAuthenticationChallengeTools::GenerateAuthenticationChallenge("Tomasz");
+
+  
 }

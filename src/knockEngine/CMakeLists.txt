@@ -3,12 +3,6 @@ project( knockEngine )
 SET( OUTPUT_NAME knockEngine )
 
 add_library( ${OUTPUT_NAME} STATIC
-CAESCipherWrapper.cpp
-CAESCipherWrapper.h
-CAuthenticationChallengeTools.cpp
-CAuthenticationChallengeTools.h
-CHashFunction.cpp
-CHashFunction.h
 CKnocknockService.cpp
 CKnocknockService.h
 CUserSession.cpp

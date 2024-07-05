@@ -15,8 +15,9 @@ private:
 
   std::string m_authenticationChallenge;
 
-  CUser m_userRecord;
+  std::string m_cryptoIV;
 
+  CUser m_userRecord;
 };
 
 }

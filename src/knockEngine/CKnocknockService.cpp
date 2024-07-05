@@ -25,13 +25,13 @@ void CKnocknockService::Shutdown()
 
 const CUserSession& CKnocknockService::Identify( const std::string& userId)
 {
-  return CUserSession();
+  return empty;
 
 }
 
 const CUserSession& CKnocknockService::Authenticate( const std::string& userId, const std::string& authenticationString)
 {
-  return CUserSession();
+  return empty;
 }
 
 }

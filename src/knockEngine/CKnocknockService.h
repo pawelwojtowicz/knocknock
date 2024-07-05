@@ -19,6 +19,8 @@ private:
   virtual const CUserSession& Authenticate( const std::string& userId, const std::string& authenticationString) override;
 private:
   std::map<std::string, CUserSession> m_sessions;
+
+  static CUserSession empty;
 };
 
 }
