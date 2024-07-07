@@ -1,0 +1,32 @@
+@startuml
+actor       User       as user
+participant PWA as frontend
+participant Knocknock as knck
+
+
+user -> frontend : Enter UserId and Password
+group Identifictation
+frontend -\\ knck : Identify(userName)
+knck -// frontend  : Return( authenticationChallenge )
+
+note left
+The frontend app sends an identification request
+that includes the name of the user, that makes
+an attempt of the logonl The knocknock responds
+with the sessionId, authentication challenge
+and IV of the AES encryption algorithm
+end note
+end
+group Authentication
+frontend -\\ knck : Authenticate ( authentication attempt)
+knck -// frontend  : AuthenticationResult ( result )
+note left
+The PWA application calculates the authentication
+challenge on the basis of the data from the server:
+* authentication challenge string
+* IV for the AES algorithm
+* cipher key calculated as a SHA256 of the password 
+  entered by the user
+end note
+end
+@enduml

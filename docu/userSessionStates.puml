@@ -1,0 +1,9 @@
+@startuml
+
+[*] --> CREATED
+
+CREATED --> AUTHENTICTED : Challenge validated
+AUTHENTICTED --> STALLED : Log Off
+STALLED --> [*]
+
+@enduml
