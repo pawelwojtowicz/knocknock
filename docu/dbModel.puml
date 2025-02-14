@@ -5,13 +5,6 @@ hide circle
 skinparam linetype ortho
 
 ' comment
-entity "USERS" as user {
-USER_ID : string
---
-FIRST_NAME : string 
-LAST_NAME : string
-PASS_HASH : string 
-}
 
 entity "APPLICATIONS" as app {
 APP_ID : int
@@ -42,8 +35,45 @@ USER_ID : string
 VALUE : string
 }
 
+entity "ROLES" as userRoles {
+NAME : string
+--
+DESCRIPTION : string
+
+}
+
+entity "USERS" as user {
+USER_ID : string
+--
+FIRST_NAME : string 
+LAST_NAME : string
+PASS_HASH : string 
+}
+
+
+entity "PRIVILEGES" as rolePrivileges {
+SHORT_DESC : string
+--
+LONG_DESC : string
+}
+
+entity "ROLE2PRIVILEGE" as r2p {
+ROLE_NAME : string
+PRIVILEGE_SHORT_DESC : string  
+}
+
+entity "USER2ROLE" as u2p {
+USER_ID : string
+ROLE_NAME : string
+}
+
+
 userParams }o--|| app
 userParams  }o--|| user
 appParam }o--|| app
 userParams |o--|| appParam 
+user }o--|| u2p
+userRoles }o--|| u2p
+userRoles }o--|| r2p
+rolePrivileges }o--|| r2p
 @enduml
