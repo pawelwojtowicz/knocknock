@@ -1,0 +1,49 @@
+@startuml
+
+' configuration
+hide circle
+skinparam linetype ortho
+
+' comment
+entity "USERS" as user {
+USER_ID : string
+--
+FIRST_NAME : string 
+LAST_NAME : string
+PASS_HASH : string 
+}
+
+entity "APPLICATIONS" as app {
+APP_ID : int
+--
+APP_NAME : string
+APP_DATA_PUBLISHER : string
+}
+
+entity "SYSTEM_PARAMS" as sysParam {
+PARAM_NAME : string
+--
+PARAM_VALUE : string
+}
+
+entity "APPLICATION_PARAMS" as appParam {
+APPLICATION_ID : int
+NAME : string
+--
+PUBLIC : int
+VALUE : string
+}
+
+entity "USER_SETTINGS" as userParams {
+APPLICATION_ID : int
+APPLICATION_PARAM_NAME : string
+USER_ID : string
+--
+VALUE : string
+}
+
+userParams }o--|| app
+userParams  }o--|| user
+appParam }o--|| app
+userParams |o--|| appParam 
+@enduml
