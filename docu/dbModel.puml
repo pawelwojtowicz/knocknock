@@ -39,7 +39,6 @@ entity "ROLES" as userRoles {
 NAME : string
 --
 DESCRIPTION : string
-
 }
 
 entity "USERS" as user {

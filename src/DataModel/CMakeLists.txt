@@ -3,6 +3,8 @@ project( dbAccess )
 SET( OUTPUT_NAME DataModel )
 
 add_library( ${OUTPUT_NAME} STATIC
+CApplication.cpp
+CApplication.h
 CUser.cpp
 CUser.h
 )
