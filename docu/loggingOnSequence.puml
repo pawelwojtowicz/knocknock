@@ -13,9 +13,10 @@ deactivate knck
 note left
 The frontend app sends an identification request
 that includes the name of the user, that makes
-an attempt of the logonl The knocknock responds
-with the sessionId, authentication challenge
-and IV of the AES encryption algorithm
+an attempt of the logon The knocknock responds
+with the sessionId and authentication challenge.
+The two along with the user password will be used
+to calculate the authentication challenge response
 end note
 end
 group Authentication
@@ -25,7 +26,8 @@ note left
 The PWA application calculates the authentication
 challenge on the basis of the data from the server:
 * authentication challenge string
-* IV for the AES algorithm
+* The session id will be used as IV for the AES 
+  algorithm
 * cipher key calculated as a SHA256 of the password 
   entered by the user
 end note
