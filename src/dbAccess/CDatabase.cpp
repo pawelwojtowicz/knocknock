@@ -7,6 +7,7 @@ namespace DBAccess
 
 CDatabase::CDatabase()
 : m_dbDriver()
+, m_privilegeData(m_dbDriver)
 , m_roleData(m_dbDriver)
 , m_sysParamData(m_dbDriver)
 , m_userData(m_dbDriver)

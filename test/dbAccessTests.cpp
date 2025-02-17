@@ -224,3 +224,35 @@ TEST( CSQLiteDriver, Roles_UpdateRole )
 
   database.Close();
 }
+
+TEST( CSQLiteDriver, Privileges_CRUD_Privilege) 
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  ASSERT_TRUE( database.GetPrivilegeData().AddPrivilege( knocknock::CPrivilege("Sleeping", "Sleeping at night and resting")));
+  ASSERT_TRUE( database.GetPrivilegeData().AddPrivilege( knocknock::CPrivilege("Running", "Running is healthy")));
+  ASSERT_TRUE( database.GetPrivilegeData().AddPrivilege( knocknock::CPrivilege("Eating", "Eating healthy")));
+
+  knocknock::tPrivilegeArray privileges = database.GetPrivilegeData().GetAllPrivileges();
+  ASSERT_EQ(privileges.size(), 3 );
+
+  knocknock::CPrivilege update("Running", "Moving per pedes");
+  ASSERT_TRUE(database.GetPrivilegeData().UpdatePrivilege(update));
+
+  const auto privilege = database.GetPrivilegeData().GetPrivilege("Running");
+  ASSERT_TRUE( privilege );
+  EXPECT_EQ( privilege->GetShortDesc(), "Running");
+  EXPECT_EQ( privilege->GetLongDesc(), "Moving per pedes");
+
+  database.GetPrivilegeData().DeletePrivilege("Running");
+  knocknock::tPrivilegeArray privileges2 = database.GetPrivilegeData().GetAllPrivileges();
+  EXPECT_EQ(privileges2.size(), 2);
+
+  database.GetPrivilegeData().DeletePrivilege("Eating");
+  knocknock::tPrivilegeArray privileges3 = database.GetPrivilegeData().GetAllPrivileges();
+  EXPECT_EQ(privileges3.size(), 1);
+
+  database.Close();
+}

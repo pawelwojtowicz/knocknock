@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include "CSQLiteDriver.h"
+#include "CPrivilegeData.h"
 #include "CRoleData.h"
 #include "CSystemParamData.h"
 #include "CUserData.h"
@@ -18,6 +19,10 @@ public:
   void OpenDatabase( const std::string& dbFilename );
   void Close( );
 
+  CPrivilegeData& GetPrivilegeData() {
+    return m_privilegeData;
+  }
+
   CRoleData& GetRoleData() {
     return m_roleData;
   }
@@ -32,6 +37,8 @@ public:
 
 private:
   CSQLiteDriver m_dbDriver;
+
+  CPrivilegeData m_privilegeData;
 
   CRoleData m_roleData;
 
