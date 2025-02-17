@@ -15,7 +15,6 @@ TEST( CHashFunction , Base )
     char hexFromString = std::stoi(byteString,0,16);
     EXPECT_EQ( hashRaw[i], hexFromString);
   };
-  std::cout << hashString;
 }
 
 

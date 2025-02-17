@@ -5,6 +5,8 @@ SET( OUTPUT_NAME DataModel )
 add_library( ${OUTPUT_NAME} STATIC
 CApplication.cpp
 CApplication.h
+CRole.cpp
+CRole.h
 CUser.cpp
 CUser.h
 )

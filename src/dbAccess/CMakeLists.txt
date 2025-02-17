@@ -11,6 +11,8 @@ CSQLiteDriver.cpp
 CSQLiteDriver.h
 CSystemParamData.cpp
 CSystemParamData.h
+CRoleData.cpp
+CRoleData.h
 CUserData.cpp
 CUserData.h
 IDBDriver.h

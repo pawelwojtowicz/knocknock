@@ -165,3 +165,62 @@ TEST( CSQLiteDriver, Users_DeleteUser )
   EXPECT_EQ( 0, users.size() );  
   database.Close();
 }
+
+TEST( CSQLiteDriver, Roles_AddRole )
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  ASSERT_TRUE( database.GetRoleData().AddRole(knocknock::CRole("pilot", "Switching on TVs")));
+  ASSERT_TRUE( database.GetRoleData().AddRole(knocknock::CRole("fork", "carring the broccoli to your boccia")));
+
+  knocknock::tRoles allRoles = database.GetRoleData().GetAllRoles();
+  ASSERT_EQ(allRoles.size(), 2 );
+
+  const auto roleQueryResult =  database.GetRoleData().GetRole("pilot");
+  ASSERT_TRUE( roleQueryResult );
+  ASSERT_EQ( roleQueryResult->GetName(), "pilot");
+  ASSERT_EQ( roleQueryResult->GetDescription(), "Switching on TVs");
+
+  database.GetRoleData().DeleteRole("pilot");
+  allRoles = database.GetRoleData().GetAllRoles();
+  ASSERT_EQ(allRoles.size(), 1 );
+
+  const auto roleQueryResult2 = database.GetRoleData().GetRole("pilot");
+  ASSERT_FALSE( roleQueryResult2 );
+
+  database.GetRoleData().DeleteRole("fork");
+  allRoles = database.GetRoleData().GetAllRoles();
+  ASSERT_EQ(allRoles.size(), 0 );
+
+  database.Close();
+}
+
+TEST( CSQLiteDriver, Roles_UpdateRole )
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  ASSERT_TRUE( database.GetRoleData().AddRole(knocknock::CRole("test1", "test description1")));
+  ASSERT_TRUE( database.GetRoleData().AddRole(knocknock::CRole("test2", "describing the test #2")));
+
+  knocknock::tRoles allRoles = database.GetRoleData().GetAllRoles();
+  ASSERT_EQ(allRoles.size(), 2 );
+
+  const auto roleQueryResult =  database.GetRoleData().GetRole("test1");
+  ASSERT_TRUE( roleQueryResult );
+  ASSERT_EQ( roleQueryResult->GetName(), "test1");
+  ASSERT_EQ( roleQueryResult->GetDescription(), "test description1");
+
+  knocknock::CRole updateRole("test1", "AfterUpdate1");
+  database.GetRoleData().UpdateRole(updateRole);
+
+  const auto roleQueryResult2 =  database.GetRoleData().GetRole("test1");
+  ASSERT_TRUE( roleQueryResult2 );
+  ASSERT_EQ( roleQueryResult2->GetName(), "test1");
+  ASSERT_EQ( roleQueryResult2->GetDescription(), "AfterUpdate1");
+
+  database.Close();
+}
