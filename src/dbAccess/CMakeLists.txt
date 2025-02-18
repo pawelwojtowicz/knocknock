@@ -13,6 +13,8 @@ CSystemParamData.cpp
 CSystemParamData.h
 CPrivilegeData.cpp
 CPrivilegeData.h
+CRole2PrivilegeMappingData.cpp
+CRole2PrivilegeMappingData.h
 CRoleData.cpp
 CRoleData.h
 CUserData.cpp

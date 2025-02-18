@@ -4,6 +4,7 @@
 #include "CSQLiteDriver.h"
 #include "CPrivilegeData.h"
 #include "CRoleData.h"
+#include "CRole2PrivilegeMappingData.h"
 #include "CSystemParamData.h"
 #include "CUserData.h"
 
@@ -27,6 +28,11 @@ public:
     return m_roleData;
   }
 
+  CRole2PrivilegeMappingData GetRole2PrivilegeMappingData()
+  {
+    return m_role2PrivilegeMappingData;
+  }
+
   CSystemParamData& GetSystemParamData() {
     return m_sysParamData;
   }
@@ -41,6 +47,8 @@ private:
   CPrivilegeData m_privilegeData;
 
   CRoleData m_roleData;
+
+  CRole2PrivilegeMappingData m_role2PrivilegeMappingData;
 
   CSystemParamData m_sysParamData;
 

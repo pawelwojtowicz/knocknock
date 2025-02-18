@@ -256,3 +256,43 @@ TEST( CSQLiteDriver, Privileges_CRUD_Privilege)
 
   database.Close();
 }
+
+TEST( CSQLiteDriver, RoleToPrivilegeMapping) 
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  database.GetRoleData().AddRole( knocknock::CRole("VIEWER", "Can Read"));
+  database.GetRoleData().AddRole( knocknock::CRole("WRITER", "Can WRITE"));
+  database.GetRoleData().AddRole( knocknock::CRole("ADMIN", "CAN DO EVERYTHING"));
+
+  database.GetPrivilegeData().AddPrivilege(knocknock::CPrivilege("READ","READING DB"));
+  database.GetPrivilegeData().AddPrivilege(knocknock::CPrivilege("ADD","ADD RECORD"));
+  database.GetPrivilegeData().AddPrivilege(knocknock::CPrivilege("UPDATE","UPDATE RECORD"));
+  database.GetPrivilegeData().AddPrivilege(knocknock::CPrivilege("DELETE","DELETE RECORD"));
+  database.GetPrivilegeData().AddPrivilege(knocknock::CPrivilege("ADD_TABLE","ADD TABLE"));
+  database.GetPrivilegeData().AddPrivilege(knocknock::CPrivilege("PURGE_TABLE","PURGE TABLE"));
+
+  database.GetRole2PrivilegeMappingData().AddPrivilege2Role("VIEWER","READ");
+  database.GetRole2PrivilegeMappingData().AddPrivilege2Role("WRITER","ADD");
+  database.GetRole2PrivilegeMappingData().AddPrivilege2Role("WRITER","UPDATE");
+  database.GetRole2PrivilegeMappingData().AddPrivilege2Role("WRITER","DELETE");
+  database.GetRole2PrivilegeMappingData().AddPrivilege2Role("ADMIN","READ");
+  database.GetRole2PrivilegeMappingData().AddPrivilege2Role("ADMIN","ADD");
+  database.GetRole2PrivilegeMappingData().AddPrivilege2Role("ADMIN","UPDATE");
+  database.GetRole2PrivilegeMappingData().AddPrivilege2Role("ADMIN","DELETE");
+  database.GetRole2PrivilegeMappingData().AddPrivilege2Role("ADMIN","ADD_TABLE");
+  database.GetRole2PrivilegeMappingData().AddPrivilege2Role("ADMIN","PURGE_TABLE");
+
+  const auto adminPrivileges = database.GetRole2PrivilegeMappingData().GetPrivilegesForRole("ADMIN");
+  EXPECT_EQ(adminPrivileges.size(), 6);
+
+  const auto writerPrivileges = database.GetRole2PrivilegeMappingData().GetPrivilegesForRole("WRITER");
+  EXPECT_EQ(writerPrivileges.size(), 3);
+
+  const auto viewerPrivileges = database.GetRole2PrivilegeMappingData().GetPrivilegesForRole("VIEWER");
+  EXPECT_EQ(viewerPrivileges.size(), 1);
+  
+  database.Close();
+}
