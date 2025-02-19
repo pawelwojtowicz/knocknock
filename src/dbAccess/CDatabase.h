@@ -7,6 +7,7 @@
 #include "CRole2PrivilegeMappingData.h"
 #include "CSystemParamData.h"
 #include "CUserData.h"
+#include "CUser2RoleMappingData.h"
 
 namespace DBAccess
 {
@@ -41,6 +42,11 @@ public:
     return m_userData;
   }
 
+  CUser2RoleMappingData GetUser2RoleMappingData()
+  {
+    return m_user2RoleMappingData;
+  }
+
 private:
   CSQLiteDriver m_dbDriver;
 
@@ -52,8 +58,9 @@ private:
 
   CSystemParamData m_sysParamData;
 
-
   CUserData m_userData;
+
+  CUser2RoleMappingData m_user2RoleMappingData;
 };
 
 }

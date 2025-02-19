@@ -12,6 +12,7 @@ CDatabase::CDatabase()
 , m_role2PrivilegeMappingData(m_dbDriver)
 , m_sysParamData(m_dbDriver)
 , m_userData(m_dbDriver)
+, m_user2RoleMappingData(m_dbDriver)
 {
 
 }

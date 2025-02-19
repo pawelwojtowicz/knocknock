@@ -296,3 +296,36 @@ TEST( CSQLiteDriver, RoleToPrivilegeMapping)
   
   database.Close();
 }
+
+TEST( CSQLiteDriver, User2RoleMappings ) 
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  database.GetUserData().AddUser(knocknock::CUser( "jckSprw", 
+                                                  "Jack", 
+                                                  "Sparrow",
+                                                  "bush"));
+
+  database.GetUser2RoleMappingData().AssignRoleToUser("jckSprw", "VIEWER");
+  const auto userRoles = database.GetUser2RoleMappingData().GetUserRoles("jckSprw");
+  const auto userPrivileges = database.GetUser2RoleMappingData().GetUserPrivileges("jckSprw");
+  EXPECT_EQ(userRoles.size(),1);
+  EXPECT_EQ(userPrivileges.size(), 1 );
+
+  database.GetUser2RoleMappingData().AssignRoleToUser("jckSprw", "WRITER");
+  const auto userRoles2 = database.GetUser2RoleMappingData().GetUserRoles("jckSprw");
+  const auto userPrivileges2 = database.GetUser2RoleMappingData().GetUserPrivileges("jckSprw");
+  EXPECT_EQ(userRoles2.size(),2);
+  EXPECT_EQ(userPrivileges2.size(), 4 );
+
+  database.GetUser2RoleMappingData().RemoveRoleFromUser("jckSprw", "VIEWER");
+  const auto userRoles3 = database.GetUser2RoleMappingData().GetUserRoles("jckSprw");
+  const auto userPrivileges3 = database.GetUser2RoleMappingData().GetUserPrivileges("jckSprw");
+  EXPECT_EQ(userRoles3.size(),1);
+  EXPECT_EQ(userPrivileges3.size(), 3 );
+
+  
+  database.Close();
+}

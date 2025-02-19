@@ -17,6 +17,8 @@ CRole2PrivilegeMappingData.cpp
 CRole2PrivilegeMappingData.h
 CRoleData.cpp
 CRoleData.h
+CUser2RoleMappingData.cpp
+CUser2RoleMappingData.h
 CUserData.cpp
 CUserData.h
 IDBDriver.h
