@@ -6,6 +6,7 @@ namespace knocknock
 {
 class CApplication
 {
+public:
   CApplication() = default;
   CApplication( const int id, const std::string& name, const std::string& datePublisher, const std::string& accessTOken);
   ~CApplication() = default;
@@ -45,5 +46,5 @@ private:
   std::string m_accessToken = {};
 };
 
-using tApplications = std::vector<CApplication>;
+using tApplicationArray = std::vector<CApplication>;
 }

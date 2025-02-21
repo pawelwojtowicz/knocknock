@@ -329,3 +329,24 @@ TEST( CSQLiteDriver, User2RoleMappings )
   
   database.Close();
 }
+
+TEST( CSQLiteDriver, Applications ) 
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  ASSERT_TRUE(database.GetApplicationData().AddApplication(knocknock::CApplication(-1, "MsWord", "MQTT", "@#$#$#$%@#$%@#$#$%")));
+  const auto apps = database.GetApplicationData().GetAllApplications();
+  EXPECT_EQ(apps.size(), 1 );
+
+  database.GetApplicationData().AddApplication(knocknock::CApplication(-1, "MsExcel", "MQTT", "@#$#$#$%@#$%@#$#$%"));
+  const auto apps1 = database.GetApplicationData().GetAllApplications();
+  EXPECT_EQ(apps1.size(), 2 );
+
+  database.GetApplicationData().AddApplication(knocknock::CApplication(-1, "MsAccess", "MQTT", "@#$#$#$%@#$%@#$#$%"));
+  const auto apps2 = database.GetApplicationData().GetAllApplications();
+  EXPECT_EQ(apps2.size(), 3 );
+
+  database.Close();
+}

@@ -83,8 +83,6 @@ knocknock::tRoles CRoleData::GetAllRoles()
   m_rDBDriver.ExecuteSQLCommand( sqlQuery, getAllRolesCallback, &roles );
 
   return roles;
-
-
 }
 
 }
