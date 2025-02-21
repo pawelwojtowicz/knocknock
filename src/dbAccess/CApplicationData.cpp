@@ -32,7 +32,7 @@ bool CApplicationData::UpdateApplication( const knocknock::CApplication& applica
 
 bool CApplicationData::DeleteApplication( const int appId )
 {
-  const std::string sqlQuery = "DELETE FROM APPLICATIONS WHERE ( WHERE APP_ID="+std::to_string(appId)+" );";
+  const std::string sqlQuery = "DELETE FROM APPLICATIONS WHERE APP_ID="+std::to_string(appId)+";";
 
   auto deleteCallback = [](void *data, int argc, char **argv, char **azColName) {
     return 0;
@@ -43,8 +43,26 @@ bool CApplicationData::DeleteApplication( const int appId )
 
 std::optional<knocknock::CApplication> CApplicationData::GetApplication( const int appId)
 {
-  std::optional<knocknock::CApplication> application;
+  knocknock::CApplication application;
 
+  const std::string sqlQuery = "SELECT APP_ID, APP_NAME, APP_DATA_PUBLISHER, APP_ACCESS_TOKEN FROM APPLICATIONS WHERE APP_ID="+std::to_string(appId)+";";
+
+  auto getAppCallback = [](void *data, int argc, char **argv, char **azColName) {
+    if ( 4 == argc )
+    { 
+      knocknock::CApplication* pApplication = (knocknock::CApplication*)data;
+      *pApplication = knocknock::CApplication(atoi(argv[0]), argv[1], argv[2], argv[3] );
+    }
+    return 0;
+  };
+
+  if (m_rDBDriver.ExecuteSQLCommand( sqlQuery, getAppCallback, &application ) )
+  {
+    if ( -1 != application.GetAppId() )
+    {
+      return std::optional<knocknock::CApplication>(application);
+    }
+  }
   return std::nullopt;
 }
 

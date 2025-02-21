@@ -348,5 +348,24 @@ TEST( CSQLiteDriver, Applications )
   const auto apps2 = database.GetApplicationData().GetAllApplications();
   EXPECT_EQ(apps2.size(), 3 );
 
+  const auto& firstRecord = *(apps2.begin());
+
+  
+  int recordId = firstRecord.GetAppId();
+  const std::string& appNameBeforeChange = firstRecord.GetName();
+  //update it and check it
+  knocknock::CApplication newAppRecord( recordId, "NewName", "NewPublisher", "NewToken");
+  database.GetApplicationData().UpdateApplication(newAppRecord);
+  const auto updatedRecordFromDB = database.GetApplicationData().GetApplication(recordId);
+  ASSERT_TRUE(updatedRecordFromDB);
+  EXPECT_EQ(updatedRecordFromDB->GetName(), "NewName");
+  EXPECT_EQ(updatedRecordFromDB->GetDataPublisher(), "NewPublisher");
+  EXPECT_EQ(updatedRecordFromDB->GetAccessToken(), "NewToken");
+
+  //remove it and check
+  database.GetApplicationData().DeleteApplication(recordId);
+  const auto removedRecord = database.GetApplicationData().GetApplication(recordId);
+  ASSERT_FALSE(removedRecord);
+  
   database.Close();
 }

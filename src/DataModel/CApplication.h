@@ -7,7 +7,7 @@ namespace knocknock
 class CApplication
 {
 public:
-  CApplication() = default;
+  CApplication();
   CApplication( const int id, const std::string& name, const std::string& datePublisher, const std::string& accessTOken);
   ~CApplication() = default;
 
