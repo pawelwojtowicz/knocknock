@@ -5,6 +5,8 @@ SET( OUTPUT_NAME dbAccess )
 add_library( ${OUTPUT_NAME} STATIC
 CApplicationData.cpp
 CApplicationData.h
+CApplicationParamData.cpp
+CApplicationParamData.h
 CDatabase.cpp
 CDatabase.h
 CDBStructureBuilder.cpp

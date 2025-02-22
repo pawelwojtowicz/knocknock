@@ -3,6 +3,7 @@
 #include <memory>
 #include "CSQLiteDriver.h"
 #include "CApplicationData.h"
+#include "CApplicationParamData.h"
 #include "CPrivilegeData.h"
 #include "CRoleData.h"
 #include "CRole2PrivilegeMappingData.h"
@@ -24,6 +25,10 @@ public:
 
   CApplicationData& GetApplicationData() {
     return m_applicationData;
+  }
+
+  CApplicationParamData& GetApplicationParamData() {
+    return m_applicatonParamData;
   }
 
   CPrivilegeData& GetPrivilegeData() {
@@ -56,6 +61,8 @@ private:
   CSQLiteDriver m_dbDriver;
 
   CApplicationData m_applicationData;
+
+  CApplicationParamData m_applicatonParamData;
 
   CPrivilegeData m_privilegeData;
 

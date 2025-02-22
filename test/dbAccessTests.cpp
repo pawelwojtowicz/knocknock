@@ -369,3 +369,16 @@ TEST( CSQLiteDriver, Applications )
   
   database.Close();
 }
+
+TEST( CSQLiteDriver, ApplicationParams ) 
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  knocknock::CApplicationParam applicationParameter(-1 , "IPADDRESS", true, "192.168.1.1");
+
+  database.GetApplicationParamData().AddApplicationParam(applicationParameter);
+
+  database.Close();
+}
