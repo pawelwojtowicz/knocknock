@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 namespace knocknock
 {
@@ -45,4 +46,6 @@ private:
   bool m_public = {};
   std::string m_value = {};
 };
+
+using tApplicationParamsArray = std::vector<CApplicationParam>;
 }

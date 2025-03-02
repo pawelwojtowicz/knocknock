@@ -377,8 +377,41 @@ TEST( CSQLiteDriver, ApplicationParams )
   database.OpenDatabase("test.db");
 
   knocknock::CApplicationParam applicationParameter(-1 , "IPADDRESS", true, "192.168.1.1");
-
   database.GetApplicationParamData().AddApplicationParam(applicationParameter);
+
+  int applicationId(15);
+  std::string paramName( "BROKER_IP");
+  bool publicParam(false);
+  std::string paramValue("192.168.1.100");
+  std::string newParamValue("10.10.0.100");
+
+  database.GetApplicationParamData().AddApplicationParam(knocknock::CApplicationParam(applicationId, paramName, publicParam, paramValue));
+
+  {
+    std::optional<knocknock::CApplicationParam> dbData = database.GetApplicationParamData().GetApplicationParam(applicationId, paramName);
+
+    ASSERT_TRUE( dbData );
+    EXPECT_EQ( dbData->GetApplicationId() , applicationId);
+    EXPECT_EQ( dbData->GetParameterName() , paramName);
+    EXPECT_EQ( dbData->IsPublic(), publicParam);
+    EXPECT_EQ( dbData->GetValue(), paramValue);
+
+    dbData->SetPublicFlag(true);
+    dbData->SetValue(newParamValue);
+
+    ASSERT_TRUE( database.GetApplicationParamData().UpdateApplicationParam(*dbData) );
+  }
+
+  {
+    std::optional<knocknock::CApplicationParam> dbData = database.GetApplicationParamData().GetApplicationParam(applicationId, paramName);
+
+    ASSERT_TRUE( dbData );
+    EXPECT_EQ( dbData->GetApplicationId() , applicationId);
+    EXPECT_EQ( dbData->GetParameterName() , paramName);
+    EXPECT_EQ( dbData->IsPublic(), true);
+    EXPECT_EQ( dbData->GetValue(), newParamValue);
+  }
+
 
   database.Close();
 }

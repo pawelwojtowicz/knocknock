@@ -22,10 +22,61 @@ bool CApplicationParamData::AddApplicationParam( const knocknock::CApplicationPa
     return 0;
   };
 
-  std::cout << sqlQuery << std::endl;
-
   return m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 ) ;
 }
+
+bool CApplicationParamData::UpdateApplicationParam( const knocknock::CApplicationParam& applicationParam )
+{
+  int isPublic = applicationParam.IsPublic() ? 1 : 0;
+
+  const std::string sqlQuery = "UPDATE APPLICATION_PARAMS SET PUBLIC="+std::to_string(isPublic)+", VALUE='"+applicationParam.GetValue()+"' WHERE APPLICATION_ID="+std::to_string(applicationParam.GetApplicationId())+" AND NAME='"+applicationParam.GetParameterName()+"';"; 
+  auto updateCallback = [](void *data, int argc, char **argv, char **azColName) {
+    return 0;
+  };
+
+  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, updateCallback, 0 ) ;
+}
+
+std::optional<knocknock::CApplicationParam> CApplicationParamData::GetApplicationParam( const int applicationId, const std::string& paramName)
+{
+  std::string getParamQuery = "SELECT APPLICATION_ID, NAME, PUBLIC, VALUE FROM APPLICATION_PARAMS WHERE APPLICATION_ID="+std::to_string(applicationId)+" AND NAME='"+paramName+"';";
+  knocknock::CApplicationParam applicationParameter = {} ;
+
+  auto getParamCallback = [](void *data, int argc, char **argv, char **azColName) {
+    if (argc == 4 )
+    {
+      knocknock::CApplicationParam* pAppParam( (knocknock::CApplicationParam*)data);
+      *pAppParam = knocknock::CApplicationParam(atoi(argv[0]), argv[1], static_cast<bool>(atoi(argv[2])), argv[3]);
+    }
+    return 0;
+  };
+
+  if ( m_rDBDriver.ExecuteSQLCommand( getParamQuery, getParamCallback, &applicationParameter ) );
+  {
+    if ( applicationParameter.GetApplicationId() == applicationId )
+    {
+      return std::optional<knocknock::CApplicationParam>(applicationParameter);
+    }
+  }
+
+  return std::nullopt;
+}
+
+knocknock::tApplicationParamsArray CApplicationParamData::GetApplicationParams( const int applicationI )
+{
+  knocknock::tApplicationParamsArray appParams = {};
+
+  return appParams;
+}
+
+knocknock::tApplicationParamsArray GetAllParams()
+{
+  knocknock::tApplicationParamsArray appParams = {};
+
+
+  return appParams;
+}
+
 
 
 }
