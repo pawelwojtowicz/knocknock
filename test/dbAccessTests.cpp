@@ -412,6 +412,22 @@ TEST( CSQLiteDriver, ApplicationParams )
     EXPECT_EQ( dbData->GetValue(), newParamValue);
   }
 
+  {
+    knocknock::tApplicationParamsArray appParams = database.GetApplicationParamData().GetApplicationParams(applicationId);
+    EXPECT_EQ( appParams.size() , 1 );
+  }
+
+  database.GetApplicationParamData().AddApplicationParam(knocknock::CApplicationParam(applicationId, "BACKEND_IP", true, "192.168.1.123"));
+
+  {
+    knocknock::tApplicationParamsArray appParams = database.GetApplicationParamData().GetApplicationParams(applicationId);
+    EXPECT_EQ( appParams.size() , 2 );
+  }
+
+  {
+    knocknock::tApplicationParamsArray allAppParams = database.GetApplicationParamData().GetAllParams();
+    EXPECT_EQ( allAppParams.size() , 3 );
+  }
 
   database.Close();
 }

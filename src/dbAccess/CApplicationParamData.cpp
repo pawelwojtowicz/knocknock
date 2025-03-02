@@ -62,17 +62,43 @@ std::optional<knocknock::CApplicationParam> CApplicationParamData::GetApplicatio
   return std::nullopt;
 }
 
-knocknock::tApplicationParamsArray CApplicationParamData::GetApplicationParams( const int applicationI )
+knocknock::tApplicationParamsArray CApplicationParamData::GetApplicationParams( const int applicationId )
 {
   knocknock::tApplicationParamsArray appParams = {};
 
+  std::string getParamQuery = "SELECT APPLICATION_ID, NAME, PUBLIC, VALUE FROM APPLICATION_PARAMS WHERE APPLICATION_ID="+std::to_string(applicationId)+";";
+  knocknock::CApplicationParam applicationParameter = {} ;
+
+  auto getParamCallback = [](void *data, int argc, char **argv, char **azColName) {
+    if (argc == 4 )
+    {
+      knocknock::tApplicationParamsArray* pAppParams = (knocknock::tApplicationParamsArray*)data;
+      pAppParams->push_back(knocknock::CApplicationParam(atoi(argv[0]), argv[1], static_cast<bool>(atoi(argv[2])), argv[3]));
+    }
+    return 0;
+  };
+
+  m_rDBDriver.ExecuteSQLCommand( getParamQuery, getParamCallback, &appParams );
   return appParams;
 }
 
-knocknock::tApplicationParamsArray GetAllParams()
+knocknock::tApplicationParamsArray CApplicationParamData::GetAllParams()
 {
   knocknock::tApplicationParamsArray appParams = {};
 
+  std::string getParamQuery = "SELECT APPLICATION_ID, NAME, PUBLIC, VALUE FROM APPLICATION_PARAMS;";
+  knocknock::CApplicationParam applicationParameter = {} ;
+
+  auto getParamCallback = [](void *data, int argc, char **argv, char **azColName) {
+    if (argc == 4 )
+    {
+      knocknock::tApplicationParamsArray* pAppParams = (knocknock::tApplicationParamsArray*)data;
+      pAppParams->push_back(knocknock::CApplicationParam(atoi(argv[0]), argv[1], static_cast<bool>(atoi(argv[2])), argv[3]));
+    }
+    return 0;
+  };
+
+  m_rDBDriver.ExecuteSQLCommand( getParamQuery, getParamCallback, &appParams );
 
   return appParams;
 }
