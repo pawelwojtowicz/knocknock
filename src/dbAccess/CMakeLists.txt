@@ -25,6 +25,8 @@ CUser2RoleMappingData.cpp
 CUser2RoleMappingData.h
 CUserData.cpp
 CUserData.h
+CUserSettingsData.cpp
+CUserSettingsData.h
 IDBDriver.h
 )
 

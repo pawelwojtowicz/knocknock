@@ -123,5 +123,4 @@ bool CApplicationParamData::DeleteApplicationParameter( int applicationId, const
   return m_rDBDriver.ExecuteSQLCommand( deleteParamQuery, deleteCallback, 0 );
 }
 
-
 }

@@ -445,3 +445,50 @@ TEST( CSQLiteDriver, ApplicationParams )
 
   database.Close();
 }
+
+TEST( CSQLiteDriver, UserSettings ) 
+{
+  DBAccess::CDatabase database;
+
+  database.OpenDatabase("test.db");
+
+  int appId = { 100 };
+  std::string userId = { "skull" };
+  std::string paramName = { "SCREEN_PALETTE" };
+
+  knocknock::CUserSetting userSetting ( appId, paramName , userId, "BLACK");
+  ASSERT_TRUE(database.GetUserSettingsData().AddUserSetting(userSetting));
+
+  {
+    knocknock::tUserSettingsArray dbData = database.GetUserSettingsData().GetUserSettings(appId, userId);
+    EXPECT_EQ(dbData.size(), 1);
+    EXPECT_EQ( dbData[0].GetParamValue() , "BLACK" );
+  }
+
+  userSetting.SetParamValue("ORANGE");
+  ASSERT_TRUE(database.GetUserSettingsData().UpdateUserSetting(userSetting));
+
+  {
+    knocknock::tUserSettingsArray dbData = database.GetUserSettingsData().GetUserSettings(appId, userId);
+    EXPECT_EQ(dbData.size(), 1);
+    EXPECT_EQ( dbData[0].GetParamValue() , "ORANGE" );
+  }
+
+  knocknock::CUserSetting userSetting2 ( appId, "USER_PREFIX" , userId, "Mr.");
+  ASSERT_TRUE(database.GetUserSettingsData().AddUserSetting(userSetting2));
+
+  {
+    knocknock::tUserSettingsArray dbData = database.GetUserSettingsData().GetUserSettings(appId, userId);
+    EXPECT_EQ(dbData.size(), 2);
+  }
+
+  ASSERT_TRUE(database.GetUserSettingsData().DeleteUserSetting( appId, paramName, userId));
+
+  {
+    knocknock::tUserSettingsArray dbData = database.GetUserSettingsData().GetUserSettings(appId, userId);
+    EXPECT_EQ(dbData.size(), 1);
+  }
+
+  database.Close();
+
+}

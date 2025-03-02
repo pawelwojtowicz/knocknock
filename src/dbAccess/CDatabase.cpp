@@ -15,8 +15,8 @@ CDatabase::CDatabase()
 , m_sysParamData(m_dbDriver)
 , m_userData(m_dbDriver)
 , m_user2RoleMappingData(m_dbDriver)
+, m_userSettingsData(m_dbDriver)
 {
-
 }
 
 void CDatabase::OpenDatabase( const std::string& dbFilename )
