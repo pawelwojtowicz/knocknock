@@ -376,7 +376,7 @@ TEST( CSQLiteDriver, ApplicationParams )
 
   database.OpenDatabase("test.db");
 
-  knocknock::CApplicationParam applicationParameter(-1 , "IPADDRESS", true, "192.168.1.1");
+  knocknock::CApplicationParam applicationParameter(100 , "IPADDRESS", true, "192.168.1.1");
   database.GetApplicationParamData().AddApplicationParam(applicationParameter);
 
   int applicationId(15);
@@ -427,6 +427,20 @@ TEST( CSQLiteDriver, ApplicationParams )
   {
     knocknock::tApplicationParamsArray allAppParams = database.GetApplicationParamData().GetAllParams();
     EXPECT_EQ( allAppParams.size() , 3 );
+  }
+
+  //Deleting the app params
+  {
+    ASSERT_TRUE( database.GetApplicationParamData().DeleteApplicationParams(applicationId));
+    knocknock::tApplicationParamsArray allAppParams = database.GetApplicationParamData().GetAllParams();
+    EXPECT_EQ( allAppParams.size() , 1 );
+  }
+
+  //Deleting the single param 
+  {
+    ASSERT_TRUE( database.GetApplicationParamData().DeleteApplicationParameter(100, "IPADDRESS") );
+    knocknock::tApplicationParamsArray allAppParams = database.GetApplicationParamData().GetAllParams();
+    EXPECT_EQ( allAppParams.size() , 0 );
   }
 
   database.Close();

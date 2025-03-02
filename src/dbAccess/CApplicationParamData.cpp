@@ -103,6 +103,25 @@ knocknock::tApplicationParamsArray CApplicationParamData::GetAllParams()
   return appParams;
 }
 
+bool CApplicationParamData::DeleteApplicationParams( int applicationId)
+{
+  std::string deleteParamQuery = "DELETE FROM APPLICATION_PARAMS WHERE APPLICATION_ID="+std::to_string(applicationId)+";";
+
+  auto deleteCallback = [](void *data, int argc, char **argv, char **azColName) {
+    return 0;
+  };
+  return m_rDBDriver.ExecuteSQLCommand( deleteParamQuery, deleteCallback, 0 );
+}
+
+bool CApplicationParamData::DeleteApplicationParameter( int applicationId, const std::string& paramName)
+{
+  std::string deleteParamQuery = "DELETE FROM APPLICATION_PARAMS WHERE APPLICATION_ID="+std::to_string(applicationId)+" AND NAME='"+paramName+"';";
+
+  auto deleteCallback = [](void *data, int argc, char **argv, char **azColName) {
+    return 0;
+  };
+  return m_rDBDriver.ExecuteSQLCommand( deleteParamQuery, deleteCallback, 0 );
+}
 
 
 }

@@ -23,6 +23,10 @@ public:
 
   knocknock::tApplicationParamsArray GetAllParams();
 
+  bool DeleteApplicationParams( int applicationId);
+
+  bool DeleteApplicationParameter( int applicationId, const std::string& paramName);
+
 private:
   IDBDriver& m_rDBDriver;
 };
