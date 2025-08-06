@@ -3,7 +3,7 @@
 
 namespace knocknock
 {
-class CUserSession;
+class CSession;
 
 class IKnocknockService
 {
@@ -11,8 +11,8 @@ public:
   IKnocknockService() = default;
   virtual ~IKnocknockService() = default;
 
-  virtual const CUserSession& Identify( const std::string& userId) = 0;
-  virtual const CUserSession& Authenticate( const std::string& userId, const std::string& authenticationString) = 0;
+  virtual const CSession& Identify( const std::string& userId) = 0;
+  virtual const CSession& Authenticate( const std::string& userId, const std::string& authenticationString) = 0;
 
 private:
   IKnocknockService(const IKnocknockService&) = delete;

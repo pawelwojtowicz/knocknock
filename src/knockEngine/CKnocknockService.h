@@ -1,7 +1,7 @@
 #pragma once
 #include "IKnocknockService.h"
 #include <map>
-#include "CUserSession.h"
+#include "CSession.h"
 
 namespace knocknock
 {
@@ -15,12 +15,12 @@ public:
   bool Initialize();
   void Shutdown();
 private:
-  virtual const CUserSession& Identify( const std::string& userId) override;
-  virtual const CUserSession& Authenticate( const std::string& userId, const std::string& authenticationString) override;
+  virtual const CSession& Identify( const std::string& userId) override;
+  virtual const CSession& Authenticate( const std::string& userId, const std::string& authenticationString) override;
 private:
-  std::map<std::string, CUserSession> m_sessions;
+  std::map<std::string, CSession> m_sessions;
 
-  static CUserSession empty;
+  static CSession empty;
 };
 
 }

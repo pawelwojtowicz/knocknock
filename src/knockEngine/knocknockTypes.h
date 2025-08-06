@@ -1,4 +1,7 @@
-#pragma once 
+#pragma once
+
+namespace knocknock
+{
 
 enum class UserSessionState
 {
@@ -7,3 +10,12 @@ enum class UserSessionState
   TIMED_OUT,      //next request requires the
   STALLED
 };
+
+enum class CookieSameSite
+{
+  STRICT,
+  LAX,
+  NONE
+};
+
+}

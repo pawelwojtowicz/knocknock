@@ -5,8 +5,8 @@ SET( OUTPUT_NAME knockEngine )
 add_library( ${OUTPUT_NAME} STATIC
 CKnocknockService.cpp
 CKnocknockService.h
-CUserSession.cpp
-CUserSession.h
+CSession.cpp
+CSession.h
 IKnocknockService.h
 )
 
