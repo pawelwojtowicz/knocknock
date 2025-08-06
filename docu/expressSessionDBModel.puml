@@ -1,0 +1,45 @@
+@startuml
+
+' configuration
+hide circle
+skinparam linetype ortho
+
+' comment
+
+entity "sessions" as sessions {
+sid : TEXT
+--
+sess : TEXT
+APP_DATA_PUBLISHER : DATETIME
+}
+
+note left
+Creating a table goes:
+CREATE TABLE sessions (
+  sid TEXT PRIMARY KEY NOT NULL,
+  sess TEXT NOT NULL,
+  expired DATETIME NOT NULL
+);
+
+-- Index for faster expiration checks
+CREATE INDEX idx_expired ON sessions(expired);
+end note
+
+note right
+Example data in sess:
+{
+  "cookie": {
+    "originalMaxAge": 86400000,
+    "expires": "2023-10-31T12:34:56.789Z",
+    "secure": false,
+    "httpOnly": true,
+    "domain": null,
+    "path": "/"
+  },
+  "userId": "12345",
+  "authenticationChallenge": "abcdef1234567890",
+  "sessionId": "session1234567890"
+}
+end note
+
+@enduml
