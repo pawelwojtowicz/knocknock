@@ -1,22 +1,21 @@
 #pragma once
-#include <CUser.h>
-#include <optional>
+#include "IUserData.h"
 
 namespace DBAccess
 {
 class IDBDriver;
 
-class CUserData
+class CUserData : public IUserData
 {
 public:
   CUserData( IDBDriver& rDBDriver );
   virtual ~CUserData() = default;
 
-  bool AddUser( const knocknock::CUser& user );
-  bool UpdateUser( const knocknock::CUser& user );
-  void DeleteUser( const std::string& userId );
-  std::optional<knocknock::CUser> GetUserByUserId( const std::string& userId);
-  knocknock::tUserArray GetAllUsers();
+  bool AddUser( const knocknock::CUser& user ) override;
+  bool UpdateUser( const knocknock::CUser& user ) override;
+  void DeleteUser( const std::string& userId ) override;
+  std::optional<knocknock::CUser> GetUserByUserId( const std::string& userId) override;
+  knocknock::tUserArray GetAllUsers() override;
 
 private:
   IDBDriver& m_rDBDriver;

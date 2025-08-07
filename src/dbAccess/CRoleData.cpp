@@ -41,7 +41,7 @@ bool CRoleData::DeleteRole( const std::string& name)
   return m_rDBDriver.ExecuteSQLCommand( sqlQuery, deleteCallback, 0 ) ;
 }
   
-std::optional<knocknock::CRole> CRoleData::GetRole( const std::string& roleName)
+std::optional<knocknock::CRole> CRoleData::GetRole( const std::string& roleName) const
 {
   const std::string sqlQuery = "SELECT NAME, DESCRIPTION FROM ROLES WHERE NAME='"+roleName+"';";
 
@@ -67,7 +67,7 @@ std::optional<knocknock::CRole> CRoleData::GetRole( const std::string& roleName)
   return std::nullopt ;
 }
 
-knocknock::tRoles CRoleData::GetAllRoles()
+knocknock::tRoles CRoleData::GetAllRoles() const
 {
   knocknock::tRoles roles = {};
   const std::string sqlQuery = "SELECT NAME,DESCRIPTION FROM ROLES;";

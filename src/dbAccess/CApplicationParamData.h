@@ -1,31 +1,30 @@
 #pragma once
-#include <CApplicationParam.h>
-#include <optional>
+#include "IApplicationParamData.h"
 
 namespace DBAccess
 {
 
 class IDBDriver;
 
-class CApplicationParamData
+class CApplicationParamData : public IApplicationParamData
 {
 public:
   CApplicationParamData( IDBDriver& dbDriver);
   ~CApplicationParamData() = default;
 
-  bool AddApplicationParam( const knocknock::CApplicationParam& applicationParam );
+  bool AddApplicationParam( const knocknock::CApplicationParam& applicationParam ) override;
 
-  bool UpdateApplicationParam( const knocknock::CApplicationParam& applicationParam );
+  bool UpdateApplicationParam( const knocknock::CApplicationParam& applicationParam ) override;
 
-  std::optional<knocknock::CApplicationParam> GetApplicationParam( const int applicationId, const std::string& paramName);
+  std::optional<knocknock::CApplicationParam> GetApplicationParam( const int applicationId, const std::string& paramName) override;
 
-  knocknock::tApplicationParamsArray GetApplicationParams( const int applicationI );
+  knocknock::tApplicationParamsArray GetApplicationParams( const int applicationI ) override;
 
-  knocknock::tApplicationParamsArray GetAllParams();
+  knocknock::tApplicationParamsArray GetAllParams() override;
 
-  bool DeleteApplicationParams( int applicationId);
+  bool DeleteApplicationParams( int applicationId) override;
 
-  bool DeleteApplicationParameter( int applicationId, const std::string& paramName);
+  bool DeleteApplicationParameter( int applicationId, const std::string& paramName) override;
 
 private:
   IDBDriver& m_rDBDriver;

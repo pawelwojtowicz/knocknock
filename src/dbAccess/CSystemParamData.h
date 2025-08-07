@@ -1,25 +1,21 @@
 #pragma once
-#include <string>
-#include <map>
-#include <optional>
-
+#include "ISystemParamData.h"
 namespace DBAccess
 {
 
-using tSystemParameters = std::map<std::string,std::string>; 
 class IDBDriver;
 
-class CSystemParamData
+class CSystemParamData : public ISystemParamData
 {
 public:
   CSystemParamData(IDBDriver& rDBDriver);
   virtual ~CSystemParamData() = default;
 
-  bool AddSystemParam( const std::string& key, const std::string& value);
+  bool AddSystemParam( const std::string& key, const std::string& value) override;
 
-  tSystemParameters GetAllSystemParams();
+  tSystemParameters GetAllSystemParams()  override;
 
-  std::optional<std::string> GetSystemParam( const std::string& key);
+  std::optional<std::string> GetSystemParam( const std::string& key) override;
 
 private:
   IDBDriver& m_rDBDriver;

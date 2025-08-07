@@ -28,37 +28,37 @@ public:
     return m_applicationData;
   }
 
-  CApplicationParamData& GetApplicationParamData() {
+  IApplicationParamData& GetApplicationParamData() {
     return m_applicatonParamData;
   }
 
-  CPrivilegeData& GetPrivilegeData() {
+  IPrivilegeData& GetPrivilegeData() {
     return m_privilegeData;
   }
 
-  CRoleData& GetRoleData() {
+  IRoleData& GetRoleData() {
     return m_roleData;
   }
 
-  CRole2PrivilegeMappingData GetRole2PrivilegeMappingData()
+  IRole2PrivilegeMappingData& GetRole2PrivilegeMappingData()
   {
     return m_role2PrivilegeMappingData;
   }
 
-  CSystemParamData& GetSystemParamData() {
+  ISystemParamData& GetSystemParamData() {
     return m_sysParamData;
   }
 
-  CUserData& GetUserData() {
+  IUserData& GetUserData() {
     return m_userData;
   }
 
-  CUser2RoleMappingData GetUser2RoleMappingData()
+  IUser2RoleMappingData& GetUser2RoleMappingData()
   {
     return m_user2RoleMappingData;
   }
 
-  CUserSettingsData GetUserSettingsData()
+  IUserSettingsData& GetUserSettingsData()
   {
     return m_userSettingsData;
   }

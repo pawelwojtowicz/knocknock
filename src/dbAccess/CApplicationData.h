@@ -1,23 +1,21 @@
 #pragma once
-#include <CApplication.h>
-#include <optional>
-
+#include "IApplicationData.h"
 namespace DBAccess
 {
 class IDBDriver;
 
-class CApplicationData
+class CApplicationData : public IApplicationData
 {
 public:
   CApplicationData(IDBDriver& rDBDriver);
   ~CApplicationData() = default;
 
-  bool AddApplication( const knocknock::CApplication& applicationRecord);
-  bool UpdateApplication( const knocknock::CApplication& applicationRecord );
-  bool DeleteApplication( const int appId );
+  bool AddApplication( const knocknock::CApplication& applicationRecord) override;
+  bool UpdateApplication( const knocknock::CApplication& applicationRecord ) override;
+  bool DeleteApplication( const int appId ) override;
 
-  std::optional<knocknock::CApplication> GetApplication( const int appId);
-  knocknock::tApplicationArray GetAllApplications();  
+  std::optional<knocknock::CApplication> GetApplication( const int appId) override;
+  knocknock::tApplicationArray GetAllApplications() override;
 
 private:
   IDBDriver& m_rDBDriver;

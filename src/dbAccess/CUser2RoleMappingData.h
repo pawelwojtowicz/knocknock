@@ -1,23 +1,21 @@
 #pragma once 
-#include <string>
-#include <CRole.h>
-#include <CPrivilege.h>
+#include "IUser2RoleMappingData.h"
 
 namespace DBAccess
 {
 class IDBDriver;
 
-class CUser2RoleMappingData
+class CUser2RoleMappingData : public IUser2RoleMappingData
 {
 public:
   CUser2RoleMappingData(IDBDriver& rDBDriver);
   ~CUser2RoleMappingData() = default;
 
-  bool AssignRoleToUser( const std::string& userId, const std::string& roleName);
-  bool RemoveRoleFromUser(const std::string& userId, const std::string& roleName);
+  bool AssignRoleToUser( const std::string& userId, const std::string& roleName) override;
+  bool RemoveRoleFromUser(const std::string& userId, const std::string& roleName) override;
 
-  knocknock::tRoles GetUserRoles( const std::string& userId);
-  knocknock::tPrivilegeArray GetUserPrivileges( const std::string& userId);
+  knocknock::tRoles GetUserRoles( const std::string& userId) override;
+  knocknock::tPrivilegeArray GetUserPrivileges( const std::string& userId) override;
 
 private:
   IDBDriver& m_rDBDriver;

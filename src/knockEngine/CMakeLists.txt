@@ -7,6 +7,8 @@ CKnocknockService.cpp
 CKnocknockService.h
 CSession.cpp
 CSession.h
+CSessionBuilder.cpp
+CSessionBuilder.h
 IKnocknockService.h
 )
 
