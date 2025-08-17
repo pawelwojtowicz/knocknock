@@ -6,7 +6,10 @@ namespace knocknock
 class CSessionBuilder
 {
 public:
-    CSessionBuilder();
-    ~CSessionBuilder();
+  CSessionBuilder();
+  virtual ~CSessionBuilder();
+
+private:
+  
 };
 }

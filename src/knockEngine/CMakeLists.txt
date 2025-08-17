@@ -3,6 +3,8 @@ project( knockEngine )
 SET( OUTPUT_NAME knockEngine )
 
 add_library( ${OUTPUT_NAME} STATIC
+CConfiguration.cpp
+CConfiguration.h
 CKnocknockService.cpp
 CKnocknockService.h
 CSession.cpp
