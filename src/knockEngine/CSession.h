@@ -24,21 +24,25 @@ public:
   bool GetCookieSecure() const;
   CookieSameSite GetCookieSameSite() const;
 
+  void UpdateUserSessionState(UserSessionState newState) { m_userSessionState = newState; }
+  UserSessionState GetUserSessionState() const { return m_userSessionState; }
+
+  void SetAuthenticationState( const std::string& authState) { m_authenticationState = authState; }
+  const std::string& GetAuthenticationState() const { return m_authenticationState; }
+
+
 private:
   std::string m_sid;
   std::string m_userId;
   std::string m_userName;
   std::string m_authMethod;
   std::string m_authString;
+  int m_sessionMaxAge;
+  int m_sessionExpires;
 
-  int m_cookieMaxAge;
-  std::string m_cookieExpires;
-  bool m_cookieHttpOnly;
-  std::string m_cookiePath;
-  bool m_cookieSecure;
-  CookieSameSite m_cookieSameSite;
+  UserSessionState m_userSessionState;
 
-
+  std::string m_authenticationState;
 };
 
 }

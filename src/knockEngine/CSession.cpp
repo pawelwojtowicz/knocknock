@@ -9,6 +9,7 @@ CSession::CSession(const std::string& sessionId, const std::string& userId, cons
 , m_userName(userName)
 , m_authMethod(authMethod)
 , m_authString(authString)
+, m_userSessionState(UserSessionState::CREATED)
 {
 }
 

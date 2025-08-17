@@ -19,6 +19,5 @@ private:
   CConfiguration& m_rConfiguration;
 
   DBAccess::IDBAccess& m_rDBAccess;
-
 };
 }
