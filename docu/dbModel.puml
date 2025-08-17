@@ -46,7 +46,8 @@ USER_ID : string
 --
 FIRST_NAME : string 
 LAST_NAME : string
-PASS_HASH : string 
+AUTH_METHOD : string
+AUTH_STRING : string 
 }
 
 

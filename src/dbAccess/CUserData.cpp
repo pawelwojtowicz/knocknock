@@ -12,7 +12,7 @@ CUserData::CUserData( IDBDriver& rDBDriver )
 
 bool CUserData::AddUser( const knocknock::CUser& user )
 {
-  const std::string sqlQuery = "INSERT INTO USERS (USER_ID, FIRST_NAME , LAST_NAME , PASS_HASH) VALUES ('"+user.getUserId() +"','"+user.getFirstName()+"','"+user.getLastName()+"','"+user.getPasswordHash()+"');";
+  const std::string sqlQuery = "INSERT INTO USERS (USER_ID, FIRST_NAME , LAST_NAME , AUTH_METHOD, AUTH_STRING) VALUES ('"+user.getUserId() +"','"+user.getFirstName()+"','"+user.getLastName()+"','"+user.getAuthenticationMethod()+"','"+user.getAuthenticationString()+"');";
 
   auto insertValueCallback = [](void *data, int argc, char **argv, char **azColName) {
     return 0;
@@ -23,7 +23,7 @@ bool CUserData::AddUser( const knocknock::CUser& user )
 
 bool CUserData::UpdateUser( const knocknock::CUser& user )
 {
-  const std::string sqlQuery = "UPDATE USERS SET FIRST_NAME='"+user.getFirstName()+"', LAST_NAME='"+user.getLastName()+"', PASS_HASH='"+user.getPasswordHash()+"' WHERE USER_ID='"+user.getUserId()+"';"; 
+  const std::string sqlQuery = "UPDATE USERS SET FIRST_NAME='"+user.getFirstName()+"', LAST_NAME='"+user.getLastName()+"', AUTH_METHOD='"+user.getAuthenticationMethod()+"', AUTH_STRING='"+user.getAuthenticationString()+"' WHERE USER_ID='"+user.getUserId()+"';"; 
   auto updateValueCallback = [](void *data, int argc, char **argv, char **azColName) {
     return 0;
   };
@@ -44,15 +44,15 @@ void CUserData::DeleteUser( const std::string& userId )
 
 std::optional<knocknock::CUser> CUserData::GetUserByUserId( const std::string& userId)
 {
-  const std::string sqlQuery = "SELECT USER_ID,FIRST_NAME,LAST_NAME,PASS_HASH FROM USERS WHERE USER_ID='"+userId+"';";
+  const std::string sqlQuery = "SELECT USER_ID,FIRST_NAME,LAST_NAME, AUTH_METHOD, AUTH_STRING FROM USERS WHERE USER_ID='"+userId+"';";
 
   knocknock::CUser user;
 
   auto getUserCallback = [](void *data, int argc, char **argv, char **azColName) {
     knocknock::CUser* pUser = (knocknock::CUser*)data;
-    if ( 4 == argc )
+    if ( 5 == argc )
     {
-      *pUser = knocknock::CUser( argv[0], argv[1], argv[2], argv[3] );
+      *pUser = knocknock::CUser( argv[0], argv[1], argv[2], argv[3], argv[4] );
     } 
     return 0;
   };
@@ -71,13 +71,13 @@ std::optional<knocknock::CUser> CUserData::GetUserByUserId( const std::string& u
 knocknock::tUserArray CUserData::GetAllUsers()
 {
   knocknock::tUserArray users = {};
-  const std::string sqlQuery = "SELECT USER_ID,FIRST_NAME,LAST_NAME,PASS_HASH FROM USERS;";
+  const std::string sqlQuery = "SELECT USER_ID,FIRST_NAME,LAST_NAME, AUTH_METHOD, AUTH_STRING FROM USERS;";
 
   auto getAllUsersCallback = [](void *data, int argc, char **argv, char **azColName) {
-    if ( 4 == argc )
+    if ( 5 == argc )
     {
       auto usersArray = (knocknock::tUserArray*)data;
-      usersArray->push_back(knocknock::CUser( argv[0], argv[1], argv[2], argv[3] ));
+      usersArray->push_back(knocknock::CUser( argv[0], argv[1], argv[2], argv[3], argv[4] ));
     }
     return 0;
   };

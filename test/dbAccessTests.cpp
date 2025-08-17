@@ -78,7 +78,7 @@ TEST( CSQLiteDriver, Users_AddingDuplicate )
 
   database.OpenDatabase("test.db");
 
-  knocknock::CUser user("don","John","Doe","1234567890");
+  knocknock::CUser user("don","John","Doe","otp","1234567890");
 
   ASSERT_TRUE(database.GetUserData().AddUser(user) );
   ASSERT_FALSE(database.GetUserData().AddUser(user) );
@@ -97,7 +97,8 @@ TEST( CSQLiteDriver, Users_GetUserById_Existing )
   ASSERT_TRUE( user );
   EXPECT_EQ( "John", user->getFirstName());
   EXPECT_EQ( "Doe", user->getLastName());
-  EXPECT_EQ( "1234567890", user->getPasswordHash() );
+  EXPECT_EQ( "otp", user->getAuthenticationMethod() );
+  EXPECT_EQ( "1234567890", user->getAuthenticationString() );
 
   database.Close();
 }
@@ -120,16 +121,18 @@ TEST( CSQLiteDriver, Users_UpdateUser_Existing )
   std::string userId("testUser");
   std::string firstNameBeforeUpdate("Pablo");
   std::string lastNameBeforeUpdate("Morales");
-  std::string passHashBeforeChange("1234567890");
+  std::string authMethodBeforeUpdate("otp");
+  std::string authStringBeforeUpdate("1234567890");
   std::string firstNameAfterUpdate("Pietro");
   std::string lastNameAfterUpdate("Desantis");
-  std::string passHashAfterChange("0987654321");
+  std::string authMethodAfterUpdate("checksum");
+  std::string authStringAfterUpdate("0987654321");
   {
-    knocknock::CUser user( userId, firstNameBeforeUpdate,lastNameBeforeUpdate,passHashBeforeChange);
+    knocknock::CUser user( userId, firstNameBeforeUpdate,lastNameBeforeUpdate,authMethodBeforeUpdate,authStringBeforeUpdate);
     database.GetUserData().AddUser( user );
   }
   {
-    knocknock::CUser user( userId, firstNameAfterUpdate,lastNameAfterUpdate,passHashAfterChange);
+    knocknock::CUser user( userId, firstNameAfterUpdate,lastNameAfterUpdate,authMethodAfterUpdate,authStringAfterUpdate);
     ASSERT_TRUE(database.GetUserData().UpdateUser( user) );
   }
 
@@ -137,7 +140,8 @@ TEST( CSQLiteDriver, Users_UpdateUser_Existing )
   ASSERT_TRUE( user );
   EXPECT_EQ( firstNameAfterUpdate, user->getFirstName() );
   EXPECT_EQ( lastNameAfterUpdate, user->getLastName() );
-  EXPECT_EQ( passHashAfterChange, user->getPasswordHash() );
+  EXPECT_EQ( authMethodAfterUpdate, user->getAuthenticationMethod() );
+  EXPECT_EQ( authStringAfterUpdate, user->getAuthenticationString() );
   database.Close();
 }
 
@@ -306,6 +310,7 @@ TEST( CSQLiteDriver, User2RoleMappings )
   database.GetUserData().AddUser(knocknock::CUser( "jckSprw", 
                                                   "Jack", 
                                                   "Sparrow",
+                                                  "otp",
                                                   "bush"));
 
   database.GetUser2RoleMappingData().AssignRoleToUser("jckSprw", "VIEWER");
