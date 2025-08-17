@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <memory>
+#include "IDBAccess.h"
 #include "CSQLiteDriver.h"
 #include "CApplicationData.h"
 #include "CApplicationParamData.h"
@@ -15,7 +15,7 @@
 namespace DBAccess
 {
 
-class CDatabase
+class CDatabase : public IDBAccess
 {
 public:
   CDatabase();
@@ -28,11 +28,11 @@ public:
     return m_applicationData;
   }
 
-  IApplicationParamData& GetApplicationParamData() {
+  IApplicationParamData& GetApplicationParamData() override {
     return m_applicatonParamData;
   }
 
-  IPrivilegeData& GetPrivilegeData() {
+  IPrivilegeData& GetPrivilegeData() override {
     return m_privilegeData;
   }
 

@@ -2,6 +2,16 @@
 
 namespace knocknock
 {
+
+CSession::CSession(const std::string& sessionId, const std::string& userId, const std::string& userName, const std::string& authMethod, const std::string& authString) 
+: m_sid(sessionId)
+, m_userId(userId)
+, m_userName(userName)
+, m_authMethod(authMethod)
+, m_authString(authString)
+{
+}
+
 const std::string& CSession::GetSessionId() const
 {
   return m_sid;

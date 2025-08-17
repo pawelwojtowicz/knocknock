@@ -17,4 +17,4 @@ The configuration can be read from the configuration file and also from the data
 | Parameter name        | Type         | Description                     |
 |-----------------------|--------------|---------------------------------|
 | allowAnonymousSession | [true\|false]| parameter specifies whether it is possible to create session for a user that is not defined in the database |
-| defaultAuthenticationMethod | string | The name of the user authentication method that is used in case there is not user specific method defined in the database <br> Supported authentication methods: <br> * checksum <br> * OTP <br>* SHA256|
+| defaultAuthenticationMethod | string | The name of the user authentication method that is used in case there is not user specific method defined in the database <br> Supported authentication methods: <br> * checksum <br> * OTP <br>* SHA256 |

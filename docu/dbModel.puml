@@ -1,4 +1,4 @@
-@startuml
+@startuml Database Model
 
 ' configuration
 hide circle
