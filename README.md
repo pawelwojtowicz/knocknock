@@ -2,6 +2,7 @@
 
 ## Overview
 The knocknock is an identity server that is dedicated for the embedded devices. The user list is stored in the SQLite database.
+![image info](docu/img/knocknockOverview.png)
 
 ## Development
 The server is implemented in the C++ with the intention to avoid newest C++ syntax, to make it possible to compile it with older C++ compilers.

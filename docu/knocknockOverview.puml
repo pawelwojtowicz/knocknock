@@ -1,0 +1,34 @@
+@startuml
+
+[knocknock] as srv
+
+() "DB CRUD" as dbCRUD
+() "Login" as login
+() "AppData" as appData
+
+srv -down- login
+srv -left- appData
+srv -right- dbCRUD
+
+note left of login
+ The interface exposes the operations for setting up and
+ controlling the user session. Operations:
+ * Login
+ * Authenticate
+ * Logout
+ * Touch
+end note
+
+note top of appData
+ The interfaces used for publishing session 
+ information for external software components
+end note
+
+note top of dbCRUD
+  The inteface exposes the DB CRUD 
+  operations for controlling the data 
+  of the knocknock server
+end note
+
+footer //knocknock identity server overview//
+@enduml
