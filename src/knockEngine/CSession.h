@@ -17,13 +17,6 @@ public:
   const std::string& GetAuthMethod() const { return m_authMethod; }
   const std::string& GetAuthString() const { return m_authString; }
 
-  int GetCookieMaxAge() const;
-  const std::string& GetCookieExpires() const;
-  bool GetCookieHttpOnly() const;
-  const std::string& GetCookiePath() const;
-  bool GetCookieSecure() const;
-  CookieSameSite GetCookieSameSite() const;
-
   void UpdateUserSessionState(UserSessionState newState) { m_userSessionState = newState; }
   UserSessionState GetUserSessionState() const { return m_userSessionState; }
 

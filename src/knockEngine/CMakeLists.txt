@@ -3,6 +3,8 @@ project( knockEngine )
 SET( OUTPUT_NAME knockEngine )
 
 add_library( ${OUTPUT_NAME} STATIC
+CAuthenticator.cpp
+CAuthenticator.h
 CConfiguration.cpp
 CConfiguration.h
 CKnocknockService.cpp
@@ -11,7 +13,10 @@ CSession.cpp
 CSession.h
 CSessionBuilder.cpp
 CSessionBuilder.h
+IAuthenticationMethod.h
 IKnocknockService.h
+CSimpleDBAuthMethod.cpp
+CSimpleDBAuthMethod.h
 )
 
 #set_target_properties(${OUTPUT_NAME} PROPERTIES VERSION ${HOME_AUTOMATION_SERVICES_VERSION} SOVERSION ${HOME_AUTOMATION_SERVICES_VERSION} )
