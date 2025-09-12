@@ -1,14 +1,14 @@
 #include <gtest/gtest.h>
 #include <string.h>
 #include <CAESCipherWrapper.h>
-#include <CHashFunction.h>
+#include <CSHA256Hash.h>
 #include <iostream>
 
-TEST( CHashFunction , Base )
+TEST( CSHA256Hash , Base )
 {
   std::string hashRaw;
   std::string hashString;
-  ASSERT_TRUE(knocknock::CHashFunction::CalculateHash("Input", hashRaw, hashString));
+  ASSERT_TRUE(knocknock::CSHA256Hash::CalculateHash("Input", hashRaw, hashString));
   for ( int i = 0 ; i < hashRaw.size() ; ++i)
   {
     std::string byteString = hashString.substr(i*2, 2);
@@ -28,8 +28,8 @@ TEST( CAESCipherWrapper, Basic)
   std::string keyHashString;
   std::string keyHashRaw;
 
-  knocknock::CHashFunction::CalculateHash(ivString, ivHashRaw, ivHashString);
-  knocknock::CHashFunction::CalculateHash(keyString, keyHashRaw, keyHashString );
+  knocknock::CSHA256Hash::CalculateHash(ivString, ivHashRaw, ivHashString);
+  knocknock::CSHA256Hash::CalculateHash(keyString, keyHashRaw, keyHashString );
 
   std::string planTextToEncrypt("This is a test string, that will be encrypted");
 

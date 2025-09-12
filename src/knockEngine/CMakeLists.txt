@@ -5,6 +5,8 @@ SET( OUTPUT_NAME knockEngine )
 add_library( ${OUTPUT_NAME} STATIC
 CAuthenticator.cpp
 CAuthenticator.h
+CAuthMethodFactory.cpp
+CAuthMethodFactory.h
 CConfiguration.cpp
 CConfiguration.h
 CKnocknockService.cpp
@@ -15,6 +17,8 @@ CSessionBuilder.cpp
 CSessionBuilder.h
 IAuthenticationMethod.h
 IKnocknockService.h
+CSHA256AuthMethod.cpp
+CSHA256AuthMethod.h
 CSimpleDBAuthMethod.cpp
 CSimpleDBAuthMethod.h
 )

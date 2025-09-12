@@ -1,6 +1,6 @@
 #include "CAuthenticationChallengeTools.h"
 #include <time.h>
-#include "CHashFunction.h"
+#include "CSHA256Hash.h"
 
 namespace knocknock
 {
@@ -19,7 +19,7 @@ std::string CAuthenticationChallengeTools::GenerateSessionId( const std::string&
   std::string sessionId = {};
   std::string sessionIdRaw = {};
 
-  if (CHashFunction::CalculateHash(rawChallenge, sessionId, sessionIdRaw))
+  if (CSHA256Hash::CalculateHash(rawChallenge, sessionId, sessionIdRaw))
   {
     return sessionId;
   }

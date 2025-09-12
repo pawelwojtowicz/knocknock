@@ -1,10 +1,10 @@
-#include "CHashFunction.h"
+#include "CSHA256Hash.h"
 #include <cryptopp/sha.h>
 #include <cryptopp/hex.h>
 
 namespace knocknock
 {
-bool CHashFunction::CalculateHash( const std::string& message, std::string& digestRaw, std::string& digestString)
+bool CSHA256Hash::CalculateHash( const std::string& message, std::string& digestRaw, std::string& digestString)
 {
   CryptoPP::SHA256 hash;
   hash.Update((CryptoPP::byte*)message.data(), message.size());

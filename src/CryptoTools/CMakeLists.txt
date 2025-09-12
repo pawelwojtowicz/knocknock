@@ -7,8 +7,8 @@ CAESCipherWrapper.cpp
 CAESCipherWrapper.h
 CAuthenticationChallengeTools.cpp
 CAuthenticationChallengeTools.h
-CHashFunction.cpp
-CHashFunction.h
+CSHA256Hash.cpp
+CSHA256Hash.h
 )
 
 target_link_libraries( ${OUTPUT_NAME} cryptopp )

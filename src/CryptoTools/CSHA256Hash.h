@@ -3,10 +3,10 @@
 
 namespace knocknock
 {
-class CHashFunction
+class CSHA256Hash
 {
-  CHashFunction() = delete;
-  ~CHashFunction() = delete;
+  CSHA256Hash() = delete;
+  ~CSHA256Hash() = delete;
 public:
   static bool CalculateHash( const std::string& message, std::string& stringHex, std::string& rawHex);
 };
