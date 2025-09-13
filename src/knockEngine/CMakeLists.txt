@@ -11,6 +11,8 @@ CConfiguration.cpp
 CConfiguration.h
 CKnocknockService.cpp
 CKnocknockService.h
+CSCRAuthMethod.cpp
+CSCRAuthMethod.h
 CSession.cpp
 CSession.h
 CSessionBuilder.cpp

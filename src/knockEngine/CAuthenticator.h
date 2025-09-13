@@ -1,6 +1,4 @@
 #pragma once
-#include <string>
-#include <map>
 #include <memory>
 #include "IAuthenticationMethod.h"
 
@@ -22,9 +20,9 @@ public:
   bool Initialize( const CConfiguration& config ); 
   void Shutdown();
 
-  std::string Login(CSession& session, const std::string& username, const std::string& password);
+  tKeyValueMap Login(CSession& session, const std::string& password);
 
-  std::string Authenticate(CSession& session, const std::string& authenticationPaylod);
+  tKeyValueMap Authenticate(CSession& session, const tKeyValueMap& authenticationPayload);
 
 private:
   tAuthMethodMap m_authMethods;

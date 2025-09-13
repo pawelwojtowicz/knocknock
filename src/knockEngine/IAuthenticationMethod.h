@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
+#include "knocknockTypes.h"
 
-namespace knocknock {
+namespace knocknock 
+{
 
 class CSession; 
 
@@ -9,8 +11,8 @@ class IAuthenticationMethod {
 public:
     virtual ~IAuthenticationMethod() = default;
 
-    virtual std::string Login(CSession& session, const std::string& username, const std::string& password) = 0;
-    virtual std::string Authenticate(CSession& session, const std::string& authenticationPayload) = 0;
+    virtual tKeyValueMap Login(CSession& session, const std::string& password) = 0;
+    virtual tKeyValueMap Authenticate(CSession& session, const tKeyValueMap& authenticationPayload) = 0;
 };
 
-} // namespace knock::engine
+} // namespace knocknock

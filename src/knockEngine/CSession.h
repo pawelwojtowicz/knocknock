@@ -20,8 +20,16 @@ public:
   void UpdateUserSessionState(UserSessionState newState) { m_userSessionState = newState; }
   UserSessionState GetUserSessionState() const { return m_userSessionState; }
 
-  void SetAuthenticationState( const std::string& authState) { m_authenticationState = authState; }
-  const std::string& GetAuthenticationState() const { return m_authenticationState; }
+  void AddAuthenticationStateVariable( const std::string& key, const std::string& value ) { m_authenticationState[key] = value; }
+  const std::string GetAuthenticationStateVariable( const std::string& key ) const 
+  { 
+    const auto it = m_authenticationState.find(key);
+    if (it != m_authenticationState.end())
+    {
+      return it->second;
+    }
+    return "";
+  }
 
 
 private:
@@ -35,7 +43,7 @@ private:
 
   UserSessionState m_userSessionState;
 
-  std::string m_authenticationState;
+  tKeyValueMap m_authenticationState;
 };
 
 }

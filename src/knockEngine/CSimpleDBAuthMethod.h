@@ -10,9 +10,9 @@ class CSimpleDBAuthMethod : public IAuthenticationMethod {
 public:
     virtual ~CSimpleDBAuthMethod() = default;
 
-    virtual std::string Login(CSession& session, const std::string& username, const std::string& password) override;
+    virtual tKeyValueMap Login(CSession& session, const std::string& password) override;
 
-    virtual std::string Authenticate(CSession& session, const std::string& authenticationPayload) override;
+    virtual tKeyValueMap Authenticate(CSession& session, const tKeyValueMap& authenticationPayload) override;
 };
 
-} // namespace knock::engine
+} // namespace knocknock

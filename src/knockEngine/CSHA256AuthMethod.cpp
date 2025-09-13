@@ -4,7 +4,7 @@
 
 namespace knocknock {
 
-std::string CSHA256AuthMethod::Login(CSession& session, const std::string& username, const std::string& password)
+tKeyValueMap CSHA256AuthMethod::Login(CSession& session, const std::string& password)
 {
   std::string passwordHashRaw{};
   std::string passwordHashString{};
@@ -16,14 +16,14 @@ std::string CSHA256AuthMethod::Login(CSession& session, const std::string& usern
   if ( session.GetAuthString() != passwordHashString)
   {
     session.UpdateUserSessionState(UserSessionState::AUTH_FAILED);
-    return "Invalid username or password";
+    return { tKeyValueMap::value_type("error", "invalid_credentials") };
   } 
 
   session.UpdateUserSessionState(UserSessionState::READY);
   return {};
 }
 
-std::string CSHA256AuthMethod::Authenticate(CSession& session, const std::string& authenticationPayload)
+tKeyValueMap CSHA256AuthMethod::Authenticate(CSession& session, const tKeyValueMap& authenticationPayload)
 {
   //method does not require the 2nd step. Session is immediately authenticated after creation
   return {};

@@ -43,21 +43,21 @@ void CAuthenticator::Shutdown()
 }
 
 
-std::string CAuthenticator::Login(CSession& session, const std::string& username, const std::string& password)
+tKeyValueMap CAuthenticator::Login(CSession& session, const std::string& password)
 {
   const std::string& authMethod = session.GetAuthMethod();
 
   tAuthMethodMapCIterator cIter = m_authMethods.find(authMethod);
   if (cIter != m_authMethods.end())
   {
-    return cIter->second->Login(session, username, password);
+    return cIter->second->Login(session, password);
   } 
 
   session.UpdateUserSessionState(UserSessionState::AUTH_FAILED);
-  return "Authentication failed";
+  return {tKeyValueMap::value_type("error", "Authentication failed")};
 }
 
-std::string CAuthenticator::Authenticate(CSession& session, const std::string& authenticationPayload)
+tKeyValueMap CAuthenticator::Authenticate(CSession& session, const tKeyValueMap& authenticationPayload)
 {
   const std::string& authMethod = session.GetAuthMethod();
 
@@ -68,6 +68,6 @@ std::string CAuthenticator::Authenticate(CSession& session, const std::string& a
   }
 
   session.UpdateUserSessionState(UserSessionState::AUTH_FAILED);
-  return "Authentication failed";
+  return tKeyValueMap{ { "error", "Authentication failed" } };
 }
 }

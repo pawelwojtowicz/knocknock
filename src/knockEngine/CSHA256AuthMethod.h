@@ -1,6 +1,5 @@
 #pragma once
 #include "IAuthenticationMethod.h"
-#include <string>
 
 namespace knocknock {
 
@@ -10,9 +9,9 @@ class CSHA256AuthMethod : public IAuthenticationMethod {
 public:
     virtual ~CSHA256AuthMethod() = default;
 
-    virtual std::string Login(CSession& session, const std::string& username, const std::string& password) override;
+    virtual tKeyValueMap Login(CSession& session, const std::string& password) override;
 
-    virtual std::string Authenticate(CSession& session, const std::string& authenticationPayload) override;
+    virtual tKeyValueMap Authenticate(CSession& session, const tKeyValueMap& authenticationPayload) override;
 };
 
 } // namespace knocknock
