@@ -18,6 +18,7 @@ void InitializeDB(DBAccess::CDatabase& database)
   
   database.OpenDatabase(testDBFileName);
 
+  database.GetUserData().AddUser( CUser( "cashier1", "Cashier", "#1", "simpledb", "" ));
   database.GetUserData().AddUser( CUser( "1234", "John", "Doe", "", "" ));
   database.GetUserData().AddUser( CUser( "4312", "Paul", "Newman", "otp", "1234567890" ));
 }
@@ -70,4 +71,44 @@ TEST( SessionBuilderTests, ExistingUser_AnonymousLogingDisallowed_AuthMethodDefi
   ASSERT_EQ(session->GetUserName(), "Paul Newman");
   ASSERT_EQ(session->GetAuthMethod(), "otp");
   ASSERT_EQ(session->GetAuthString(), "1234567890");
+}
+
+TEST( SessionBuilderTests, NonExistingUser1_AnonymousLoginAllowed )
+{
+  DBAccess::CDatabase database;
+  InitializeDB(database);
+  database.GetSystemParamData().AddSystemParam("anonymousUserTemplate", "cashier1");
+
+  CConfiguration configuration;
+  configuration.LoadConfig(database);
+
+  knocknock::CSessionBuilder sessionBuilder(configuration, database);
+
+  std::optional<CSession> session = sessionBuilder.CreateSession("non_existing_user");
+
+  ASSERT_TRUE(session.has_value());
+  ASSERT_EQ(session->GetUserId(), "non_existing_user");
+  ASSERT_EQ(session->GetUserName(), "Cashier #1");
+  ASSERT_EQ(session->GetAuthMethod(), "simpledb");
+  ASSERT_EQ(session->GetAuthString(), configuration.GetDefaultAuthenticationString());
+}
+
+TEST( SessionBuilderTests, NonExistingUser2_AnonymousLoginAllowed )
+{
+  DBAccess::CDatabase database;
+  InitializeDB(database);
+  database.GetSystemParamData().AddSystemParam("anonymousUserTemplate", "cashier1");
+
+  CConfiguration configuration;
+  configuration.LoadConfig(database);
+
+  knocknock::CSessionBuilder sessionBuilder(configuration, database);
+
+  std::optional<CSession> session = sessionBuilder.CreateSession("buffalo_bob");
+
+  ASSERT_TRUE(session.has_value());
+  ASSERT_EQ(session->GetUserId(), "buffalo_bob");
+  ASSERT_EQ(session->GetUserName(), "Cashier #1");
+  ASSERT_EQ(session->GetAuthMethod(), "simpledb");
+  ASSERT_EQ(session->GetAuthString(), configuration.GetDefaultAuthenticationString());
 }

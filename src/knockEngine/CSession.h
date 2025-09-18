@@ -21,15 +21,7 @@ public:
   UserSessionState GetUserSessionState() const { return m_userSessionState; }
 
   void AddAuthenticationStateVariable( const std::string& key, const std::string& value ) { m_authenticationState[key] = value; }
-  const std::string GetAuthenticationStateVariable( const std::string& key ) const 
-  { 
-    const auto it = m_authenticationState.find(key);
-    if (it != m_authenticationState.end())
-    {
-      return it->second;
-    }
-    return "";
-  }
+  const std::string GetAuthenticationStateVariable( const std::string& key ) const;
 
 
 private:

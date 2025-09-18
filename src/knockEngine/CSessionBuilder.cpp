@@ -21,10 +21,14 @@ std::optional<CSession> CSessionBuilder::CreateSession(const std::string& userId
   std::optional<knocknock::CUser> userInfo = m_rDBAccess.GetUserData().GetUserByUserId(userId);
   if ( !userInfo.has_value() )
   {
-    if ( m_rConfiguration.GetAllowAnonymousLogin() )
+    if ( !m_rConfiguration.GetAnonymousUserTemplate().empty() )
     {
-      CUser anonymousUserTemplate( userId, cAnonymousUserId,"",m_rConfiguration.GetDefaultAuthenticationMethod(), m_rConfiguration.GetDefaultAuthenticationString() );
-      userInfo = std::move(anonymousUserTemplate);
+      std::optional<knocknock::CUser> userTemplate = m_rDBAccess.GetUserData().GetUserByUserId( m_rConfiguration.GetAnonymousUserTemplate() );
+      if ( userTemplate.has_value() )
+      {
+        const CUser& userTemplateRef = userTemplate.value();
+        userInfo = CUser(userId, userTemplateRef.getFirstName(), userTemplateRef.getLastName(), userTemplateRef.getAuthenticationMethod(), userTemplateRef.getAuthenticationString() );
+      }
     }
   }
 

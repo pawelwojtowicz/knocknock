@@ -23,24 +23,24 @@ void CKnocknockService::Shutdown()
 
 }
 
-const std::string CKnocknockService::Login(const std::string& userId, const std::string& password)
+const tKeyValueMap CKnocknockService::Login(const std::string& userId, const std::string& password)
 {
-  return "";
+  return {};
 }
 
-const std::string CKnocknockService::Authenticate(const std::string& sessionId, const std::string& authenticationPayload)
+const tKeyValueMap CKnocknockService::Authenticate(const std::string& sessionId, const tKeyValueMap& authenticationPayload)
 {
-  return "";
+  return {};
 }
 
-const std::string CKnocknockService::Logout(const std::string& sessionId)
+const tKeyValueMap CKnocknockService::Logout(const std::string& sessionId)
 {
-  return "";
+  return {};
 }
 
-const std::string CKnocknockService::Touch(const std::string& sessionId)
+const tKeyValueMap CKnocknockService::Touch(const std::string& sessionId)
 {
-  return "";
+  return {};
 }
 
 }

@@ -28,4 +28,15 @@ const std::string& CSession::GetUserName() const
   return m_userName;
 }
 
+const std::string CSession::GetAuthenticationStateVariable( const std::string& key ) const 
+{ 
+  const auto it = m_authenticationState.find(key);
+  if (it != m_authenticationState.end())
+  {
+    return it->second;
+  }
+  return "";
+}
+
+
 }
