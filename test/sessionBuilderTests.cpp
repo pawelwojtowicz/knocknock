@@ -112,3 +112,23 @@ TEST( SessionBuilderTests, NonExistingUser2_AnonymousLoginAllowed )
   ASSERT_EQ(session->GetAuthMethod(), "simpledb");
   ASSERT_EQ(session->GetAuthString(), configuration.GetDefaultAuthenticationString());
 }
+
+TEST( SessionBuilderTests, ExistingUser_AnonymousLoginAllowed )
+{
+  DBAccess::CDatabase database;
+  InitializeDB(database);
+  database.GetSystemParamData().AddSystemParam("anonymousUserTemplate", "cashier1");
+
+  CConfiguration configuration;
+  configuration.LoadConfig(database);
+
+  knocknock::CSessionBuilder sessionBuilder(configuration, database);
+
+  std::optional<CSession> session = sessionBuilder.CreateSession("4312");
+
+  ASSERT_TRUE(session.has_value());
+  ASSERT_EQ(session->GetUserId(), "4312");
+  ASSERT_EQ(session->GetUserName(), "Paul Newman");
+  ASSERT_EQ(session->GetAuthMethod(), "otp");
+  ASSERT_EQ(session->GetAuthString(), "1234567890");
+}
