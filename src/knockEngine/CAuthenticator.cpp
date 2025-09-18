@@ -34,7 +34,7 @@ bool CAuthenticator::Initialize( const CConfiguration& config )
     }
   }
 
-  return true;
+  return ( m_authMethods.size() > 0 );
 }
 
 void CAuthenticator::Shutdown()

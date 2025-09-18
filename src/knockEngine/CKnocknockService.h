@@ -2,14 +2,24 @@
 #include "IKnocknockService.h"
 #include <map>
 #include "CSession.h"
+#include "CSessionBuilder.h"
+#include "CAuthenticator.h"
+
+namespace DBAccess
+{
+  class IDBAccess;
+}
 
 namespace knocknock
 {
+class CConfiguration;
+
 
 class CKnocknockService : public IKnocknockService
 {
+  using tSessionMap = std::map<std::string, CSession>;
 public:
-  CKnocknockService();
+  CKnocknockService( DBAccess::IDBAccess& rDBAccess, CConfiguration& rConfiguration );
   virtual ~CKnocknockService();
 
   bool Initialize();
@@ -20,7 +30,15 @@ private:
   const tKeyValueMap Logout(const std::string& sessionId) override;
   const tKeyValueMap Touch(const std::string& sessionId) override;
 private:
-  std::map<std::string, CSession> m_sessions;
+  DBAccess::IDBAccess& m_rDBAccess;
+
+  CConfiguration& m_rConfiguration;
+
+  CSessionBuilder m_sessionBuilder;
+
+  CAuthenticator m_authenticator;
+
+  tSessionMap m_sessions;
 
   static CSession empty;
 };
