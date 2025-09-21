@@ -18,7 +18,7 @@ CAuthenticator::~CAuthenticator()
 bool CAuthenticator::Initialize( const CConfiguration& config )
 {
   CAuthMethodFactory authMethodFactory;
-  std::stringstream authMethodsStream(config.GetAllowedAuthMethods());
+  std::stringstream authMethodsStream(config.GetParamString(cParamName_AllowedAuthMethods));
   std::string method;
 
   while (std::getline(authMethodsStream, method, ','))

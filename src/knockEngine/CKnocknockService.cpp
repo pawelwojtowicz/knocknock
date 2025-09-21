@@ -19,6 +19,7 @@ CKnocknockService::~CKnocknockService()
 
 bool CKnocknockService::Initialize()
 {
+  m_sessionBuilder.Initialize();
   m_authenticator.Initialize(m_rConfiguration);
   return false;
 }

@@ -5,36 +5,34 @@
 
 namespace knocknock
 {
-  class CConfiguration
-  {
-  public:
-    CConfiguration() = default;
-    ~CConfiguration() = default;
+constexpr auto cParamName_AnonymousUserTemplate = "anonymousUserTemplate";
+constexpr auto cParamName_DefaultAuthenticationMethod = "defaultAuthenticationMethod";
+constexpr auto cParamName_DefaultAuthenticationString = "defaultAuthenticationString";
+constexpr auto cParamName_AllowedAuthMethods = "allowedAuthMethods";
+
+class CConfiguration
+{
+  using tParameterMap = std::map<std::string, std::string>;
+  using tParameterMapCI = tParameterMap::const_iterator;
+  using tParameterMapI = tParameterMap::iterator;
+public:
+  CConfiguration();
+  ~CConfiguration() = default;
 
 
-    bool LoadConfig(DBAccess::IDBAccess& rDBAccess);
-    bool LoadConfig(const std::string& filename);
+  bool LoadConfig(DBAccess::IDBAccess& rDBAccess);
+  bool LoadConfig(const std::string& filename);
 
-    const std::string& GetAnonymousUserTemplate() const { return m_anonumousUserTemplate; }
+  const std::string GetParamString( const std::string& paramName ) const;
 
-    const std::string& GetDefaultAuthenticationMethod() const { return m_defaultAuthenticationMethod; }
-    const std::string& GetDefaultAuthenticationString() const { return m_defaultAuthenticationString; }
+private:
+  tParameterMap m_parameters;
 
-    const std::string& GetAllowedAuthMethods() const { return m_allowedAuthMethods; }
+  int m_sessionMaxAge = 0;
+  bool m_cookieHttpOnly = false;
+  std::string m_cookiePath = "/";
+  bool m_cookieSecure = false;
+  CookieSameSite m_cookieSameSite = CookieSameSite::LAX;
 
-  private:
-    std::string m_anonumousUserTemplate = "";
-
-    std::string m_defaultAuthenticationMethod = "sha256";
-    std::string m_defaultAuthenticationString = "db89a15ca72c6c91a94c03e6b7973bbbf01b3e67988c9f79d6b764b36d913a66";
-
-    std::string m_allowedAuthMethods = "simpledb,sha256,scr";
-
-    int m_sessionMaxAge = 0;
-    bool m_cookieHttpOnly = false;
-    std::string m_cookiePath = "/";
-    bool m_cookieSecure = false;
-    CookieSameSite m_cookieSameSite = CookieSameSite::LAX;
-
-  };
+};
 }

@@ -31,6 +31,7 @@ TEST( SessionBuilderTests, NonExistingUser_AnonymousLogingDisallowed )
   InitializeDB(database);
 
   knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("non_existing_user");
 
@@ -45,6 +46,7 @@ TEST( SessionBuilderTests, ExistingUser_AnonymousLogingDisallowed_AuthMethodNotD
   InitializeDB(database);
 
   knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("1234");
 
@@ -63,6 +65,7 @@ TEST( SessionBuilderTests, ExistingUser_AnonymousLogingDisallowed_AuthMethodDefi
   InitializeDB(database);
 
   knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("4312");
 
@@ -83,6 +86,7 @@ TEST( SessionBuilderTests, NonExistingUser1_AnonymousLoginAllowed )
   configuration.LoadConfig(database);
 
   knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("non_existing_user");
 
@@ -90,7 +94,7 @@ TEST( SessionBuilderTests, NonExistingUser1_AnonymousLoginAllowed )
   ASSERT_EQ(session->GetUserId(), "non_existing_user");
   ASSERT_EQ(session->GetUserName(), "Cashier #1");
   ASSERT_EQ(session->GetAuthMethod(), "simpledb");
-  ASSERT_EQ(session->GetAuthString(), configuration.GetDefaultAuthenticationString());
+  ASSERT_EQ(session->GetAuthString(), configuration.GetParamString(cParamName_DefaultAuthenticationString));
 }
 
 TEST( SessionBuilderTests, NonExistingUser2_AnonymousLoginAllowed )
@@ -103,6 +107,7 @@ TEST( SessionBuilderTests, NonExistingUser2_AnonymousLoginAllowed )
   configuration.LoadConfig(database);
 
   knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("buffalo_bob");
 
@@ -110,7 +115,7 @@ TEST( SessionBuilderTests, NonExistingUser2_AnonymousLoginAllowed )
   ASSERT_EQ(session->GetUserId(), "buffalo_bob");
   ASSERT_EQ(session->GetUserName(), "Cashier #1");
   ASSERT_EQ(session->GetAuthMethod(), "simpledb");
-  ASSERT_EQ(session->GetAuthString(), configuration.GetDefaultAuthenticationString());
+  ASSERT_EQ(session->GetAuthString(), configuration.GetParamString(cParamName_DefaultAuthenticationString));
 }
 
 TEST( SessionBuilderTests, ExistingUser_AnonymousLoginAllowed )
@@ -123,6 +128,7 @@ TEST( SessionBuilderTests, ExistingUser_AnonymousLoginAllowed )
   configuration.LoadConfig(database);
 
   knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("4312");
 
