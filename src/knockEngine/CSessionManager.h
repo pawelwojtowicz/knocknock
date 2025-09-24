@@ -15,12 +15,12 @@ namespace knocknock
 class CConfiguration;
 
 
-class CKnocknockService : public IKnocknockService
+class CSessionManager : public IKnocknockService
 {
   using tSessionMap = std::map<std::string, CSession>;
 public:
-  CKnocknockService( DBAccess::IDBAccess& rDBAccess, CConfiguration& rConfiguration );
-  virtual ~CKnocknockService();
+  CSessionManager( DBAccess::IDBAccess& rDBAccess, CConfiguration& rConfiguration );
+  virtual ~CSessionManager();
 
   bool Initialize();
   void Shutdown();

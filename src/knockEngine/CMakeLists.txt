@@ -9,8 +9,8 @@ CAuthMethodFactory.cpp
 CAuthMethodFactory.h
 CConfiguration.cpp
 CConfiguration.h
-CKnocknockService.cpp
-CKnocknockService.h
+CSessionManager.cpp
+CSessionManager.h
 CSCRAuthMethod.cpp
 CSCRAuthMethod.h
 CSession.cpp
