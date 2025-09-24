@@ -16,7 +16,7 @@ tKeyValueMap CSCRAuthMethod::Login(CSession& session, const std::string&)
 
   response[SCR_KEY_CHALLENGE] = challenge;
   session.AddAuthenticationStateVariable(SCR_KEY_CHALLENGE, challenge);
-  session.UpdateUserSessionState(UserSessionState::AUTHENTICATING);
+  session.UpdateUserSessionState(UserSessionState::AUTH_IN_PROGRESS);
 
   return response;
 }
@@ -24,8 +24,8 @@ tKeyValueMap CSCRAuthMethod::Login(CSession& session, const std::string&)
 tKeyValueMap CSCRAuthMethod::Authenticate(CSession& session, const tKeyValueMap& authenticationPayload)
 {
   tKeyValueMap response{};
-  
-  if (session.GetUserSessionState() != UserSessionState::AUTHENTICATING)
+
+  if (session.GetUserSessionState() != UserSessionState::AUTH_IN_PROGRESS)
   {
     response["error"] = "invalid_session_state";
     return response;
@@ -55,7 +55,7 @@ tKeyValueMap CSCRAuthMethod::Authenticate(CSession& session, const tKeyValueMap&
     if (expectedResponse == challengeResponse)
     {
       // authentication successful
-      session.UpdateUserSessionState(UserSessionState::READY);
+      session.UpdateUserSessionState(UserSessionState::AUTH_SUCCESS);
       response["status"] = "ok";
       return response;
     }

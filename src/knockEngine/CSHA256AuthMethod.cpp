@@ -19,7 +19,7 @@ tKeyValueMap CSHA256AuthMethod::Login(CSession& session, const std::string& pass
     return { tKeyValueMap::value_type("error", "invalid_credentials") };
   } 
 
-  session.UpdateUserSessionState(UserSessionState::READY);
+  session.UpdateUserSessionState(UserSessionState::AUTH_SUCCESS);
   return {};
 }
 

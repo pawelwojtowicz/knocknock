@@ -31,6 +31,16 @@ void CSessionManager::Shutdown()
 
 const tKeyValueMap CSessionManager::Login(const std::string& userId, const std::string& password)
 {
+  auto newSession = m_sessionBuilder.CreateSession(userId);
+
+  if ( newSession && newSession->GetUserSessionState() == UserSessionState::CREATED )
+  {
+    auto& session = *newSession;
+
+    auto sessionAuthenticationState = m_authenticator.Login(session, password);
+
+  }
+
   return {};
 }
 

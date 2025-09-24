@@ -60,7 +60,7 @@ TEST(CAuthenticator, Basic_sha256_success)
 
   authenticator.Login(session, "italianoVero$123");
 
-  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::READY);
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
 
   authenticator.Shutdown();
 }
@@ -77,7 +77,7 @@ TEST(CAuthenticator, Basic_simpledb_success)
 
   authenticator.Login(session, "");
 
-  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::READY);
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
 
   authenticator.Shutdown();
 }
@@ -93,9 +93,9 @@ TEST(CAuthenticator, Basic_scr_success)
   //create a user session with SCR auth method and password key
   CSession session(sessionId, "TestUser","Herr Test User", "scr", passwordHash);
 
-  //Initiate the logic procedure - should create the challenge and set the session state to AUTHENTICATING
+  //Initiate the logic procedure - should create the challenge and set the session state to AUTH_IN_PROGRESS
   const auto& response = authenticator.Login(session, "");
-  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTHENTICATING);
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_IN_PROGRESS);
 
 
   const auto itChallenge = response.find("challenge");
@@ -112,8 +112,8 @@ TEST(CAuthenticator, Basic_scr_success)
   tKeyValueMap authPayload{ {"challenge_response", challengeResponse} };
   const auto& authResponse = authenticator.Authenticate(session, authPayload);
 
-  //session shall be in READY state
-  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::READY);
+  //session shall be in AUTH_SUCCESS state
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
 
   authenticator.Shutdown();
 }
@@ -130,7 +130,7 @@ TEST(CAuthenticator, Basic_scr_failure)
   CSession session(sessionId, "TestUser","Herr Test User", "scr", passwordHash);
 
   const auto& response = authenticator.Login(session, "");
-  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTHENTICATING);
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_IN_PROGRESS);
 
   const auto itChallenge = response.find("challenge");
   ASSERT_TRUE(itChallenge != response.end());
