@@ -9,6 +9,8 @@ CAuthMethodFactory.cpp
 CAuthMethodFactory.h
 CConfiguration.cpp
 CConfiguration.h
+CKeyValueHelper.cpp 
+CKeyValueHelper.h
 CSessionManager.cpp
 CSessionManager.h
 CSCRAuthMethod.cpp

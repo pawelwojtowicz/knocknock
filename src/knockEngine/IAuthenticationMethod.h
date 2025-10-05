@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "knocknockTypes.h"
+#include "KnocKnockDictionary.h"
 
 namespace knocknock 
 {

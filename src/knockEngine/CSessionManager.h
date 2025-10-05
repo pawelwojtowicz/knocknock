@@ -41,9 +41,9 @@ private:
 
   CSessionVerifier m_sessionVerifier;
 
-  tSessionMap m_sessions;
+  CSession m_emptySession;
 
-  static CSession empty;
+  tSessionMap m_sessions;
 };
 
 }

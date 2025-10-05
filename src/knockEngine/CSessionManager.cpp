@@ -1,4 +1,6 @@
 #include "CSessionManager.h"
+#include "CKeyValueHelper.h"
+#include "KnocKnockDictionary.h"
 
 namespace knocknock
 {
@@ -8,6 +10,7 @@ CSessionManager::CSessionManager( DBAccess::IDBAccess& rDBAccess, CConfiguration
 , m_rConfiguration(rConfiguration)
 , m_sessionBuilder(rConfiguration, rDBAccess)
 , m_authenticator()
+, m_emptySession("", "", "", "", "")
 {
 
 }
@@ -31,25 +34,30 @@ void CSessionManager::Shutdown()
 
 const CSession& CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& output)
 {
- 
+  CKeyValueHelper inputHelper(input);
+
   std::string userId = {};
-  std::string password = {};  
-  auto newSession = m_sessionBuilder.CreateSession(input.at("userId"));
-
-  if ( newSession && newSession->GetUserSessionState() == UserSessionState::CREATED )
+  if (inputHelper.GetValue(sLoginUserId, userId))
   {
-    auto& session = *newSession;
+    auto newSession = m_sessionBuilder.CreateSession(userId);
+    if ( newSession && newSession->GetUserSessionState() == UserSessionState::CREATED )
+    {
+      auto& session = *newSession;
 
-    auto sessionAuthenticationState = m_authenticator.Login(session, password);
+      std::string password = {};
+      inputHelper.GetValue(sLoginPassword, password);
+      auto sessionAuthenticationState = m_authenticator.Login(session, password);
 
-  }
+      return session;
+    }
 
-  return empty;
+  }  
+  return m_emptySession;
 }
 
 const CSession& CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValueMap& output)
 {
-  return empty;
+  return m_emptySession;
 }
 
 const bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
