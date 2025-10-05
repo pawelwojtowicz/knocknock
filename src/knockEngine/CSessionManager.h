@@ -4,6 +4,7 @@
 #include "CSession.h"
 #include "CSessionBuilder.h"
 #include "CAuthenticator.h"
+#include "CSessionVerifier.h"
 
 namespace DBAccess
 {
@@ -25,10 +26,10 @@ public:
   bool Initialize();
   void Shutdown();
 private:
-  const tKeyValueMap Login(const std::string& userId, const std::string& password) override;
-  const tKeyValueMap Authenticate(const std::string& sessionId, const tKeyValueMap& authenticationPayload) override;
-  const tKeyValueMap Logout(const std::string& sessionId) override;
-  const tKeyValueMap Touch(const std::string& sessionId) override;
+  const CSession& Login(const tKeyValueMap& input, tKeyValueMap& output) override;
+  const CSession& Authenticate(const tKeyValueMap& input, tKeyValueMap& output) override;
+  const bool Logout(const tKeyValueMap& input, tKeyValueMap& output) override;
+  const bool Touch(const tKeyValueMap& input, tKeyValueMap& output) override;
 private:
   DBAccess::IDBAccess& m_rDBAccess;
 
@@ -37,6 +38,8 @@ private:
   CSessionBuilder m_sessionBuilder;
 
   CAuthenticator m_authenticator;
+
+  CSessionVerifier m_sessionVerifier;
 
   tSessionMap m_sessions;
 

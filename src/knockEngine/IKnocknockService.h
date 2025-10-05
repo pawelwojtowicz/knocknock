@@ -12,10 +12,10 @@ public:
   IKnocknockService() = default;
   virtual ~IKnocknockService() = default;
 
-  virtual const tKeyValueMap Login( const std::string& userId, const std::string& password ) = 0;
-  virtual const tKeyValueMap Authenticate( const std::string& sessionId, const tKeyValueMap& authenticationPayload ) = 0;
-  virtual const tKeyValueMap Logout( const std::string& sessionId ) = 0;
-  virtual const tKeyValueMap Touch( const std::string& sessionId ) = 0;
+  virtual const CSession& Login(const tKeyValueMap& input, tKeyValueMap& output) = 0;
+  virtual const CSession& Authenticate(const tKeyValueMap& input, tKeyValueMap& output) = 0;
+  virtual const bool Logout(const tKeyValueMap& input, tKeyValueMap& output) = 0;
+  virtual const bool Touch(const tKeyValueMap& input, tKeyValueMap& output) = 0;
 
 private:
   IKnocknockService(const IKnocknockService&) = delete;

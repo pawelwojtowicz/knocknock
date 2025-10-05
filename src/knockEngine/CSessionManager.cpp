@@ -29,9 +29,12 @@ void CSessionManager::Shutdown()
   m_authenticator.Shutdown();
 }
 
-const tKeyValueMap CSessionManager::Login(const std::string& userId, const std::string& password)
+const CSession& CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& output)
 {
-  auto newSession = m_sessionBuilder.CreateSession(userId);
+ 
+  std::string userId = {};
+  std::string password = {};  
+  auto newSession = m_sessionBuilder.CreateSession(input.at("userId"));
 
   if ( newSession && newSession->GetUserSessionState() == UserSessionState::CREATED )
   {
@@ -41,22 +44,22 @@ const tKeyValueMap CSessionManager::Login(const std::string& userId, const std::
 
   }
 
-  return {};
+  return empty;
 }
 
-const tKeyValueMap CSessionManager::Authenticate(const std::string& sessionId, const tKeyValueMap& authenticationPayload)
+const CSession& CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValueMap& output)
 {
-  return {};
+  return empty;
 }
 
-const tKeyValueMap CSessionManager::Logout(const std::string& sessionId)
+const bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
 {
-  return {};
+  return false;
 }
 
-const tKeyValueMap CSessionManager::Touch(const std::string& sessionId)
+const bool CSessionManager::Touch(const tKeyValueMap& input, tKeyValueMap& output)
 {
-  return {};
+  return false;  
 }
 
 }
