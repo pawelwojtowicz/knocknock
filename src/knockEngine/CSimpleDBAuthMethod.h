@@ -10,7 +10,7 @@ class CSimpleDBAuthMethod : public IAuthenticationMethod {
 public:
     virtual ~CSimpleDBAuthMethod() = default;
 
-    virtual tKeyValueMap Login(CSession& session, const std::string& password) override;
+    virtual tKeyValueMap Login(CSession& session, const tKeyValueMap& loginPayload) override;
 
     virtual tKeyValueMap Authenticate(CSession& session, const tKeyValueMap& authenticationPayload) override;
 };

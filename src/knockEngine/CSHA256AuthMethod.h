@@ -9,7 +9,7 @@ class CSHA256AuthMethod : public IAuthenticationMethod {
 public:
     virtual ~CSHA256AuthMethod() = default;
 
-    virtual tKeyValueMap Login(CSession& session, const std::string& password) override;
+    virtual tKeyValueMap Login(CSession& session, const tKeyValueMap& loginPayload ) override;
 
     virtual tKeyValueMap Authenticate(CSession& session, const tKeyValueMap& authenticationPayload) override;
 };

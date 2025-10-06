@@ -3,7 +3,7 @@
 
 namespace knocknock {
 
-tKeyValueMap CSimpleDBAuthMethod::Login(CSession& session, const std::string& password)
+tKeyValueMap CSimpleDBAuthMethod::Login(CSession& session, const tKeyValueMap& loginPayload)
 {
   session.UpdateUserSessionState(UserSessionState::AUTH_SUCCESS);
   return {};

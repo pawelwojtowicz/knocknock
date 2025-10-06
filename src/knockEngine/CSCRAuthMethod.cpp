@@ -3,13 +3,14 @@
 #include <CSHA256Hash.h>
 #include <CAuthenticationChallengeTools.h>
 #include <CAESCipherWrapper.h>
+#include "CKeyValueHelper.h"
 
 namespace knocknock {
 
 constexpr const char* SCR_KEY_CHALLENGE = "challenge";
 constexpr const char* SCR_KEY_RESPONSE = "challenge_response";
 
-tKeyValueMap CSCRAuthMethod::Login(CSession& session, const std::string&)
+tKeyValueMap CSCRAuthMethod::Login(CSession& session, const tKeyValueMap&)
 {
   tKeyValueMap response{};
   const std::string challenge = CAuthenticationChallengeTools::GenerateAuthenticationChallenge(session.GetUserId());
@@ -24,6 +25,7 @@ tKeyValueMap CSCRAuthMethod::Login(CSession& session, const std::string&)
 tKeyValueMap CSCRAuthMethod::Authenticate(CSession& session, const tKeyValueMap& authenticationPayload)
 {
   tKeyValueMap response{};
+  CKeyValueHelper authPayloadHelper(authenticationPayload);
 
   if (session.GetUserSessionState() != UserSessionState::AUTH_IN_PROGRESS)
   {
@@ -34,14 +36,13 @@ tKeyValueMap CSCRAuthMethod::Authenticate(CSession& session, const tKeyValueMap&
   // assume pessimistic outcome
   session.UpdateUserSessionState(UserSessionState::AUTH_FAILED);
 
-  const auto it = authenticationPayload.find(SCR_KEY_RESPONSE);
-  if (it == authenticationPayload.end())
+  std::string challengeResponse  = {};
+  if ( !authPayloadHelper.GetValue(SCR_KEY_RESPONSE, challengeResponse) )
   {
     response["error"] = "missing_response";
     return response;
   }
 
-  const std::string& challengeResponse  = it->second;
   const std::string authChallenge = session.GetAuthenticationStateVariable(SCR_KEY_CHALLENGE);
   if (authChallenge.empty())
   {
@@ -64,7 +65,8 @@ tKeyValueMap CSCRAuthMethod::Authenticate(CSession& session, const tKeyValueMap&
       response["error"] = "authentication_failed";
       return response;
     }
-  } else
+  } 
+  else
   {
     response["error"] = "encryption_failed";
     return response;

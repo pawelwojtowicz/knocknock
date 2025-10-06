@@ -2,6 +2,7 @@
 #include "CAuthMethodFactory.h"
 #include "CConfiguration.h"
 #include "CSession.h"
+#include "CKeyValueHelper.h"
 #include <sstream>
 
 namespace knocknock
@@ -43,14 +44,14 @@ void CAuthenticator::Shutdown()
 }
 
 
-tKeyValueMap CAuthenticator::Login(CSession& session, const std::string& password)
+tKeyValueMap CAuthenticator::Login(CSession& session, const tKeyValueMap& loginPayload)
 {
   const std::string& authMethod = session.GetAuthMethod();
 
   tAuthMethodMapCIterator cIter = m_authMethods.find(authMethod);
   if (cIter != m_authMethods.end())
   {
-    return cIter->second->Login(session, password);
+    return cIter->second->Login(session, loginPayload);
   } 
 
   session.UpdateUserSessionState(UserSessionState::AUTH_FAILED);

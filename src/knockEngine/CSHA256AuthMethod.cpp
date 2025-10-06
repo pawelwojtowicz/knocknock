@@ -1,11 +1,21 @@
 #include "CSHA256AuthMethod.h"
 #include "CSession.h"
 #include <CSHA256Hash.h>
+#include "CKeyValueHelper.h"
 
 namespace knocknock {
 
-tKeyValueMap CSHA256AuthMethod::Login(CSession& session, const std::string& password)
+tKeyValueMap CSHA256AuthMethod::Login(CSession& session, const tKeyValueMap& loginPayload)
 {
+  std::string password = {};
+
+  CKeyValueHelper loginPayloadHelper(loginPayload);
+
+  if (!loginPayloadHelper.GetValue(sLoginPassword, password))
+  {
+    return { tKeyValueMap::value_type("error", "missing_password") };
+  }
+
   std::string passwordHashRaw{};
   std::string passwordHashString{};
   if (!CSHA256Hash::CalculateHash(password, passwordHashRaw, passwordHashString))

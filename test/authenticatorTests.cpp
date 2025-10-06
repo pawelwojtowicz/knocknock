@@ -23,7 +23,11 @@ TEST(CAuthenticator, Basic_unknown_failed)
 
   authenticator.Initialize(config);
 
-  authenticator.Login(session, "");
+  tKeyValueMap loginPayload;
+  loginPayload[sLoginPassword] = "";
+
+
+  authenticator.Login(session, loginPayload);
 
   EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_FAILED);
 
@@ -41,8 +45,11 @@ TEST(CAuthenticator, Basic_sha256_failed)
 
   authenticator.Initialize(config);
 
+  tKeyValueMap loginPayload;
+  loginPayload[sLoginPassword] = "testPassword";
+
   // the correct password is italianoVero$123
-  authenticator.Login(session, "testPassword");
+  authenticator.Login(session, loginPayload);
 
   EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_FAILED);
 
@@ -58,7 +65,10 @@ TEST(CAuthenticator, Basic_sha256_success)
   CAuthenticator authenticator;
   authenticator.Initialize(config);
 
-  authenticator.Login(session, "italianoVero$123");
+  tKeyValueMap loginPayload;
+  loginPayload[sLoginPassword] = "italianoVero$123";
+
+  authenticator.Login(session, loginPayload);
 
   EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
 
@@ -75,7 +85,11 @@ TEST(CAuthenticator, Basic_simpledb_success)
 
   authenticator.Initialize(config);
 
-  authenticator.Login(session, "");
+    tKeyValueMap loginPayload;
+  loginPayload[sLoginPassword] = "";
+
+
+  authenticator.Login(session, loginPayload);
 
   EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
 
@@ -94,7 +108,10 @@ TEST(CAuthenticator, Basic_scr_success)
   CSession session(sessionId, "TestUser","Herr Test User", "scr", passwordHash);
 
   //Initiate the logic procedure - should create the challenge and set the session state to AUTH_IN_PROGRESS
-  const auto& response = authenticator.Login(session, "");
+    tKeyValueMap loginPayload;
+  loginPayload[sLoginPassword] = "";
+
+  const auto& response = authenticator.Login(session, loginPayload);
   EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_IN_PROGRESS);
 
 
@@ -129,7 +146,9 @@ TEST(CAuthenticator, Basic_scr_failure)
   std::string wrongPasswordHash{TEST_SHA256_PASSWORD2};
   CSession session(sessionId, "TestUser","Herr Test User", "scr", passwordHash);
 
-  const auto& response = authenticator.Login(session, "");
+    tKeyValueMap loginPayload;
+  loginPayload[sLoginPassword] = "";
+  const auto& response = authenticator.Login(session, loginPayload);
   EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_IN_PROGRESS);
 
   const auto itChallenge = response.find("challenge");

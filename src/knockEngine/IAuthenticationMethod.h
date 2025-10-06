@@ -12,7 +12,7 @@ class IAuthenticationMethod {
 public:
     virtual ~IAuthenticationMethod() = default;
 
-    virtual tKeyValueMap Login(CSession& session, const std::string& password) = 0;
+    virtual tKeyValueMap Login(CSession& session, const tKeyValueMap& loginPayload) = 0;
     virtual tKeyValueMap Authenticate(CSession& session, const tKeyValueMap& authenticationPayload) = 0;
 };
 

@@ -43,10 +43,7 @@ const CSession& CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& 
     if ( newSession && newSession->GetUserSessionState() == UserSessionState::CREATED )
     {
       auto& session = *newSession;
-
-      std::string password = {};
-      inputHelper.GetValue(sLoginPassword, password);
-      auto sessionAuthenticationState = m_authenticator.Login(session, password);
+      auto sessionAuthenticationState = m_authenticator.Login(session, input);
 
       return session;
     }

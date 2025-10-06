@@ -20,7 +20,7 @@ public:
   bool Initialize( const CConfiguration& config ); 
   void Shutdown();
 
-  tKeyValueMap Login(CSession& session, const std::string& password);
+  tKeyValueMap Login(CSession& session, const tKeyValueMap& loginPayload);
 
   tKeyValueMap Authenticate(CSession& session, const tKeyValueMap& authenticationPayload);
 
