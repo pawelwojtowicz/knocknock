@@ -11,5 +11,6 @@ CSHA256Hash.cpp
 CSHA256Hash.h
 )
 
-target_link_libraries( ${OUTPUT_NAME} cryptopp )
+find_package(OpenSSL REQUIRED)
+target_link_libraries( ${OUTPUT_NAME} OpenSSL::SSL OpenSSL::Crypto )
 target_include_directories( ${OUTPUT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
