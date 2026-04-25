@@ -9,6 +9,8 @@ CAuthMethodFactory.cpp
 CAuthMethodFactory.h
 CConfiguration.cpp
 CConfiguration.h
+CJSONSerializer.cpp
+CJSONSerializer.h
 CKeyValueHelper.cpp 
 CKeyValueHelper.h
 CSessionManager.cpp
