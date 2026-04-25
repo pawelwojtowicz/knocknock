@@ -5,8 +5,9 @@
 namespace HTTPServer
 {
 
-CHTTPConnection::CHTTPConnection( IServiceContext& serviceContext, boost::asio::ip::tcp::socket socket)
+CHTTPConnection::CHTTPConnection( IServiceContext& serviceContext, boost::asio::ip::tcp::socket socket, boost::asio::thread_pool& threadPool)
 : m_serviceContext(serviceContext)
+, m_threadPool(threadPool)
 , m_socket( std::move( socket) )
 , m_remoteAddress ( m_socket.remote_endpoint().address().to_string() )
 , m_deadlineTimer( m_socket.get_executor(), std::chrono::seconds(30) )
@@ -59,15 +60,29 @@ void CHTTPConnection::ProcessRequest()
   }
 
   const std::string url( m_request.target() );
+  const std::string requestBody = m_request.body();
 
-  if ( !m_serviceContext.ProcessRequest(method, url, m_request.body(), m_response.body()) )
-  {
-    HandleInvalid(); 
-  }
-
-  m_request.body().clear();
-  m_response.prepare_payload();
-  WriteResponse();
+  // Post the request processing to the thread pool
+  std::shared_ptr<CHTTPConnection> self = shared_from_this();
+  boost::asio::post(m_threadPool, [self, method, url, requestBody]() {
+    std::string responseBody;
+    bool success = self->m_serviceContext.ProcessRequest(method, url, requestBody, responseBody);
+    
+    // Post the response back to the I/O thread
+    std::string responseBodyCopy = responseBody;
+    boost::asio::post(self->m_socket.get_executor(), [self, success, responseBodyCopy]() {
+      if (!success)
+      {
+        self->HandleInvalid();
+      }
+      else
+      {
+        self->m_response.body() = responseBodyCopy;
+      }
+      self->m_response.prepare_payload();
+      self->WriteResponse();
+    });
+  });
 }
 
 void CHTTPConnection::WriteResponse()

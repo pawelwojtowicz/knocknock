@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
+#include <boost/asio/thread_pool.hpp>
 #include <chrono>
 
 namespace HTTPServer
@@ -10,7 +11,7 @@ namespace HTTPServer
 class CHTTPConnection final : public std::enable_shared_from_this<CHTTPConnection>
 {
 public:
-  CHTTPConnection( IServiceContext& serviceContext, boost::asio::ip::tcp::socket socket);
+  CHTTPConnection( IServiceContext& serviceContext, boost::asio::ip::tcp::socket socket, boost::asio::thread_pool& threadPool);
   ~CHTTPConnection() = default;
 
   void WaitForRequest();
@@ -24,6 +25,7 @@ private:
 
 private:
   IServiceContext& m_serviceContext;
+  boost::asio::thread_pool& m_threadPool;
 
   boost::asio::ip::tcp::socket m_socket;
   std::string m_remoteAddress;
