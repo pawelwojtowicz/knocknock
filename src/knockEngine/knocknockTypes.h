@@ -11,6 +11,7 @@ using tKeyValueMapConstIterator = tKeyValueMap::const_iterator;
 
 enum class UserSessionState
 {
+  INVALID_SESSION,   // the session is invalid, for example due to missing or invalid session ID
   CREATED,           // created a session for an endpoint (with UserId)
   AUTH_IN_PROGRESS,  // authentication process is in progress (under the control of the auth method implementation )
                      // The "AUTH_IN_PROGRESS" state can be skipped (switching directly from CREATED to AUTH_SUCCESS),

@@ -22,9 +22,17 @@ CSessionManager::~CSessionManager()
 
 bool CSessionManager::Initialize()
 {
-  m_sessionBuilder.Initialize();
-  m_authenticator.Initialize(m_rConfiguration);
-  return false;
+  if ( !m_sessionBuilder.Initialize() )
+  {
+    return false;
+  } 
+  
+  if ( !m_authenticator.Initialize(m_rConfiguration) )
+  {
+    return false;
+  }
+
+  return true;
 }
 
 void CSessionManager::Shutdown()
@@ -32,7 +40,7 @@ void CSessionManager::Shutdown()
   m_authenticator.Shutdown();
 }
 
-const CSession& CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& output)
+const CSession CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& output)
 {
   CKeyValueHelper inputHelper(input);
 
@@ -52,7 +60,7 @@ const CSession& CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& 
   return m_emptySession;
 }
 
-const CSession& CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValueMap& output)
+const CSession CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValueMap& output)
 {
   return m_emptySession;
 }

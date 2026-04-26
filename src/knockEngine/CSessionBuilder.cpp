@@ -70,6 +70,7 @@ std::optional<CSession> CSessionBuilder::CreateSession(const std::string& userId
                         userInfo->getFirstName() + " " + userInfo->getLastName(),
                         userAuthMethod, 
                         userAuthString);
+  newSession.UpdateUserSessionState(UserSessionState::CREATED);
 
   return newSession;
 }
