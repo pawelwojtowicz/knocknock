@@ -16,12 +16,13 @@ std::string CAuthenticationChallengeTools::GenerateAuthenticationChallenge( cons
 std::string CAuthenticationChallengeTools::GenerateSessionId( const std::string& userId)
 {
   std::string rawChallenge = GenerateAuthenticationChallenge(userId);
-  std::string sessionId = {};
-  std::string sessionIdRaw = {};
+  std::string hexEncodedSessionId;
+  std::string rawBinarySessionId;
 
-  if (CSHA256Hash::CalculateHash(rawChallenge, sessionId, sessionIdRaw))
+  if (CSHA256Hash::CalculateHash(rawChallenge, rawBinarySessionId, hexEncodedSessionId))
   {
-    return sessionId;
+    // Return the hex-encoded session ID as plain text (not raw binary)
+    return hexEncodedSessionId;
   }
   return std::string{};
 }
