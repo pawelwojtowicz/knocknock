@@ -23,6 +23,9 @@ public:
   void AddAuthenticationStateVariable( const std::string& key, const std::string& value ) { m_authenticationState[key] = value; }
   const std::string GetAuthenticationStateVariable( const std::string& key ) const;
 
+  void SetSessionExpires(int expires) { m_sessionExpires = expires; }
+  int GetSessionExpires() const { return m_sessionExpires; }
+
 
 private:
   std::string m_sid;

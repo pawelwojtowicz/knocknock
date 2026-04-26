@@ -25,6 +25,8 @@ public:
 
   const std::string GetParamString( const std::string& paramName ) const;
 
+  int GetParamInt( const std::string& paramName, int defaultValue = 0 ) const;
+
 private:
   tParameterMap m_parameters;
 

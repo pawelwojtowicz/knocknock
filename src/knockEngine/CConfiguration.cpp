@@ -63,5 +63,24 @@ const std::string CConfiguration::GetParamString( const std::string& paramName )
   return {};
 }
 
+int CConfiguration::GetParamInt( const std::string& paramName, int defaultValue ) const
+{
+  tParameterMapCI it = m_parameters.find(paramName);
+  if (it != m_parameters.end())
+  {
+    try
+    {
+      return std::stoi(it->second);
+    }
+    catch (const std::exception& ex)
+    {
+      // Log the error and return default value
+      // For example: LOG_ERROR("Invalid value for parameter " + paramName + ": " + it->second + ". Using default value: " + std::to_string(defaultValue));
+    }
+  }
+  return defaultValue;
+}
+
+
 
 }

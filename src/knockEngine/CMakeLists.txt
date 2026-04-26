@@ -23,6 +23,8 @@ CSessionBuilder.cpp
 CSessionBuilder.h
 CSessionVerifier.cpp
 CSessionVerifier.h
+CTimespan.cpp
+CTimespan.h
 IAuthenticationMethod.h
 IKnocknockService.h
 CSHA256AuthMethod.cpp

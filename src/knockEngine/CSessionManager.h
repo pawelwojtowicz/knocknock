@@ -1,6 +1,7 @@
 #pragma once
 #include "IKnocknockService.h"
 #include <map>
+#include <shared_mutex>
 #include "CSession.h"
 #include "CSessionBuilder.h"
 #include "CAuthenticator.h"
@@ -29,7 +30,7 @@ private:
   const CSession Login(const tKeyValueMap& input, tKeyValueMap& output) override;
   const CSession Authenticate(const tKeyValueMap& input, tKeyValueMap& output) override;
   const bool Logout(const tKeyValueMap& input, tKeyValueMap& output) override;
-  const bool Touch(const tKeyValueMap& input, tKeyValueMap& output) override;
+  const CSession Touch(const tKeyValueMap& input, tKeyValueMap& output) override;
 private:
   DBAccess::IDBAccess& m_rDBAccess;
 
@@ -41,7 +42,11 @@ private:
 
   CSession m_emptySession;
 
+  std::shared_mutex m_sessionsMutex;
+
   tSessionMap m_sessions;
+
+  int m_sessionExpirationTimeout;
 };
 
 }
