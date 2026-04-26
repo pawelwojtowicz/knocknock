@@ -15,6 +15,7 @@ CSessionManager::CSessionManager( DBAccess::IDBAccess& rDBAccess, CConfiguration
 , m_sessionsMutex()
 , m_sessions()
 , m_sessionExpirationTimeout{180} // default to 3 minutes, can be overridden by configuration
+, m_authenticationChallengeTimeout{3}
 {
 
 }
@@ -61,6 +62,10 @@ const CSession CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& o
       if ( session.GetUserSessionState() == UserSessionState::AUTH_SUCCESS )
       {
         session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
+      } 
+      else if ( session.GetUserSessionState() == UserSessionState::AUTH_IN_PROGRESS )
+      {
+        session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_authenticationChallengeTimeout);
       }
 
       {
@@ -92,30 +97,12 @@ const CSession CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValu
         if ( session.GetUserSessionState() == UserSessionState::AUTH_SUCCESS )
         {
           session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
+          return session;
         }
       }
-      return session;
     }
   } 
   return m_emptySession;
-}
-
-const bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
-{
-  CKeyValueHelper inputHelper(input);
-  std::string sessionId{};
-  if ( inputHelper.GetValue(sLoginSessionId, sessionId) && !sessionId.empty() )
-  {
-    std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
-    auto sessionIt = m_sessions.find(sessionId);
-    if ( sessionIt != m_sessions.end() )
-    {
-      CSession& session = sessionIt->second;
-      session.UpdateUserSessionState(UserSessionState::LOGGED_OUT);
-      return true;
-    }
-  } 
-  return false;
 }
 
 const CSession CSessionManager::Touch(const tKeyValueMap& input, tKeyValueMap& output)
@@ -140,5 +127,28 @@ const CSession CSessionManager::Touch(const tKeyValueMap& input, tKeyValueMap& o
   } 
   return m_emptySession;
 }
+
+const bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
+{
+  CKeyValueHelper inputHelper(input);
+  std::string sessionId{};
+  if ( inputHelper.GetValue(sLoginSessionId, sessionId) && !sessionId.empty() )
+  {
+    std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
+    auto sessionIt = m_sessions.find(sessionId);
+    if ( sessionIt != m_sessions.end() )
+    {
+      CSession& session = sessionIt->second;
+      if (  session.GetUserSessionState() == UserSessionState::AUTH_SUCCESS && session.GetSessionExpires() > CTimespan::GetEpochSeconds() )
+      {
+        session.UpdateUserSessionState(UserSessionState::LOGGED_OUT);
+        return true;
+
+      }
+    }
+  } 
+  return false;
+}
+
 
 }

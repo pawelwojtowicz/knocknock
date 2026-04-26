@@ -14,8 +14,8 @@ public:
 
   virtual const CSession Login(const tKeyValueMap& input, tKeyValueMap& output) = 0;
   virtual const CSession Authenticate(const tKeyValueMap& input, tKeyValueMap& output) = 0;
-  virtual const bool Logout(const tKeyValueMap& input, tKeyValueMap& output) = 0;
   virtual const CSession Touch(const tKeyValueMap& input, tKeyValueMap& output) = 0;
+  virtual const bool Logout(const tKeyValueMap& input, tKeyValueMap& output) = 0;
 
 private:
   IKnocknockService(const IKnocknockService&) = delete;

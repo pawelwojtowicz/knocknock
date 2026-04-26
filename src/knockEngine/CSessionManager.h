@@ -29,8 +29,9 @@ public:
 private:
   const CSession Login(const tKeyValueMap& input, tKeyValueMap& output) override;
   const CSession Authenticate(const tKeyValueMap& input, tKeyValueMap& output) override;
-  const bool Logout(const tKeyValueMap& input, tKeyValueMap& output) override;
   const CSession Touch(const tKeyValueMap& input, tKeyValueMap& output) override;
+  const bool Logout(const tKeyValueMap& input, tKeyValueMap& output) override;
+
 private:
   DBAccess::IDBAccess& m_rDBAccess;
 
@@ -47,6 +48,8 @@ private:
   tSessionMap m_sessions;
 
   int m_sessionExpirationTimeout;
+
+  int m_authenticationChallengeTimeout;
 };
 
 }
