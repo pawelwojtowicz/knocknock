@@ -13,15 +13,30 @@ constexpr const char* TEST_SHA256_PASSWORD1 = "786FAE789EB7D049E9D00CA71CCEED212
 // password: testPassword
 constexpr const char* TEST_SHA256_PASSWORD2 = "FD5CB51BAFD60F6FDBEDDE6E62C473DA6F247DB271633E15919BAB78A02EE9EB";
 
-TEST(CAuthenticator, Basic_unknown_failed)
+class AuthenticatorTests : public ::testing::Test
 {
-  CConfiguration config;
+protected:
+  CConfiguration m_configuration;
+
+  virtual void SetUp() override
+  {
+    m_configuration.LoadConfig("config/knocknock.conf");
+  }
+
+  virtual void TearDown() override
+  {
+  }
+};
+
+
+TEST_F(AuthenticatorTests, Basic_unknown_failed)
+{
 
   CSession session("sessionId", "testUser", "", "unknown", "");
 
   CAuthenticator authenticator;
 
-  authenticator.Initialize(config);
+  authenticator.Initialize(m_configuration);
 
   tKeyValueMap loginPayload;
   loginPayload[sLoginPassword] = "";
@@ -35,15 +50,13 @@ TEST(CAuthenticator, Basic_unknown_failed)
 }
 
 
-TEST(CAuthenticator, Basic_sha256_failed)
+TEST_F(AuthenticatorTests, Basic_sha256_failed)
 {
-  CConfiguration config;
-
   CSession session("sessionId", "testUser", "", "sha256", TEST_SHA256_PASSWORD1);
 
   CAuthenticator authenticator;
 
-  authenticator.Initialize(config);
+  authenticator.Initialize(m_configuration);
 
   tKeyValueMap loginPayload;
   loginPayload[sLoginPassword] = "testPassword";
@@ -56,14 +69,12 @@ TEST(CAuthenticator, Basic_sha256_failed)
   authenticator.Shutdown();
 }
 
-TEST(CAuthenticator, Basic_sha256_success)
+TEST_F(AuthenticatorTests, Basic_sha256_success)
 {
-  CConfiguration config;
-
   CSession session("sessionId", "testUser", "", "sha256", TEST_SHA256_PASSWORD1);
 
   CAuthenticator authenticator;
-  authenticator.Initialize(config);
+  authenticator.Initialize(m_configuration);
 
   tKeyValueMap loginPayload;
   loginPayload[sLoginPassword] = "italianoVero$123";
@@ -75,17 +86,15 @@ TEST(CAuthenticator, Basic_sha256_success)
   authenticator.Shutdown();
 }
 
-TEST(CAuthenticator, Basic_simpledb_success)
+TEST_F(AuthenticatorTests, Basic_simpledb_success)
 {
-  CConfiguration config;
-
   CSession session("sessionId", "testUser", "", "simpledb", "");
 
   CAuthenticator authenticator;
 
-  authenticator.Initialize(config);
+  authenticator.Initialize(m_configuration);
 
-    tKeyValueMap loginPayload;
+  tKeyValueMap loginPayload;
   loginPayload[sLoginPassword] = "";
 
 
@@ -96,11 +105,10 @@ TEST(CAuthenticator, Basic_simpledb_success)
   authenticator.Shutdown();
 }
 
-TEST(CAuthenticator, Basic_scr_success)
+TEST_F(AuthenticatorTests, Basic_scr_success)
 {
-  CConfiguration config;
   CAuthenticator authenticator;
-  authenticator.Initialize(config);
+  authenticator.Initialize(m_configuration);
 
   std::string sessionId{"6E7B30E57AC2B2E6A9FF079F623FE9D892CDD760227070FF2352CABEE60CEEFD"};
   std::string passwordHash{TEST_SHA256_PASSWORD1};
@@ -135,11 +143,10 @@ TEST(CAuthenticator, Basic_scr_success)
   authenticator.Shutdown();
 }
 
-TEST(CAuthenticator, Basic_scr_failure)
+TEST_F(AuthenticatorTests, Basic_scr_failure)
 {
-  CConfiguration config;
   CAuthenticator authenticator;
-  authenticator.Initialize(config);
+  authenticator.Initialize(m_configuration);
 
   std::string sessionId{"6E7B30E57AC2B2E6A9FF079F623FE9D892CDD760227070FF2352CABEE60CEEFD"};
   std::string passwordHash{TEST_SHA256_PASSWORD1};

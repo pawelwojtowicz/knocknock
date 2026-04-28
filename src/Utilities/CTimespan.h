@@ -1,6 +1,6 @@
 #pragma once
 
-namespace knocknock
+namespace Utilities
 {
 class CTimespan
 {

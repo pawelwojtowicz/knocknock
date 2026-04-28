@@ -3,6 +3,8 @@
 #include "KnocKnockDictionary.h"
 #include "CTimespan.h"
 
+using namespace Utilities;
+
 namespace knocknock
 {
 

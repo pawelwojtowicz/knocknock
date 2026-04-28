@@ -1,7 +1,7 @@
 #include "CTimespan.h"
 #include <chrono>
 
-namespace knocknock
+namespace Utilities
 {
 int CTimespan::m_timestamp = -1;
 

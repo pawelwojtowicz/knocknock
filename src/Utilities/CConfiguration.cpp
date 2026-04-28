@@ -7,10 +7,6 @@ namespace knocknock
 
 CConfiguration::CConfiguration()
 {
-  m_parameters[cParamName_AnonymousUserTemplate] = "";
-  m_parameters[cParamName_DefaultAuthenticationMethod] = "sha256";
-  m_parameters[cParamName_DefaultAuthenticationString] = "db89a15ca72c6c91a94c03e6b7973bbbf01b3e67988c9f79d6b764b36d913a66";
-  m_parameters[cParamName_AllowedAuthMethods] = "simpledb,sha256,scr";
 }
 
 bool CConfiguration::LoadConfig(DBAccess::IDBAccess& rDBAccess)
@@ -20,7 +16,6 @@ bool CConfiguration::LoadConfig(DBAccess::IDBAccess& rDBAccess)
   {
     m_parameters[param.first] = param.second;
   }
-
 
   return true;
 }
@@ -53,14 +48,14 @@ bool CConfiguration::LoadConfig(const std::string& filename)
 
 
 
-const std::string CConfiguration::GetParamString( const std::string& paramName ) const
+const std::string CConfiguration::GetParamString( const std::string& paramName, const std::string defaultValue) const
 {
   tParameterMapCI it = m_parameters.find(paramName);
   if (it != m_parameters.end())
   {
     return it->second;
   }
-  return {};
+  return defaultValue;
 }
 
 int CConfiguration::GetParamInt( const std::string& paramName, int defaultValue ) const

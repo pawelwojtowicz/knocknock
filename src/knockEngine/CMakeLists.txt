@@ -7,8 +7,6 @@ CAuthenticator.cpp
 CAuthenticator.h
 CAuthMethodFactory.cpp
 CAuthMethodFactory.h
-CConfiguration.cpp
-CConfiguration.h
 CJSONSerializer.cpp
 CJSONSerializer.h
 CKeyValueHelper.cpp 
@@ -23,8 +21,6 @@ CSessionBuilder.cpp
 CSessionBuilder.h
 CSessionVerifier.cpp
 CSessionVerifier.h
-CTimespan.cpp
-CTimespan.h
 IAuthenticationMethod.h
 IKnocknockService.h
 CSHA256AuthMethod.cpp
@@ -34,6 +30,6 @@ CSimpleDBAuthMethod.h
 )
 
 #set_target_properties(${OUTPUT_NAME} PROPERTIES VERSION ${HOME_AUTOMATION_SERVICES_VERSION} SOVERSION ${HOME_AUTOMATION_SERVICES_VERSION} )
-add_dependencies( ${OUTPUT_NAME} DataModel dbAccess CryptoTools)
-target_link_libraries( ${OUTPUT_NAME} DataModel dbAccess CryptoTools sqlite3 )
+add_dependencies( ${OUTPUT_NAME} DataModel dbAccess CryptoTools Utilities)
+target_link_libraries( ${OUTPUT_NAME} DataModel dbAccess CryptoTools Utilities sqlite3 )
 target_include_directories( ${OUTPUT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

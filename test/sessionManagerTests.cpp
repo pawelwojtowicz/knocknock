@@ -9,6 +9,8 @@
 #include <CAESCipherWrapper.h>
 #include <memory>
 
+using namespace Utilities;
+
 using namespace knocknock;
 
 static std::string testDBFileName = "sessionManager_test.db";
@@ -23,6 +25,8 @@ protected:
 
   virtual void SetUp() override
   {
+    m_configuration.LoadConfig("config/knocknock.conf");
+
     CTimespan::SetTimeline(0); // reset time to real current time
     // Clean up any existing test database
     if (std::filesystem::exists(testDBFileName))

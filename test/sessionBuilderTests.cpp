@@ -3,34 +3,44 @@
 #include <CDatabase.h>
 #include <CConfiguration.h>
 #include <filesystem>
+#include <KnocKnockDictionary.h>
 
 using namespace knocknock;
 
 
-
-void InitializeDB(DBAccess::CDatabase& database)
+class SessionBuilderTests : public ::testing::Test
 {
-  std::string testDBFileName = "test.db";
-  if (std::filesystem::exists(testDBFileName))
+protected:
+  DBAccess::CDatabase m_database;
+  CConfiguration m_configuration;
+
+  virtual void SetUp() override
   {
-    std::filesystem::remove(testDBFileName);
+    std::string testDBFileName = "test.db";
+    if (std::filesystem::exists(testDBFileName))
+    {
+      std::filesystem::remove(testDBFileName);
+    }
+
+    m_configuration.LoadConfig("config/knocknock.conf");
+    
+    m_database.OpenDatabase(testDBFileName);
+
+    m_database.GetUserData().AddUser( CUser( "cashier1", "Cashier", "#1", "simpledb", "" ));
+    m_database.GetUserData().AddUser( CUser( "1234", "John", "Doe", "", "" ));
+    m_database.GetUserData().AddUser( CUser( "4312", "Paul", "Newman", "otp", "1234567890" ));
+
+
   }
-  
-  database.OpenDatabase(testDBFileName);
 
-  database.GetUserData().AddUser( CUser( "cashier1", "Cashier", "#1", "simpledb", "" ));
-  database.GetUserData().AddUser( CUser( "1234", "John", "Doe", "", "" ));
-  database.GetUserData().AddUser( CUser( "4312", "Paul", "Newman", "otp", "1234567890" ));
-}
+  virtual void TearDown() override
+  {
+  }
+};
 
-TEST( SessionBuilderTests, NonExistingUser_AnonymousLogingDisallowed )
+TEST_F( SessionBuilderTests, NonExistingUser_AnonymousLogingDisallowed )
 {
-  CConfiguration configuration;
-  DBAccess::CDatabase database;
-
-  InitializeDB(database);
-
-  knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  knocknock::CSessionBuilder sessionBuilder(m_configuration, m_database);
   sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("non_existing_user");
@@ -38,14 +48,9 @@ TEST( SessionBuilderTests, NonExistingUser_AnonymousLogingDisallowed )
   ASSERT_FALSE(session.has_value());
 }
 
-TEST( SessionBuilderTests, ExistingUser_AnonymousLogingDisallowed_AuthMethodNotDefined )
+TEST_F( SessionBuilderTests, ExistingUser_AnonymousLogingDisallowed_AuthMethodNotDefined )
 {
-  CConfiguration configuration;
-  DBAccess::CDatabase database;
-
-  InitializeDB(database);
-
-  knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  knocknock::CSessionBuilder sessionBuilder(m_configuration, m_database);
   sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("1234");
@@ -57,14 +62,9 @@ TEST( SessionBuilderTests, ExistingUser_AnonymousLogingDisallowed_AuthMethodNotD
   ASSERT_EQ(session->GetAuthString(), "db89a15ca72c6c91a94c03e6b7973bbbf01b3e67988c9f79d6b764b36d913a66");
 }
 
-TEST( SessionBuilderTests, ExistingUser_AnonymousLogingDisallowed_AuthMethodDefined )
+TEST_F( SessionBuilderTests, ExistingUser_AnonymousLogingDisallowed_AuthMethodDefined )
 {
-  CConfiguration configuration;
-  DBAccess::CDatabase database;
-
-  InitializeDB(database);
-
-  knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  knocknock::CSessionBuilder sessionBuilder(m_configuration, m_database);
   sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("4312");
@@ -76,16 +76,13 @@ TEST( SessionBuilderTests, ExistingUser_AnonymousLogingDisallowed_AuthMethodDefi
   ASSERT_EQ(session->GetAuthString(), "1234567890");
 }
 
-TEST( SessionBuilderTests, NonExistingUser1_AnonymousLoginAllowed )
+TEST_F( SessionBuilderTests, NonExistingUser1_AnonymousLoginAllowed )
 {
-  DBAccess::CDatabase database;
-  InitializeDB(database);
-  database.GetSystemParamData().AddSystemParam("anonymousUserTemplate", "cashier1");
+  m_database.GetSystemParamData().AddSystemParam("anonymousUserTemplate", "cashier1");
 
-  CConfiguration configuration;
-  configuration.LoadConfig(database);
+  m_configuration.LoadConfig(m_database);
 
-  knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  knocknock::CSessionBuilder sessionBuilder(m_configuration, m_database);
   sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("non_existing_user");
@@ -94,19 +91,16 @@ TEST( SessionBuilderTests, NonExistingUser1_AnonymousLoginAllowed )
   ASSERT_EQ(session->GetUserId(), "non_existing_user");
   ASSERT_EQ(session->GetUserName(), "Cashier #1");
   ASSERT_EQ(session->GetAuthMethod(), "simpledb");
-  ASSERT_EQ(session->GetAuthString(), configuration.GetParamString(cParamName_DefaultAuthenticationString));
+  ASSERT_EQ(session->GetAuthString(), m_configuration.GetParamString(cParamName_DefaultAuthenticationString));
 }
 
-TEST( SessionBuilderTests, NonExistingUser2_AnonymousLoginAllowed )
+TEST_F( SessionBuilderTests, NonExistingUser2_AnonymousLoginAllowed )
 {
-  DBAccess::CDatabase database;
-  InitializeDB(database);
-  database.GetSystemParamData().AddSystemParam("anonymousUserTemplate", "cashier1");
+  m_database.GetSystemParamData().AddSystemParam("anonymousUserTemplate", "cashier1");
 
-  CConfiguration configuration;
-  configuration.LoadConfig(database);
+  m_configuration.LoadConfig(m_database);
 
-  knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  knocknock::CSessionBuilder sessionBuilder(m_configuration, m_database);
   sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("buffalo_bob");
@@ -115,19 +109,16 @@ TEST( SessionBuilderTests, NonExistingUser2_AnonymousLoginAllowed )
   ASSERT_EQ(session->GetUserId(), "buffalo_bob");
   ASSERT_EQ(session->GetUserName(), "Cashier #1");
   ASSERT_EQ(session->GetAuthMethod(), "simpledb");
-  ASSERT_EQ(session->GetAuthString(), configuration.GetParamString(cParamName_DefaultAuthenticationString));
+  ASSERT_EQ(session->GetAuthString(), m_configuration.GetParamString(cParamName_DefaultAuthenticationString));
 }
 
-TEST( SessionBuilderTests, ExistingUser_AnonymousLoginAllowed )
+TEST_F( SessionBuilderTests, ExistingUser_AnonymousLoginAllowed )
 {
-  DBAccess::CDatabase database;
-  InitializeDB(database);
-  database.GetSystemParamData().AddSystemParam("anonymousUserTemplate", "cashier1");
+  m_database.GetSystemParamData().AddSystemParam("anonymousUserTemplate", "cashier1");
 
-  CConfiguration configuration;
-  configuration.LoadConfig(database);
+  m_configuration.LoadConfig(m_database);
 
-  knocknock::CSessionBuilder sessionBuilder(configuration, database);
+  knocknock::CSessionBuilder sessionBuilder(m_configuration, m_database);
   sessionBuilder.Initialize();
 
   std::optional<CSession> session = sessionBuilder.CreateSession("4312");
