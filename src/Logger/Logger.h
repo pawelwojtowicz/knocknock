@@ -6,21 +6,20 @@
 #define DETAIL  0x02
 #define PERF    0x01
 
-#define ALL ( ERROR | WARNING | INFO | DETAIL | PERF )
+#define ALL (ERROR | WARNING | INFO | DETAIL | PERF)
+
+#define WITH_LOGGER
 
 #ifdef WITH_LOGGER
 
 #include "CLoggerMsg.h"
 
-#define LOG( zone, logMsg )                                   \
-    {                                                         \
+#define LOG( zone, ... )                                   \
       if ( Logger::CLoggerMsg::ZoneEnabled( zone ) )          \
       {                                                       \
         Logger::CLoggerMsg msg( zone, __FILE__, __LINE__);    \
-        msg.LogText  logMsg ;                                 \
-      }                                                       \
-    }                                                         \
-
+        msg.LogText( __VA_ARGS__ );                                 \
+      }                                                       
 #else
   #define LOG( zone, logMsg )
 #endif

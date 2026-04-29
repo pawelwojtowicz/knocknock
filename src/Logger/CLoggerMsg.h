@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <string>
 #define MAX_LOG_TEXT_LENGTH 512
 
 namespace Logger
@@ -29,7 +30,7 @@ public:
 
 private:
   uint16_t m_logDbgZone;
-  char* m_logText;
+  std::string m_logText;
   const char* m_pSrcFileName;
   uint32_t m_srcLineNo;
   uint32_t m_timeStamp;

@@ -22,6 +22,7 @@ uint16_t CLoggerMsg::sDebugZoneMask = 0xFF;
 
 CLoggerMsg::CLoggerMsg()
 : m_logDbgZone(0)
+, m_logText("")
 , m_pSrcFileName(nullptr)
 , m_srcLineNo(0)
 , m_timeStamp(0)
@@ -29,8 +30,9 @@ CLoggerMsg::CLoggerMsg()
 }
 CLoggerMsg::CLoggerMsg(const uint16_t debugZone, const char* srcFileName, const uint32_t srcLineNo )
 : m_logDbgZone(debugZone)
+, m_logText("")
 , m_pSrcFileName(srcFileName)
-, m_srcLineNo(0)
+, m_srcLineNo(srcLineNo)
 , m_timeStamp(0)
 {
   struct timeval currentTime;
@@ -94,7 +96,7 @@ const char* CLoggerMsg::GetDBGZone() const
 
 const char* CLoggerMsg::GetLogText() const
 {
-  return m_logText;
+  return m_logText.c_str();
 }
 
 const char* CLoggerMsg::GetSrcFileName() const

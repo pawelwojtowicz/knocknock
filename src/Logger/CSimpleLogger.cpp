@@ -36,7 +36,7 @@ void CSimpleLogger::RecordDebugMessage( const CLoggerMsg& rLoggerMsg)
   }
   if ( tLogEntryCfg::eSource & m_logEntryConfig )
   {
-    std::cout << rLoggerMsg.GetSrcFileName() << "|";
+    std::cout << rLoggerMsg.GetSrcFileName() << ":" << rLoggerMsg.GetLineNo() << "|";
   }
   std::cout << std::endl;
 }
