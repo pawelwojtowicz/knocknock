@@ -12,13 +12,13 @@ CMain::CMain()
 	__pExecutable = this;
 }
 
-void CMain::InitModule(int argc, char** argv)
+bool CMain::InitModule(int argc, char** argv)
 {
 	for (int i = 0 ; i < argc ; ++i )
 	{
 		m_arguments.push_back(argv[i]);
 	}
-	Initialize();
+	return Initialize();
 }
 
 int CMain::GetArgumentCount()
@@ -26,9 +26,33 @@ int CMain::GetArgumentCount()
 	return m_arguments.size();
 }
 
-void CMain::Initialize()
+const std::string& CMain::GetArgument( const int& argNo )
 {
-  LOG( INFO, "CMain::Initialize() called %d", GetArgumentCount() );
+	if ( argNo >= GetArgumentCount() )
+	{
+		static const std::string emptyString{};
+		return emptyString;
+	}
+	return m_arguments.at( argNo );
+}
+
+bool CMain::Initialize()
+{
+	if ( GetArgumentCount() < 2 )
+	{
+		LOG( ERROR, "No configuration file provided. Please provide configuration file as first argument." );
+		return false;
+	}
+
+	const std::string& configFileName = GetArgument(1);
+	if ( !m_configuration.LoadConfig(configFileName) )
+	{
+		LOG( ERROR, "Failed to load configuration file: %s", configFileName.c_str() );
+		return false;
+	}
+	LOG( INFO, "Configuration file %s loaded successfully", configFileName.c_str() );
+
+	return true;
 }
 
 

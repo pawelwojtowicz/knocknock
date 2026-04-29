@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <CConfiguration.h>
 #include <CSimpleLogger.h>
 
 namespace knocknock
@@ -12,11 +13,11 @@ public:
 	CMain();
 	virtual ~CMain() = default;
 
-	void InitModule(int argc, char** argv);
+	bool InitModule(int argc, char** argv);
 
-	virtual void Initialize();
-	virtual int Run();
-	virtual void Shutdown();
+	bool Initialize();
+	int Run();
+	void Shutdown();
 
 protected:
 	const std::string& GetArgument( const int& argNo );
@@ -24,6 +25,8 @@ protected:
 
 private:
 	std::vector<std::string> m_arguments;
+
+	CConfiguration m_configuration;
 
   Logger::CSimpleLogger m_logger;
 

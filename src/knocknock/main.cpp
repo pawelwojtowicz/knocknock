@@ -8,10 +8,10 @@ int main(int argc, char** argv )
 
 	if ( 0 != __pExecutable )
 	{
-		__pExecutable->InitModule(argc,argv);
-
-		retVal = __pExecutable->Run();
-
+		if ( __pExecutable->InitModule(argc,argv) )
+		{
+			retVal = __pExecutable->Run();
+		}
 		__pExecutable->Shutdown();
 	}
 
