@@ -31,10 +31,15 @@ bool CConfiguration::LoadConfig(const std::string& filename)
   std::string line{};
   while (std::getline(configurationFile, line))
   {
+    if (line.empty() || line[0] == '#')
+    {
+      continue;
+    }
+
     auto pos = line.find('=');
     if (pos == std::string::npos)
     {
-      continue; // Invalid line, skip
+      continue;
     }
 
     std::string paramName = line.substr(0, pos);
