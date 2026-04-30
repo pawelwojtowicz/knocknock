@@ -12,39 +12,44 @@ CUserData::CUserData( IDBDriver& rDBDriver )
 
 bool CUserData::AddUser( const knocknock::CUser& user )
 {
-  const std::string sqlQuery = "INSERT INTO USERS (USER_ID, FIRST_NAME , LAST_NAME , AUTH_METHOD, AUTH_STRING) VALUES ('"+user.getUserId() +"','"+user.getFirstName()+"','"+user.getLastName()+"','"+user.getAuthenticationMethod()+"','"+user.getAuthenticationString()+"');";
-
-  auto insertValueCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
+  const std::string sql = "INSERT INTO USERS (USER_ID, FIRST_NAME, LAST_NAME, AUTH_METHOD, AUTH_STRING) VALUES (?, ?, ?, ?, ?);";
+  std::vector<std::string> params = {
+    user.getUserId(),
+    user.getFirstName(),
+    user.getLastName(),
+    user.getAuthenticationMethod(),
+    user.getAuthenticationString()
   };
 
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 bool CUserData::UpdateUser( const knocknock::CUser& user )
 {
-  const std::string sqlQuery = "UPDATE USERS SET FIRST_NAME='"+user.getFirstName()+"', LAST_NAME='"+user.getLastName()+"', AUTH_METHOD='"+user.getAuthenticationMethod()+"', AUTH_STRING='"+user.getAuthenticationString()+"' WHERE USER_ID='"+user.getUserId()+"';"; 
-  auto updateValueCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
+  const std::string sql = "UPDATE USERS SET FIRST_NAME=?, LAST_NAME=?, AUTH_METHOD=?, AUTH_STRING=? WHERE USER_ID=?;";
+  std::vector<std::string> params = {
+    user.getFirstName(),
+    user.getLastName(),
+    user.getAuthenticationMethod(),
+    user.getAuthenticationString(),
+    user.getUserId()
   };
 
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, updateValueCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 void CUserData::DeleteUser( const std::string& userId )
 {
-  const std::string sqlQuery = "DELETE FROM USERS WHERE USER_ID='"+userId+"';";
+  const std::string sql = "DELETE FROM USERS WHERE USER_ID=?;";
+  std::vector<std::string> params = { userId };
 
-  auto deleteCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
-  };
-
-  m_rDBDriver.ExecuteSQLCommand( sqlQuery, deleteCallback, 0 ) ;
+  m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 std::optional<knocknock::CUser> CUserData::GetUserByUserId( const std::string& userId)
 {
-  const std::string sqlQuery = "SELECT USER_ID,FIRST_NAME,LAST_NAME, AUTH_METHOD, AUTH_STRING FROM USERS WHERE USER_ID='"+userId+"';";
+  const std::string sql = "SELECT USER_ID, FIRST_NAME, LAST_NAME, AUTH_METHOD, AUTH_STRING FROM USERS WHERE USER_ID=?;";
+  std::vector<std::string> params = { userId };
 
   knocknock::CUser user;
 
@@ -57,7 +62,7 @@ std::optional<knocknock::CUser> CUserData::GetUserByUserId( const std::string& u
     return 0;
   };
 
-  if ( m_rDBDriver.ExecuteSQLCommand( sqlQuery, getUserCallback, &user ) )
+  if ( m_rDBDriver.ExecutePreparedStatement(sql, params, getUserCallback, &user) )
   {
     if ( !user.getUserId().empty() )
     {
@@ -71,7 +76,7 @@ std::optional<knocknock::CUser> CUserData::GetUserByUserId( const std::string& u
 knocknock::tUserArray CUserData::GetAllUsers()
 {
   knocknock::tUserArray users = {};
-  const std::string sqlQuery = "SELECT USER_ID,FIRST_NAME,LAST_NAME, AUTH_METHOD, AUTH_STRING FROM USERS;";
+  const std::string sql = "SELECT USER_ID, FIRST_NAME, LAST_NAME, AUTH_METHOD, AUTH_STRING FROM USERS;";
 
   auto getAllUsersCallback = [](void *data, int argc, char **argv, char **azColName) {
     if ( 5 == argc )
@@ -81,7 +86,7 @@ knocknock::tUserArray CUserData::GetAllUsers()
     }
     return 0;
   };
-  m_rDBDriver.ExecuteSQLCommand( sqlQuery, getAllUsersCallback, &users );
+  m_rDBDriver.ExecutePreparedStatement(sql, {}, getAllUsersCallback, &users);
 
   return users;
 

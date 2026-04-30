@@ -12,21 +12,18 @@ CSystemParamData::CSystemParamData( IDBDriver& rDBDriver)
 
 bool CSystemParamData::AddSystemParam( const std::string& key, const std::string& value)
 {
+  const std::string sql = "INSERT INTO SYSTEM_PARAMS (VALUE_KEY, VALUE) VALUES (?, ?);";
+  std::vector<std::string> params = { key, value };
 
-  const std::string sqlQuery = "INSERT INTO SYSTEM_PARAMS (VALUE_KEY, VALUE) VALUES ('"+key+"','"+value+"');";
-
-  auto insertValueCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
-  };
-
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 std::optional<std::string> CSystemParamData::GetSystemParam( const std::string& key)
 {
   std::string paramValue = {};
 
-  const std::string sqlQuery = "SELECT VALUE FROM SYSTEM_PARAMS WHERE VALUE_KEY = '" + key + "';";
+  const std::string sql = "SELECT VALUE FROM SYSTEM_PARAMS WHERE VALUE_KEY = ?;";
+  std::vector<std::string> params = { key };
 
   auto readingCallback = [](void *data, int argc, char **argv, char **azColName)
   {
@@ -40,7 +37,7 @@ std::optional<std::string> CSystemParamData::GetSystemParam( const std::string& 
     return 0;
   };
 
-  m_rDBDriver.ExecuteSQLCommand( sqlQuery, readingCallback, &paramValue );
+  m_rDBDriver.ExecutePreparedStatement(sql, params, readingCallback, &paramValue);
 
   return !paramValue.empty() ? std::optional<std::string>(paramValue) : std::nullopt;
 }
@@ -49,7 +46,7 @@ tSystemParameters CSystemParamData::GetAllSystemParams()
 {
   tSystemParameters systemParameters = {};
 
-  const std::string sqlQuery = "SELECT * FROM SYSTEM_PARAMS;";
+  const std::string sql = "SELECT * FROM SYSTEM_PARAMS;";
 
   auto readingCallback = [](void *data, int argc, char **argv, char **azColName)
   {
@@ -62,7 +59,7 @@ tSystemParameters CSystemParamData::GetAllSystemParams()
     return 0;
   };
 
-  m_rDBDriver.ExecuteSQLCommand( sqlQuery, readingCallback, &systemParameters );
+  m_rDBDriver.ExecutePreparedStatement(sql, {}, readingCallback, &systemParameters);
 
   return systemParameters;
 }

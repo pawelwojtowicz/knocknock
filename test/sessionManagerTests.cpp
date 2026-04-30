@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <CSessionManager.h>
 #include <CDatabase.h>
+#include <CSQLiteDriver.h>
 #include <CConfiguration.h>
 #include <CUser.h>
 #include <CTimespan.h>
@@ -18,7 +19,8 @@ static std::string testDBFileName = "sessionManager_test.db";
 class SessionManagerTests : public ::testing::Test
 {
 protected:
-  DBAccess::CDatabase m_database;
+  DBAccess::CSQLiteDriver m_dbDriver;
+  DBAccess::CDatabase m_database{m_dbDriver};
   CConfiguration m_configuration;
   std::shared_ptr<CSessionManager> m_pSessionManager;
   std::shared_ptr<IKnocknockService> m_knocknockService;

@@ -29,7 +29,7 @@ CSessionManager::~CSessionManager()
 
 bool CSessionManager::Initialize()
 {
-  int m_sessionExpirationTimeout = m_rConfiguration.GetParamInt( "sessionExpirationTimeout", m_sessionExpirationTimeout);
+  m_sessionExpirationTimeout = m_rConfiguration.GetParamInt( "sessionExpirationTimeout", m_sessionExpirationTimeout);
 
   if ( !m_sessionBuilder.Initialize() )
   {

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <CDatabase.h>
+#include <CSQLiteDriver.h>
 #include <filesystem>
 #include "CUser.h"
 
@@ -7,6 +8,8 @@ std::string dbInterfaceKey = "dbInterface";
 std::string dbInterfaceValue = "1.0";
 
 std::string testDBFileName = "test.db";
+
+static DBAccess::CSQLiteDriver g_dbDriver;
 
 TEST( DBFileCleanup, DeletingTestFile)
 {
@@ -20,7 +23,7 @@ TEST( DBFileCleanup, DeletingTestFile)
 
 TEST( CSQLiteDriver, SysParam_AddDuplicates)
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -32,7 +35,7 @@ TEST( CSQLiteDriver, SysParam_AddDuplicates)
 
 TEST( CSQLiteDriver, SysParam_GetParameter)
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -54,7 +57,7 @@ TEST( CSQLiteDriver, SysParam_GetParameter)
 
 TEST( CSQLiteDriver, SysParam_GetAllParams)
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -74,7 +77,7 @@ TEST( CSQLiteDriver, SysParam_GetAllParams)
 
 TEST( CSQLiteDriver, Users_AddingDuplicate )
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -88,7 +91,7 @@ TEST( CSQLiteDriver, Users_AddingDuplicate )
 
 TEST( CSQLiteDriver, Users_GetUserById_Existing )
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -105,7 +108,7 @@ TEST( CSQLiteDriver, Users_GetUserById_Existing )
 
 TEST( CSQLiteDriver, Users_GetUserById_NonExisting )
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
   auto user = database.GetUserData().GetUserByUserId( "padre");
@@ -115,7 +118,7 @@ TEST( CSQLiteDriver, Users_GetUserById_NonExisting )
 
 TEST( CSQLiteDriver, Users_UpdateUser_Existing )
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
   std::string userId("testUser");
@@ -147,7 +150,7 @@ TEST( CSQLiteDriver, Users_UpdateUser_Existing )
 
 TEST( CSQLiteDriver, Users_GetAllUsers )
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
   const auto users = database.GetUserData().GetAllUsers();
@@ -158,7 +161,7 @@ TEST( CSQLiteDriver, Users_GetAllUsers )
 
 TEST( CSQLiteDriver, Users_DeleteUser )
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
   database.GetUserData().DeleteUser("testUser");
@@ -172,7 +175,7 @@ TEST( CSQLiteDriver, Users_DeleteUser )
 
 TEST( CSQLiteDriver, Roles_AddRole )
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -203,7 +206,7 @@ TEST( CSQLiteDriver, Roles_AddRole )
 
 TEST( CSQLiteDriver, Roles_UpdateRole )
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -231,7 +234,7 @@ TEST( CSQLiteDriver, Roles_UpdateRole )
 
 TEST( CSQLiteDriver, Privileges_CRUD_Privilege) 
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -263,7 +266,7 @@ TEST( CSQLiteDriver, Privileges_CRUD_Privilege)
 
 TEST( CSQLiteDriver, RoleToPrivilegeMapping) 
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -303,7 +306,7 @@ TEST( CSQLiteDriver, RoleToPrivilegeMapping)
 
 TEST( CSQLiteDriver, User2RoleMappings ) 
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -337,7 +340,7 @@ TEST( CSQLiteDriver, User2RoleMappings )
 
 TEST( CSQLiteDriver, Applications ) 
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -377,7 +380,7 @@ TEST( CSQLiteDriver, Applications )
 
 TEST( CSQLiteDriver, ApplicationParams ) 
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 
@@ -453,7 +456,7 @@ TEST( CSQLiteDriver, ApplicationParams )
 
 TEST( CSQLiteDriver, UserSettings ) 
 {
-  DBAccess::CDatabase database;
+  DBAccess::CDatabase database(g_dbDriver);
 
   database.OpenDatabase("test.db");
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "IDBAccess.h"
-#include "CSQLiteDriver.h"
+#include "IDBDriver.h"
 #include "CApplicationData.h"
 #include "CApplicationParamData.h"
 #include "CPrivilegeData.h"
@@ -18,13 +18,13 @@ namespace DBAccess
 class CDatabase : public IDBAccess
 {
 public:
-  CDatabase();
+  CDatabase( IDBDriver& rDBDriver );
   virtual ~CDatabase() = default;
 
   void OpenDatabase( const std::string& dbFilename );
   void Close( );
 
-  CApplicationData& GetApplicationData() {
+  CApplicationData& GetApplicationData() override {
     return m_applicationData;
   }
 
@@ -36,35 +36,35 @@ public:
     return m_privilegeData;
   }
 
-  IRoleData& GetRoleData() {
+  IRoleData& GetRoleData() override {
     return m_roleData;
   }
 
-  IRole2PrivilegeMappingData& GetRole2PrivilegeMappingData()
+  IRole2PrivilegeMappingData& GetRole2PrivilegeMappingData() override
   {
     return m_role2PrivilegeMappingData;
   }
 
-  ISystemParamData& GetSystemParamData() {
+  ISystemParamData& GetSystemParamData() override {
     return m_sysParamData;
   }
 
-  IUserData& GetUserData() {
+  IUserData& GetUserData() override {
     return m_userData;
   }
 
-  IUser2RoleMappingData& GetUser2RoleMappingData()
+  IUser2RoleMappingData& GetUser2RoleMappingData() override
   {
     return m_user2RoleMappingData;
   }
 
-  IUserSettingsData& GetUserSettingsData()
+  IUserSettingsData& GetUserSettingsData() override
   {
     return m_userSettingsData;
   }
 
 private:
-  CSQLiteDriver m_dbDriver;
+  IDBDriver& m_rDBDriver;
 
   CApplicationData m_applicationData;
 

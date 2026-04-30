@@ -11,41 +11,43 @@ CApplicationData::CApplicationData(IDBDriver& rDBDriver)
 
 bool CApplicationData::AddApplication( const knocknock::CApplication& applicationRecord)
 {
-  const std::string sqlQuery = "INSERT INTO APPLICATIONS ( APP_NAME, APP_DATA_PUBLISHER, APP_ACCESS_TOKEN ) VALUES ( '"+applicationRecord.GetName() +"','"+applicationRecord.GetDataPublisher()+"','"+applicationRecord.GetAccessToken()+"');";
-
-  auto insertValueCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
+  const std::string sql = "INSERT INTO APPLICATIONS (APP_NAME, APP_DATA_PUBLISHER, APP_ACCESS_TOKEN) VALUES (?, ?, ?);";
+  std::vector<std::string> params = {
+    applicationRecord.GetName(),
+    applicationRecord.GetDataPublisher(),
+    applicationRecord.GetAccessToken()
   };
 
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 bool CApplicationData::UpdateApplication( const knocknock::CApplication& applicationRecord )
 {
-  const std::string sqlQuery = "UPDATE APPLICATIONS SET APP_NAME='"+applicationRecord.GetName() +"', APP_DATA_PUBLISHER='"+applicationRecord.GetDataPublisher()+"', APP_ACCESS_TOKEN='"+applicationRecord.GetAccessToken()+"' WHERE APP_ID="+std::to_string(applicationRecord.GetAppId())+";"; 
-  auto updateValueCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
+  const std::string sql = "UPDATE APPLICATIONS SET APP_NAME=?, APP_DATA_PUBLISHER=?, APP_ACCESS_TOKEN=? WHERE APP_ID=?;";
+  std::vector<std::string> params = {
+    applicationRecord.GetName(),
+    applicationRecord.GetDataPublisher(),
+    applicationRecord.GetAccessToken(),
+    std::to_string(applicationRecord.GetAppId())
   };
 
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, updateValueCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 bool CApplicationData::DeleteApplication( const int appId )
 {
-  const std::string sqlQuery = "DELETE FROM APPLICATIONS WHERE APP_ID="+std::to_string(appId)+";";
+  const std::string sql = "DELETE FROM APPLICATIONS WHERE APP_ID=?;";
+  std::vector<std::string> params = { std::to_string(appId) };
 
-  auto deleteCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
-  };
-
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, deleteCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 std::optional<knocknock::CApplication> CApplicationData::GetApplication( const int appId)
 {
   knocknock::CApplication application;
 
-  const std::string sqlQuery = "SELECT APP_ID, APP_NAME, APP_DATA_PUBLISHER, APP_ACCESS_TOKEN FROM APPLICATIONS WHERE APP_ID="+std::to_string(appId)+";";
+  const std::string sql = "SELECT APP_ID, APP_NAME, APP_DATA_PUBLISHER, APP_ACCESS_TOKEN FROM APPLICATIONS WHERE APP_ID=?;";
+  std::vector<std::string> params = { std::to_string(appId) };
 
   auto getAppCallback = [](void *data, int argc, char **argv, char **azColName) {
     if ( 4 == argc )
@@ -56,7 +58,7 @@ std::optional<knocknock::CApplication> CApplicationData::GetApplication( const i
     return 0;
   };
 
-  if (m_rDBDriver.ExecuteSQLCommand( sqlQuery, getAppCallback, &application ) )
+  if (m_rDBDriver.ExecutePreparedStatement(sql, params, getAppCallback, &application) )
   {
     if ( -1 != application.GetAppId() )
     {
@@ -70,7 +72,7 @@ knocknock::tApplicationArray CApplicationData::GetAllApplications()
 {
   knocknock::tApplicationArray applicationList = {};
 
-  const std::string sqlQuery = "SELECT APP_ID, APP_NAME, APP_DATA_PUBLISHER, APP_ACCESS_TOKEN FROM APPLICATIONS;";
+  const std::string sql = "SELECT APP_ID, APP_NAME, APP_DATA_PUBLISHER, APP_ACCESS_TOKEN FROM APPLICATIONS;";
 
   auto getAllAppsCallback = [](void *data, int argc, char **argv, char **azColName) {
     if ( 4 == argc )
@@ -80,7 +82,7 @@ knocknock::tApplicationArray CApplicationData::GetAllApplications()
     }
     return 0;
   };
-  m_rDBDriver.ExecuteSQLCommand( sqlQuery, getAllAppsCallback, &applicationList );
+  m_rDBDriver.ExecutePreparedStatement(sql, {}, getAllAppsCallback, &applicationList);
 
   return applicationList;
 }  

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <CSessionBuilder.h>
 #include <CDatabase.h>
+#include <CSQLiteDriver.h>
 #include <CConfiguration.h>
 #include <filesystem>
 #include <KnocKnockDictionary.h>
@@ -11,7 +12,8 @@ using namespace knocknock;
 class SessionBuilderTests : public ::testing::Test
 {
 protected:
-  DBAccess::CDatabase m_database;
+  DBAccess::CSQLiteDriver m_dbDriver;
+  DBAccess::CDatabase m_database{m_dbDriver};
   CConfiguration m_configuration;
 
   virtual void SetUp() override

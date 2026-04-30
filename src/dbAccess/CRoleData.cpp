@@ -10,40 +10,32 @@ CRoleData::CRoleData( IDBDriver& dbDriver)
 
 bool CRoleData::AddRole( const knocknock::CRole& role)
 {
-  const std::string sqlQuery = "INSERT INTO ROLES ( NAME, DESCRIPTION ) VALUES ('"+role.GetName() +"','"+role.GetDescription()+"');";
+  const std::string sql = "INSERT INTO ROLES (NAME, DESCRIPTION) VALUES (?, ?);";
+  std::vector<std::string> params = { role.GetName(), role.GetDescription() };
 
-  auto insertValueCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
-  };
-
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 bool CRoleData::UpdateRole( const knocknock::CRole& role)
 {
-  const std::string sqlQuery = "UPDATE ROLES SET NAME='"+role.GetName() +"', DESCRIPTION='"+role.GetDescription()+"' WHERE NAME='"+role.GetName() +"';"; 
-  auto updateValueCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
-  };
+  const std::string sql = "UPDATE ROLES SET DESCRIPTION=? WHERE NAME=?;";
+  std::vector<std::string> params = { role.GetDescription(), role.GetName() };
 
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, updateValueCallback, 0 ) ;
-
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 bool CRoleData::DeleteRole( const std::string& name)
 {
-  const std::string sqlQuery = "DELETE FROM ROLES WHERE NAME='"+name+"';";
+  const std::string sql = "DELETE FROM ROLES WHERE NAME=?;";
+  std::vector<std::string> params = { name };
 
-  auto deleteCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
-  };
-
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, deleteCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
   
 std::optional<knocknock::CRole> CRoleData::GetRole( const std::string& roleName) const
 {
-  const std::string sqlQuery = "SELECT NAME, DESCRIPTION FROM ROLES WHERE NAME='"+roleName+"';";
+  const std::string sql = "SELECT NAME, DESCRIPTION FROM ROLES WHERE NAME=?;";
+  std::vector<std::string> params = { roleName };
 
   knocknock::CRole role;
 
@@ -56,7 +48,7 @@ std::optional<knocknock::CRole> CRoleData::GetRole( const std::string& roleName)
     return 0;
   };
 
-  if ( m_rDBDriver.ExecuteSQLCommand( sqlQuery, getUserCallback, &role ) )
+  if ( m_rDBDriver.ExecutePreparedStatement(sql, params, getUserCallback, &role) )
   {
     if ( !role.GetName().empty() )
     {
@@ -70,7 +62,7 @@ std::optional<knocknock::CRole> CRoleData::GetRole( const std::string& roleName)
 knocknock::tRoles CRoleData::GetAllRoles() const
 {
   knocknock::tRoles roles = {};
-  const std::string sqlQuery = "SELECT NAME,DESCRIPTION FROM ROLES;";
+  const std::string sql = "SELECT NAME, DESCRIPTION FROM ROLES;";
 
   auto getAllRolesCallback = [](void *data, int argc, char **argv, char **azColName) {
     if ( 2 == argc )
@@ -80,7 +72,7 @@ knocknock::tRoles CRoleData::GetAllRoles() const
     }
     return 0;
   };
-  m_rDBDriver.ExecuteSQLCommand( sqlQuery, getAllRolesCallback, &roles );
+  m_rDBDriver.ExecutePreparedStatement(sql, {}, getAllRolesCallback, &roles);
 
   return roles;
 }

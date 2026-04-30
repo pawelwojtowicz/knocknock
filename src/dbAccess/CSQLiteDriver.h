@@ -13,8 +13,12 @@ public:
   bool Open( const std::string& dbFilename) override;
   void Close() override;
 
-private:
   bool ExecuteSQLCommand( const std::string& command, tSQLiteCallback callbackFunction, void* data ) override;
+
+  bool ExecutePreparedStatement( const std::string& sql,
+                                 const std::vector<std::string>& params,
+                                 tSQLiteCallback callbackFunction,
+                                 void* data ) override;
 
 private:
   sqlite3 *m_pDBEngine = nullptr;

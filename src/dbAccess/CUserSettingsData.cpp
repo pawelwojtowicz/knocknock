@@ -10,43 +10,47 @@ CUserSettingsData::CUserSettingsData(IDBDriver& rDBDriver)
 
 bool CUserSettingsData::AddUserSetting( const knocknock::CUserSetting& userSetting)
 {
-  const std::string sqlQuery = "INSERT INTO USER_SETTINGS ( APPLICATION_ID, APPLICATION_PARAM_NAME, USER_ID, VALUE ) VALUES ( '"+std::to_string(userSetting.GetApplicationId()) +"','"+userSetting.GetParamName()+"','"+userSetting.GetUserId()+"','"+userSetting.GetParamValue()+"');";
-
-  auto insertValueCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
+  const std::string sql = "INSERT INTO USER_SETTINGS (APPLICATION_ID, APPLICATION_PARAM_NAME, USER_ID, VALUE) VALUES (?, ?, ?, ?);";
+  std::vector<std::string> params = {
+    std::to_string(userSetting.GetApplicationId()),
+    userSetting.GetParamName(),
+    userSetting.GetUserId(),
+    userSetting.GetParamValue()
   };
 
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 bool CUserSettingsData::UpdateUserSetting(const knocknock::CUserSetting& userSetting)
 {
-  const std::string sqlQuery = "UPDATE USER_SETTINGS SET VALUE='"+userSetting.GetParamValue()+"' WHERE APPLICATION_ID="+std::to_string(userSetting.GetApplicationId())+" AND APPLICATION_PARAM_NAME='"+userSetting.GetParamName()+"' AND USER_ID='"+userSetting.GetUserId()+"';"; 
-  auto updateCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
+  const std::string sql = "UPDATE USER_SETTINGS SET VALUE=? WHERE APPLICATION_ID=? AND APPLICATION_PARAM_NAME=? AND USER_ID=?;";
+  std::vector<std::string> params = {
+    userSetting.GetParamValue(),
+    std::to_string(userSetting.GetApplicationId()),
+    userSetting.GetParamName(),
+    userSetting.GetUserId()
   };
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, updateCallback, 0 ) ;
+
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 bool CUserSettingsData::DeleteUserSetting( const int appId, const std::string& paramName, const std::string& userId )
 {
-  std::string deleteParamQuery = "DELETE FROM USER_SETTINGS WHERE APPLICATION_ID="+std::to_string(appId)+" AND APPLICATION_PARAM_NAME='"+paramName+"' AND USER_ID='"+userId+"';";
+  const std::string sql = "DELETE FROM USER_SETTINGS WHERE APPLICATION_ID=? AND APPLICATION_PARAM_NAME=? AND USER_ID=?;";
+  std::vector<std::string> params = { std::to_string(appId), paramName, userId };
 
-  auto deleteCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
-  };
-  return m_rDBDriver.ExecuteSQLCommand( deleteParamQuery, deleteCallback, 0 );
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 knocknock::tUserSettingsArray CUserSettingsData::GetUserSettings( const int  appId, const std::string& userId)
 {
-  knocknock::tUserSettingsArray userSettings = {} ;
+  knocknock::tUserSettingsArray userSettings = {};
 
-  std::string getUserSettingsQuery = "SELECT APPLICATION_ID, APPLICATION_PARAM_NAME, USER_ID, VALUE FROM USER_SETTINGS WHERE APPLICATION_ID="+std::to_string(appId)+" AND USER_ID='"+userId+"';";
-  
-  
+  const std::string sql = "SELECT APPLICATION_ID, APPLICATION_PARAM_NAME, USER_ID, VALUE FROM USER_SETTINGS WHERE APPLICATION_ID=? AND USER_ID=?;";
+  std::vector<std::string> params = { std::to_string(appId), userId };
+
   auto getUserSettingsCallback = [](void *data, int argc, char **argv, char **azColName) {
-    if (argc == 4 )
+    if (argc == 4)
     {
       knocknock::tUserSettingsArray* pUserSettings = (knocknock::tUserSettingsArray*)data;
       pUserSettings->push_back(knocknock::CUserSetting(atoi(argv[0]), argv[1], argv[2], argv[3]));
@@ -54,7 +58,7 @@ knocknock::tUserSettingsArray CUserSettingsData::GetUserSettings( const int  app
     return 0;
   };
 
-  m_rDBDriver.ExecuteSQLCommand( getUserSettingsQuery, getUserSettingsCallback, &userSettings );
+  m_rDBDriver.ExecutePreparedStatement(sql, params, getUserSettingsCallback, &userSettings);
   return userSettings;
 }
 
