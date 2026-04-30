@@ -48,7 +48,14 @@ bool CJSONSerializer::Deserialize(const std::string& rInput)
 
   for (const auto &item : jsonModel.items())
   {
-    m_rKeyValueMap[item.key()] = item.value().get<std::string>();
+    if (item.value().is_string())
+    {
+      m_rKeyValueMap[item.key()] = item.value().get<std::string>();
+    }
+    else if (!item.value().is_null() && !item.value().is_structured())
+    {
+      m_rKeyValueMap[item.key()] = item.value().dump();
+    }
   }
   
   return true;
