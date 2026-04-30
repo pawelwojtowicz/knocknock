@@ -19,6 +19,11 @@ public:
   virtual void Close() = 0;
 
   virtual bool ExecuteSQLCommand( const std::string& command, tSQLiteCallback callbackFunction, void* data ) = 0;
+
+  virtual bool ExecutePreparedStatement( const std::string& sql,
+                                         const std::vector<std::string>& params,
+                                         tSQLiteCallback callbackFunction,
+                                         void* data ) = 0;
 };
 
 }

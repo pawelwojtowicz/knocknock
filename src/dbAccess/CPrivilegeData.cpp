@@ -12,39 +12,32 @@ CPrivilegeData::CPrivilegeData( IDBDriver& dbDriver)
 
 bool CPrivilegeData::AddPrivilege( const knocknock::CPrivilege& privilege)
 {
-  const std::string sqlQuery = "INSERT INTO PRIVILEGES ( SHORT_DESC, LONG_DESC ) VALUES ('"+privilege.GetShortDesc() +"','"+privilege.GetLongDesc()+"');";
+  const std::string sql = "INSERT INTO PRIVILEGES (SHORT_DESC, LONG_DESC) VALUES (?, ?);";
+  std::vector<std::string> params = { privilege.GetShortDesc(), privilege.GetLongDesc() };
 
-  auto insertValueCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
-  };
-
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, insertValueCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 bool CPrivilegeData::UpdatePrivilege(const knocknock::CPrivilege& privilege )
 {
-  const std::string sqlQuery = "UPDATE PRIVILEGES SET SHORT_DESC='"+privilege.GetShortDesc() +"', LONG_DESC='"+privilege.GetLongDesc()+"' WHERE SHORT_DESC='"+privilege.GetShortDesc() +"';"; 
-  auto updateValueCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
-  };
+  const std::string sql = "UPDATE PRIVILEGES SET LONG_DESC=? WHERE SHORT_DESC=?;";
+  std::vector<std::string> params = { privilege.GetLongDesc(), privilege.GetShortDesc() };
 
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, updateValueCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 bool CPrivilegeData::DeletePrivilege( const std::string& shortDesc)
 {
-  const std::string sqlQuery = "DELETE FROM PRIVILEGES WHERE SHORT_DESC='"+shortDesc+"';";
+  const std::string sql = "DELETE FROM PRIVILEGES WHERE SHORT_DESC=?;";
+  std::vector<std::string> params = { shortDesc };
 
-  auto deleteCallback = [](void *data, int argc, char **argv, char **azColName) {
-    return 0;
-  };
-
-  return m_rDBDriver.ExecuteSQLCommand( sqlQuery, deleteCallback, 0 ) ;
+  return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
 }
 
 std::optional<knocknock::CPrivilege> CPrivilegeData::GetPrivilege( const std::string& shortDesc)
 {
-  const std::string sqlQuery = "SELECT SHORT_DESC, LONG_DESC FROM PRIVILEGES WHERE SHORT_DESC='"+shortDesc+"';";
+  const std::string sql = "SELECT SHORT_DESC, LONG_DESC FROM PRIVILEGES WHERE SHORT_DESC=?;";
+  std::vector<std::string> params = { shortDesc };
 
   knocknock::CPrivilege privilege;
 
@@ -57,7 +50,7 @@ std::optional<knocknock::CPrivilege> CPrivilegeData::GetPrivilege( const std::st
     return 0;
   };
 
-  if ( m_rDBDriver.ExecuteSQLCommand( sqlQuery, getPrivilegeCallback, &privilege ) )
+  if ( m_rDBDriver.ExecutePreparedStatement(sql, params, getPrivilegeCallback, &privilege) )
   {
     if ( !privilege.GetShortDesc().empty() )
     {
@@ -71,7 +64,7 @@ std::optional<knocknock::CPrivilege> CPrivilegeData::GetPrivilege( const std::st
 knocknock::tPrivilegeArray CPrivilegeData::GetAllPrivileges()
 {
   knocknock::tPrivilegeArray privileges = {};
-  const std::string sqlQuery = "SELECT SHORT_DESC,LONG_DESC FROM PRIVILEGES;";
+  const std::string sql = "SELECT SHORT_DESC, LONG_DESC FROM PRIVILEGES;";
 
   auto getAllPrivilegesCallback = [](void *data, int argc, char **argv, char **azColName) {
     if ( 2 == argc )
@@ -81,7 +74,7 @@ knocknock::tPrivilegeArray CPrivilegeData::GetAllPrivileges()
     }
     return 0;
   };
-  m_rDBDriver.ExecuteSQLCommand( sqlQuery, getAllPrivilegesCallback, &privileges );
+  m_rDBDriver.ExecutePreparedStatement(sql, {}, getAllPrivilegesCallback, &privileges);
 
   return privileges;
 }

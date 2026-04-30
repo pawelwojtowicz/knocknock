@@ -6,35 +6,35 @@
 namespace DBAccess
 {
 
-CDatabase::CDatabase()
-: m_dbDriver()
-, m_applicationData(m_dbDriver)
-, m_applicatonParamData(m_dbDriver)
-, m_privilegeData(m_dbDriver)
-, m_roleData(m_dbDriver)
-, m_role2PrivilegeMappingData(m_dbDriver)
-, m_sysParamData(m_dbDriver)
-, m_userData(m_dbDriver)
-, m_user2RoleMappingData(m_dbDriver)
-, m_userSettingsData(m_dbDriver)
+CDatabase::CDatabase( IDBDriver& rDBDriver )
+: m_rDBDriver(rDBDriver)
+, m_applicationData(m_rDBDriver)
+, m_applicatonParamData(m_rDBDriver)
+, m_privilegeData(m_rDBDriver)
+, m_roleData(m_rDBDriver)
+, m_role2PrivilegeMappingData(m_rDBDriver)
+, m_sysParamData(m_rDBDriver)
+, m_userData(m_rDBDriver)
+, m_user2RoleMappingData(m_rDBDriver)
+, m_userSettingsData(m_rDBDriver)
 {
 }
 
 void CDatabase::OpenDatabase( const std::string& dbFilename )
 {
   bool dbExisted ( std::filesystem::exists( dbFilename) );
-  m_dbDriver.Open(dbFilename);
+  m_rDBDriver.Open(dbFilename);
 
   if (!dbExisted)
   {
-    CDBStructureBuilder dbBuilder( m_dbDriver );
+    CDBStructureBuilder dbBuilder( m_rDBDriver );
     dbBuilder.PrepareDatabaseStructure();
   }
 }
 
 void CDatabase::Close()
 {
-  m_dbDriver.Close();
+  m_rDBDriver.Close();
 
 }
 
