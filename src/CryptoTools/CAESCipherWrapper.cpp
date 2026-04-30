@@ -1,6 +1,5 @@
 #include "CAESCipherWrapper.h"
 #include <openssl/evp.h>
-#include <openssl/aes.h>
 #include <openssl/err.h>
 #include <sstream>
 #include <iomanip>

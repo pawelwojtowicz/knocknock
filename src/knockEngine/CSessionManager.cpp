@@ -130,7 +130,7 @@ const CSession CSessionManager::Touch(const tKeyValueMap& input, tKeyValueMap& o
   return m_emptySession;
 }
 
-const bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
+bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
 {
   CKeyValueHelper inputHelper(input);
   std::string sessionId{};
