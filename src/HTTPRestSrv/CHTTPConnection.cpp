@@ -26,7 +26,9 @@ void CHTTPConnection::WaitForRequest()
     }
     else
     {
-
+      self->m_deadlineTimer.cancel();
+      boost::beast::error_code closeEc;
+      self->m_socket.close(closeEc);
     }
   });
   CheckDeadline();
