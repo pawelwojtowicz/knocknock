@@ -1,27 +1,40 @@
 #include "CAuthenticationChallengeTools.h"
-#include <time.h>
 #include "CSHA256Hash.h"
+#include <openssl/rand.h>
+#include <sstream>
+#include <iomanip>
+#include <vector>
 
 namespace knocknock
 {
 
-std::string CAuthenticationChallengeTools::GenerateAuthenticationChallenge( const std::string& userId)
+static std::string generateRandomHex(int byteCount)
 {
-  time_t _tm =time(NULL );
-  struct tm * curtime = localtime ( &_tm );
+  std::vector<unsigned char> buffer(byteCount);
+  RAND_bytes(buffer.data(), byteCount);
 
-  return ( userId + " " +asctime(curtime) );
+  std::stringstream ss;
+  ss << std::hex << std::setfill('0');
+  for (unsigned char b : buffer)
+  {
+    ss << std::setw(2) << static_cast<int>(b);
+  }
+  return ss.str();
 }
 
-std::string CAuthenticationChallengeTools::GenerateSessionId( const std::string& userId)
+std::string CAuthenticationChallengeTools::GenerateAuthenticationChallenge(const std::string& userId)
 {
-  std::string rawChallenge = GenerateAuthenticationChallenge(userId);
-  std::string hexEncodedSessionId;
+  return generateRandomHex(32);
+}
+
+std::string CAuthenticationChallengeTools::GenerateSessionId(const std::string& userId)
+{
+  std::string rawChallenge = generateRandomHex(32);
   std::string rawBinarySessionId;
+  std::string hexEncodedSessionId;
 
   if (CSHA256Hash::CalculateHash(rawChallenge, rawBinarySessionId, hexEncodedSessionId))
   {
-    // Return the hex-encoded session ID as plain text (not raw binary)
     return hexEncodedSessionId;
   }
   return std::string{};
