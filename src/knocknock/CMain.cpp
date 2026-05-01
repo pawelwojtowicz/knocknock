@@ -7,6 +7,11 @@ CMain globalMain;
 
 CMain::CMain()
 : m_arguments()
+, m_configuration()
+, m_sqliteDriver()
+, m_database(m_sqliteDriver)
+, m_sessionManager( m_database,m_configuration)
+, m_httpChannel( m_sessionManager )
 , m_logger( ALL, Logger::CSimpleLogger::eComplete )
 {
 	__pExecutable = this;
@@ -52,6 +57,7 @@ bool CMain::Initialize()
 	}
 	LOG( INFO, "Configuration file %s loaded successfully", configFileName.c_str() );
 
+	m_httpChannel.Initialize( m_configuration );
 	return true;
 }
 
@@ -60,11 +66,19 @@ int CMain::Run()
 {
   LOG( INFO, "CMain::Run() called" );
 
+	while (1) {
+		std::this_thread::sleep_for(std::chrono::seconds(1));	
+	}
+
+
   return 0;
 }
 
 void CMain::Shutdown()
 {
+	m_httpChannel.Shutdown();
+
+	m_sessionManager.Shutdown();
   LOG( INFO, "CMain::Shutdown() called" );
 }
 

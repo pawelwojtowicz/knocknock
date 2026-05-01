@@ -2,7 +2,11 @@
 #include <string>
 #include <vector>
 #include <CConfiguration.h>
+#include <CSQLiteDriver.h>
+#include <CDatabase.h>
+#include <CSessionManager.h>
 #include <CSimpleLogger.h>
+#include "CHTTPChannel.h"
 
 namespace knocknock
 {
@@ -27,6 +31,14 @@ private:
 	std::vector<std::string> m_arguments;
 
 	CConfiguration m_configuration;
+
+	DBAccess::CSQLiteDriver m_sqliteDriver;
+	DBAccess::CDatabase m_database;
+
+	CSessionManager m_sessionManager;
+
+	CHTTPChannel m_httpChannel;
+
 
   Logger::CSimpleLogger m_logger;
 
