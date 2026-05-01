@@ -25,7 +25,7 @@ public:
   void Shutdown();
 
 private:
-  void AcceptConnection( boost::asio::ip::tcp::socket& socket, boost::system::error_code ec);
+  void AcceptConnection( std::shared_ptr<boost::asio::ip::tcp::socket> socket );
 private:
   CProcessorRegistry m_processorRegistry;
 

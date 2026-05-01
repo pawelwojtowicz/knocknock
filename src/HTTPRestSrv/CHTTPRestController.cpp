@@ -39,8 +39,8 @@ bool CHTTPRestController::Initialize( const HTTPServerConfig& config )
   m_threadPool = std::make_unique<boost::asio::thread_pool>(config.threadPoolSize);
 
   // Start accepting connections
-  boost::asio::ip::tcp::socket socket(m_ioContext);
-  AcceptConnection(socket, boost::system::error_code());
+  auto socket = std::make_shared<boost::asio::ip::tcp::socket>(m_ioContext);
+  AcceptConnection(socket);
 
   // Start multiple I/O threads
   unsigned int numThreads = std::thread::hardware_concurrency();
@@ -78,20 +78,20 @@ void CHTTPRestController::Shutdown()
 }
 
 
-void CHTTPRestController::AcceptConnection( boost::asio::ip::tcp::socket& socket, boost::system::error_code ec)
+void CHTTPRestController::AcceptConnection( std::shared_ptr<boost::asio::ip::tcp::socket> socket )
 {
-  m_acceptor.async_accept(socket, [&] ( boost::beast::error_code ec ) {
+  m_acceptor.async_accept(*socket, [this, socket] ( boost::beast::error_code ec ) {
     if ( !ec )
     {
-      auto connection = std::make_shared<CHTTPConnection>( m_processorRegistry, std::move( socket ), *m_threadPool );
+      auto connection = std::make_shared<CHTTPConnection>( m_processorRegistry, std::move( *socket ), *m_threadPool );
       if ( connection )
       {
         connection->WaitForRequest();
       }
     }
-    AcceptConnection( socket, ec);
+    auto nextSocket = std::make_shared<boost::asio::ip::tcp::socket>(m_ioContext);
+    AcceptConnection( nextSocket );
   });
-
 }
 
 }
