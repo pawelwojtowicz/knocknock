@@ -1,5 +1,6 @@
 #include "CHTTPConnection.h"
 #include "HTTPServerTypes.h"
+#include <map>
 #include <iostream>
 
 namespace HTTPServer
@@ -64,11 +65,18 @@ void CHTTPConnection::ProcessRequest()
   const std::string url( m_request.target() );
   const std::string requestBody = m_request.body();
 
+  std::map<std::string, std::string> requestHeaders;
+  for ( const auto& field : m_request )
+  {
+    requestHeaders[field.name_string()] = field.value();
+  };
+
   // Post the request processing to the thread pool
   std::shared_ptr<CHTTPConnection> self = shared_from_this();
-  boost::asio::post(m_threadPool, [self, method, url, requestBody]() {
+  boost::asio::post(m_threadPool, [self, method, url, requestHeaders, requestBody]() {
     std::string responseBody;
-    bool success = self->m_serviceContext.ProcessRequest(method, url, requestBody, responseBody);
+    std::map<std::string, std::string> responseHeaders;
+    bool success = self->m_serviceContext.ProcessRequest(method, url, requestHeaders, requestBody, responseHeaders, responseBody);
     
     // Post the response back to the I/O thread
     std::string responseBodyCopy = responseBody;

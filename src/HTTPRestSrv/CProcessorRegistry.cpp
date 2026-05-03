@@ -18,8 +18,10 @@ bool CProcessorRegistry::RegisterRequestProcessor( const HTTPServer::HttpMethod 
 }
 
 bool CProcessorRegistry::ProcessRequest(  const HTTPServer::HttpMethod method, 
-                                          const std::string& url, 
-                                          const std::string& requestBody, 
+                                          const std::string& url,
+                                          const std::map<std::string, std::string>& requestHeaders, 
+                                          const std::string& requestBody,
+                                          std::map<std::string, std::string>& responseHeaders,
                                           std::string& responseBody)
 {
   URLInfo urlMetaData;
@@ -29,7 +31,7 @@ bool CProcessorRegistry::ProcessRequest(  const HTTPServer::HttpMethod method,
     {
       if ( ( std::get<METHOD>(processor) == method ) && std::get<URLMATCHER>(processor)->PathMatches( urlMetaData.path ) )
       {
-        return std::get<PROCESSOR>(processor)->ProcessRequest( urlMetaData, requestBody, responseBody );
+        return std::get<PROCESSOR>(processor)->ProcessRequest( urlMetaData, requestHeaders, requestBody, responseHeaders, responseBody );
       }
     }
   } 

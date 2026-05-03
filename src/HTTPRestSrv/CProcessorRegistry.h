@@ -2,6 +2,7 @@
 #include <tuple>
 #include <list>
 #include <memory>
+#include <map>
 #include "HTTPServerTypes.h"
 #include "IServiceContext.h"
 #include "IRequestProcessor.h"
@@ -20,9 +21,11 @@ public:
   bool RegisterRequestProcessor( const HTTPServer::HttpMethod method, const std::string& urlPattern, std::shared_ptr<IRequestProcessor>& processor );
 
 private:
-  bool ProcessRequest(  const HTTPServer::HttpMethod method, 
+  bool ProcessRequest(  const HTTPServer::HttpMethod method,
                         const std::string& url, 
-                        const std::string& requestBody, 
+                        const std::map<std::string, std::string>& requestHeaders,
+                        const std::string& requestBody,
+                        std::map<std::string, std::string>& responseHeaders, 
                         std::string& responseBody) override;
 
 private:
