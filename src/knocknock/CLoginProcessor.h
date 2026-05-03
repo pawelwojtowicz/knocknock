@@ -10,10 +10,14 @@ public:
   CLoginProcessor(IKnocknockService& knocknockService);
   ~CLoginProcessor() override = default;
 
-  bool ProcessRequest( const HTTPServer::URLInfo& urlInfo, const std::string& requestBody, std::string& responseBody ) override;
+  bool ProcessRequest(  const HTTPServer::URLInfo& urlInfo,
+                        const std::map<std::string, std::string>& requestHeaders,
+                        const std::string& requestBody,
+                        std::map<std::string, std::string>& responseHeaders,
+                        std::string& responseBody ) override;
 
 private:
-  IKnocknockService& knocknockService;
+  IKnocknockService& m_knocknockService;
 };
 
 } // namespace knocknock  

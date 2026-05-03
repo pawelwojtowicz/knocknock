@@ -57,6 +57,12 @@ bool CMain::Initialize()
 	}
 	LOG( INFO, "Configuration file %s loaded successfully", configFileName.c_str() );
 
+	std::string filename = m_configuration.GetParamString("primaryDBLocation", "knocknock.db");
+	LOG( INFO, "Opening database at location: %s", filename.c_str() );
+	m_database.OpenDatabase( filename );
+
+	m_sessionManager.Initialize();
+
 	m_httpChannel.Initialize( m_configuration );
 	return true;
 }
