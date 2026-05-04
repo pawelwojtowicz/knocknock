@@ -80,6 +80,11 @@ void CHTTPConnection::ProcessRequest()
     
     // Post the response back to the I/O thread
     std::string responseBodyCopy = responseBody;
+    for(const auto& header : responseHeaders)
+    {
+      self->m_response.set(header.first, header.second);
+    }
+    
     boost::asio::post(self->m_socket.get_executor(), [self, success, responseBodyCopy]() {
       if (!success)
       {
@@ -100,7 +105,7 @@ void CHTTPConnection::WriteResponse()
   auto self = shared_from_this();
 
   m_response.set( boost::beast::http::field::content_length, std::to_string( m_response.body().size() ) );
-  
+ 
   boost::beast::http::async_write( m_socket, m_response, [ self ]( boost::beast::error_code ec, std::size_t) {
     self->m_socket.shutdown( boost::asio::ip::tcp::socket::shutdown_send, ec);
     self->m_deadlineTimer.cancel();

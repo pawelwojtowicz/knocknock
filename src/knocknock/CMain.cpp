@@ -1,5 +1,7 @@
 #include "CMain.h"
 #include "Logger.h"
+#include "KnocknockConst.h"
+#include <filesystem>
 
 namespace knocknock
 {
@@ -57,9 +59,24 @@ bool CMain::Initialize()
 	}
 	LOG( INFO, "Configuration file %s loaded successfully", configFileName.c_str() );
 
-	std::string filename = m_configuration.GetParamString("primaryDBLocation", "knocknock.db");
-	LOG( INFO, "Opening database at location: %s", filename.c_str() );
-	m_database.OpenDatabase( filename );
+	std::string dbLocation = m_configuration.GetParamString(cParamNamePrimaryDBLocation, cDefaultDBLocation);
+	if ( !std::filesystem::exists(dbLocation) )
+	{
+		LOG( WARNING, "Database file %s does not exist. Scanning secondary location...", dbLocation.c_str() );
+		std::string secondaryDBLocation = m_configuration.GetParamString(cParamNameSecondaryDBLocation, cDefaultDBLocation);
+		if ( std::filesystem::exists(secondaryDBLocation) )
+		{
+			LOG( INFO, "Database file found in secondary location: %s", secondaryDBLocation.c_str() );
+			dbLocation = secondaryDBLocation;
+		}
+		else
+		{
+			LOG( WARNING, "Database file %s not found in secondary location", dbLocation.c_str() );
+		  LOG( WARNING, "Creating empty DB in primary location: %s", dbLocation.c_str() );
+
+		}
+	}
+	m_database.OpenDatabase( dbLocation );
 
 	m_sessionManager.Initialize();
 
