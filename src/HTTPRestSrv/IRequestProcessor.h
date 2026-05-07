@@ -6,6 +6,8 @@ namespace HTTPServer
 {
 struct URLInfo;
 
+using tHeadersMap = std::map<std::string, std::string>;
+
 class IRequestProcessor
 {
 public:
@@ -13,9 +15,9 @@ public:
   virtual ~IRequestProcessor() = default;
 
   virtual bool ProcessRequest(  const URLInfo& urlInfo, 
-                                const std::map<std::string, std::string>& requestHeaders, 
+                                const tHeadersMap& requestHeaders, 
                                 const std::string& requestBody, 
-                                std::map<std::string, std::string>& responseHeaders,
+                                tHeadersMap& responseHeaders,
                                 std::string& responseBody ) = 0;
 };
 }

@@ -10,8 +10,8 @@ using ::testing::Return;
 
 using namespace HTTPServer;
 
-typedef const std::map<std::string, std::string>& ConstMapRef;
-typedef std::map<std::string, std::string>& MutableMapRef;
+typedef const tHeadersMap& ConstMapRef;
+typedef tHeadersMap& MutableMapRef;
 
 class CProcessorMock : public IRequestProcessor
 {
@@ -59,8 +59,8 @@ TEST_F( TestCProcessorRegistry , Basic_CaseA_allGood )
 
   IServiceContext& processor( processorRegistryUnderTest );
 
-  std::map<std::string, std::string> requestHeaders;
-  std::map<std::string, std::string> responseHeaders;
+  tHeadersMap requestHeaders;
+  tHeadersMap responseHeaders;
   
   ASSERT_TRUE( processor.ProcessRequest(  HttpMethod::mthd_POST, url, requestHeaders , requestBody, responseHeaders, responseBody ) ); 
 }
@@ -74,8 +74,8 @@ TEST_F( TestCProcessorRegistry , Basic_CaseA_methodNotFit )
   std::string url( "https://user:pass@example.com:443/path/2/A");
   std::string requestBody("");
   std::string responseBody("");
-  std::map<std::string, std::string> requestHeaders;
-  std::map<std::string, std::string> responseHeaders;
+  tHeadersMap requestHeaders;
+  tHeadersMap responseHeaders;
 
   IServiceContext& processor( processorRegistryUnderTest );
   
@@ -89,8 +89,8 @@ TEST_F( TestCProcessorRegistry , Basic_CaseB_allGood )
   EXPECT_CALL( *processorC, ProcessRequest( _, _, _, _, _ ) ).Times(0);
   
   std::string url( "https://user:pass@example.com:443/path/2/B");
-  std::map<std::string, std::string> requestHeaders;
-  std::map<std::string, std::string> responseHeaders;
+  tHeadersMap requestHeaders;
+  tHeadersMap responseHeaders;
   std::string requestBody("");
   std::string responseBody("");
 
@@ -106,8 +106,8 @@ TEST_F( TestCProcessorRegistry , Basic_CaseB_allGood_returnsFalse )
   EXPECT_CALL( *processorC, ProcessRequest( _, _, _, _, _ ) ).Times(0);
   
   std::string url( "https://user:pass@example.com:443/path/2/B");
-  std::map<std::string, std::string> requestHeaders;
-  std::map<std::string, std::string> responseHeaders;
+  tHeadersMap requestHeaders;
+  tHeadersMap responseHeaders;
   std::string requestBody("");
   std::string responseBody("");
 
@@ -123,8 +123,8 @@ TEST_F( TestCProcessorRegistry , Basic_CaseC_allGood )
   EXPECT_CALL( *processorC, ProcessRequest( _, _, _, _, _ ) ).Times(1).WillOnce(Return(true));
   
   std::string url( "https://user:pass@example.com:443/path/2/C");
-  std::map<std::string, std::string> requestHeaders;
-  std::map<std::string, std::string> responseHeaders;
+  tHeadersMap requestHeaders;
+  tHeadersMap responseHeaders;
   std::string requestBody("");
   std::string responseBody("");
 
@@ -142,8 +142,8 @@ TEST_F( TestCProcessorRegistry , Basic_CallURLNotMatching )
   std::string url( "https://user:pass@example.com:443/patch/me/badly");
   std::string requestBody("");
   std::string responseBody("");
-  std::map<std::string, std::string> requestHeaders;
-  std::map<std::string, std::string> responseHeaders;
+  tHeadersMap requestHeaders;
+  tHeadersMap responseHeaders;
 
   IServiceContext& processor( processorRegistryUnderTest );
   

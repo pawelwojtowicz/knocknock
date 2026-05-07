@@ -11,9 +11,9 @@ public:
   ~CLoginProcessor() override = default;
 
   bool ProcessRequest(  const HTTPServer::URLInfo& urlInfo,
-                        const std::map<std::string, std::string>& requestHeaders,
+                        const HTTPServer::tHeadersMap& requestHeaders,
                         const std::string& requestBody,
-                        std::map<std::string, std::string>& responseHeaders,
+                        HTTPServer::tHeadersMap& responseHeaders,
                         std::string& responseBody ) override;
 
 private:

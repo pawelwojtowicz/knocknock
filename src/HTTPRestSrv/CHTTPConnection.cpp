@@ -2,6 +2,7 @@
 #include "HTTPServerTypes.h"
 #include <map>
 #include <iostream>
+#include "IRequestProcessor.h"
 
 namespace HTTPServer
 {
@@ -65,7 +66,7 @@ void CHTTPConnection::ProcessRequest()
   const std::string url( m_request.target() );
   const std::string requestBody = m_request.body();
 
-  std::map<std::string, std::string> requestHeaders;
+  tHeadersMap requestHeaders;
   for ( const auto& field : m_request )
   {
     requestHeaders[field.name_string()] = field.value();
@@ -75,7 +76,7 @@ void CHTTPConnection::ProcessRequest()
   std::shared_ptr<CHTTPConnection> self = shared_from_this();
   boost::asio::post(m_threadPool, [self, method, url, requestHeaders, requestBody]() {
     std::string responseBody;
-    std::map<std::string, std::string> responseHeaders;
+    tHeadersMap responseHeaders;
     bool success = self->m_serviceContext.ProcessRequest(method, url, requestHeaders, requestBody, responseHeaders, responseBody);
     
     // Post the response back to the I/O thread

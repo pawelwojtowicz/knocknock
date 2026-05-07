@@ -23,9 +23,9 @@ public:
 private:
   bool ProcessRequest(  const HTTPServer::HttpMethod method,
                         const std::string& url, 
-                        const std::map<std::string, std::string>& requestHeaders,
+                        const tHeadersMap& requestHeaders,
                         const std::string& requestBody,
-                        std::map<std::string, std::string>& responseHeaders, 
+                        tHeadersMap& responseHeaders, 
                         std::string& responseBody) override;
 
 private:
