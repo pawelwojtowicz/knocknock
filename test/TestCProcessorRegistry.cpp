@@ -10,17 +10,14 @@ using ::testing::Return;
 
 using namespace HTTPServer;
 
-typedef const tHeadersMap& ConstMapRef;
-typedef tHeadersMap& MutableMapRef;
-
 class CProcessorMock : public IRequestProcessor
 {
 public:
   MOCK_METHOD(bool, ProcessRequest, (const URLInfo& urlInfo,
-                                      ConstMapRef requestHeaders, 
+                                      const tHeadersMap&  requestHeaders, 
                                       const std::string& requestBody, 
-                                      MutableMapRef responseHeaders,
-                                      std::string& responseBody), (override));
+                                      tHeadersMap& responseHeaders,
+                                      RequestResponse& requestResponse), (override));
 };
 
 class TestCProcessorRegistry : public ::testing::Test
@@ -55,14 +52,14 @@ TEST_F( TestCProcessorRegistry , Basic_CaseA_allGood )
 
   std::string url( "https://user:pass@example.com:443/path/2/A");
   std::string requestBody("");
-  std::string responseBody("");
+  RequestResponse requestResponse;
 
   IServiceContext& processor( processorRegistryUnderTest );
 
   tHeadersMap requestHeaders;
   tHeadersMap responseHeaders;
   
-  ASSERT_TRUE( processor.ProcessRequest(  HttpMethod::mthd_POST, url, requestHeaders , requestBody, responseHeaders, responseBody ) ); 
+  ASSERT_TRUE( processor.ProcessRequest(  HttpMethod::mthd_POST, url, requestHeaders , requestBody, responseHeaders, requestResponse ) ); 
 }
 
 TEST_F( TestCProcessorRegistry , Basic_CaseA_methodNotFit )
@@ -73,13 +70,13 @@ TEST_F( TestCProcessorRegistry , Basic_CaseA_methodNotFit )
   
   std::string url( "https://user:pass@example.com:443/path/2/A");
   std::string requestBody("");
-  std::string responseBody("");
+  RequestResponse requestResponse;
   tHeadersMap requestHeaders;
   tHeadersMap responseHeaders;
 
   IServiceContext& processor( processorRegistryUnderTest );
   
-  ASSERT_FALSE( processor.ProcessRequest(  HttpMethod::mthd_GET, url, requestHeaders , requestBody, responseHeaders, responseBody ) ); 
+  ASSERT_FALSE( processor.ProcessRequest(  HttpMethod::mthd_GET, url, requestHeaders , requestBody, responseHeaders, requestResponse ) ); 
 }
 
 TEST_F( TestCProcessorRegistry , Basic_CaseB_allGood )
@@ -92,11 +89,11 @@ TEST_F( TestCProcessorRegistry , Basic_CaseB_allGood )
   tHeadersMap requestHeaders;
   tHeadersMap responseHeaders;
   std::string requestBody("");
-  std::string responseBody("");
+  RequestResponse requestResponse;
 
   IServiceContext& processor( processorRegistryUnderTest );
   
-  ASSERT_TRUE( processor.ProcessRequest(  HttpMethod::mthd_GET, url, requestHeaders , requestBody, responseHeaders, responseBody ) ); 
+  ASSERT_TRUE( processor.ProcessRequest(  HttpMethod::mthd_GET, url, requestHeaders , requestBody, responseHeaders, requestResponse ) ); 
 }
 
 TEST_F( TestCProcessorRegistry , Basic_CaseB_allGood_returnsFalse )
@@ -109,11 +106,11 @@ TEST_F( TestCProcessorRegistry , Basic_CaseB_allGood_returnsFalse )
   tHeadersMap requestHeaders;
   tHeadersMap responseHeaders;
   std::string requestBody("");
-  std::string responseBody("");
+  RequestResponse requestResponse;
 
   IServiceContext& processor( processorRegistryUnderTest );
   
-  ASSERT_FALSE( processor.ProcessRequest(  HttpMethod::mthd_GET, url, requestHeaders , requestBody, responseHeaders, responseBody ) ); 
+  ASSERT_FALSE( processor.ProcessRequest(  HttpMethod::mthd_GET, url, requestHeaders , requestBody, responseHeaders, requestResponse ) ); 
 }
 
 TEST_F( TestCProcessorRegistry , Basic_CaseC_allGood )
@@ -126,11 +123,11 @@ TEST_F( TestCProcessorRegistry , Basic_CaseC_allGood )
   tHeadersMap requestHeaders;
   tHeadersMap responseHeaders;
   std::string requestBody("");
-  std::string responseBody("");
+  RequestResponse requestResponse;
 
   IServiceContext& processor( processorRegistryUnderTest );
   
-  ASSERT_TRUE( processor.ProcessRequest(  HttpMethod::mthd_DELETE, url, requestHeaders , requestBody, responseHeaders, responseBody ) ); 
+  ASSERT_TRUE( processor.ProcessRequest(  HttpMethod::mthd_DELETE, url, requestHeaders , requestBody, responseHeaders, requestResponse ) ); 
 }
 
 TEST_F( TestCProcessorRegistry , Basic_CallURLNotMatching )
@@ -141,11 +138,11 @@ TEST_F( TestCProcessorRegistry , Basic_CallURLNotMatching )
   
   std::string url( "https://user:pass@example.com:443/patch/me/badly");
   std::string requestBody("");
-  std::string responseBody("");
+  RequestResponse requestResponse;
   tHeadersMap requestHeaders;
   tHeadersMap responseHeaders;
 
   IServiceContext& processor( processorRegistryUnderTest );
   
-  ASSERT_FALSE( processor.ProcessRequest(  HttpMethod::mthd_DELETE, url, requestHeaders , requestBody, responseHeaders, responseBody ) ); 
+  ASSERT_FALSE( processor.ProcessRequest(  HttpMethod::mthd_DELETE, url, requestHeaders , requestBody, responseHeaders, requestResponse ) ); 
 }

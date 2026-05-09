@@ -26,7 +26,7 @@ private:
                         const tHeadersMap& requestHeaders,
                         const std::string& requestBody,
                         tHeadersMap& responseHeaders, 
-                        std::string& responseBody) override;
+                        RequestResponse& requestResponse) override;
 
 private:
   tProcessorList m_processors;

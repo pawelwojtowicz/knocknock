@@ -14,10 +14,10 @@ public:
 
   virtual bool ProcessRequest(  const HTTPServer::HttpMethod method, 
                                 const std::string& url, 
-                                const std::map<std::string, std::string>& requestHeaders,
+                                const tHeadersMap& requestHeaders,
                                 const std::string& requestBody, 
-                                std::map<std::string, std::string>& responseHeaders,
-                                std::string& responseBody) = 0;
+                                tHeadersMap& responseHeaders,
+                                RequestResponse& requestResponse) = 0;
 };
 
 }

@@ -75,12 +75,12 @@ void CHTTPConnection::ProcessRequest()
   // Post the request processing to the thread pool
   std::shared_ptr<CHTTPConnection> self = shared_from_this();
   boost::asio::post(m_threadPool, [self, method, url, requestHeaders, requestBody]() {
-    std::string responseBody;
     tHeadersMap responseHeaders;
-    bool success = self->m_serviceContext.ProcessRequest(method, url, requestHeaders, requestBody, responseHeaders, responseBody);
+    RequestResponse requestResponse;
+    bool success = self->m_serviceContext.ProcessRequest(method, url, requestHeaders, requestBody, responseHeaders, requestResponse);
     
     // Post the response back to the I/O thread
-    std::string responseBodyCopy = responseBody;
+    std::string responseBodyCopy = requestResponse.responseBody;
     for(const auto& header : responseHeaders)
     {
       self->m_response.set(header.first, header.second);

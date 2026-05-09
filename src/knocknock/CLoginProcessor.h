@@ -14,7 +14,7 @@ public:
                         const HTTPServer::tHeadersMap& requestHeaders,
                         const std::string& requestBody,
                         HTTPServer::tHeadersMap& responseHeaders,
-                        std::string& responseBody ) override;
+                        HTTPServer::RequestResponse& requestResponse ) override;
 
 private:
   IKnocknockService& m_knocknockService;

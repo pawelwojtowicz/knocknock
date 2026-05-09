@@ -14,7 +14,7 @@ bool CLoginProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
                                       const HTTPServer::tHeadersMap& requestHeaders,    
                                       const std::string& requestBody, 
                                       HTTPServer::tHeadersMap& responseHeaders,
-                                      std::string& responseBody )
+                                      HTTPServer::RequestResponse& requestResponse )
 {
   //extract values from request body
   tKeyValueMap input;
@@ -33,7 +33,7 @@ bool CLoginProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
     output["userName"] = session.GetUserName();
 
     CJSONSerializer responseSerializer(output);
-    responseSerializer.Serialize(responseBody);
+    responseSerializer.Serialize(requestResponse.responseBody);
     responseHeaders["Content-Type"] = "application/json";
   }
 

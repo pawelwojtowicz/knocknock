@@ -1,12 +1,11 @@
 #pragma once
 #include <map>
 #include <string>
+#include "HTTPServerTypes.h"
 
 namespace HTTPServer
 {
 struct URLInfo;
-
-using tHeadersMap = std::map<std::string, std::string>;
 
 class IRequestProcessor
 {
@@ -18,6 +17,6 @@ public:
                                 const tHeadersMap& requestHeaders, 
                                 const std::string& requestBody, 
                                 tHeadersMap& responseHeaders,
-                                std::string& responseBody ) = 0;
+                                RequestResponse& requestResponse ) = 0;
 };
 }
