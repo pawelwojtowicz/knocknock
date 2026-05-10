@@ -80,20 +80,20 @@ void CHTTPConnection::ProcessRequest()
     bool success = self->m_serviceContext.ProcessRequest(method, url, requestHeaders, requestBody, responseHeaders, requestResponse);
     
     // Post the response back to the I/O thread
-    std::string responseBodyCopy = requestResponse.responseBody;
     for(const auto& header : responseHeaders)
     {
       self->m_response.set(header.first, header.second);
     }
     
-    boost::asio::post(self->m_socket.get_executor(), [self, success, responseBodyCopy]() {
+    boost::asio::post(self->m_socket.get_executor(), [self, success, requestResponse]() {
       if (!success)
       {
         self->HandleInvalid();
       }
       else
       {
-        self->m_response.body() = responseBodyCopy;
+        self->m_response.body() = requestResponse.responseBody;
+        self->m_response.result( requestResponse.responseCode ); 
       }
       self->m_response.prepare_payload();
       self->WriteResponse();

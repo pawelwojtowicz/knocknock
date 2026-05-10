@@ -4,11 +4,11 @@
 
 namespace knocknock
 {
-class CLoginProcessor : public HTTPServer::IRequestProcessor
+class CLogoutProcessor : public HTTPServer::IRequestProcessor
 {
 public:
-  CLoginProcessor(IKnocknockService& knocknockService);
-  ~CLoginProcessor() override = default;
+  CLogoutProcessor(IKnocknockService& knocknockService);
+  ~CLogoutProcessor() override = default;
 
   bool ProcessRequest(  const HTTPServer::URLInfo& urlInfo,
                         const HTTPServer::tHeadersMap& requestHeaders,

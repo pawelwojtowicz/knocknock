@@ -1,16 +1,16 @@
-#include "CLoginProcessor.h"
+#include "CTouchProcessor.h"
 #include <CJSONSerializer.h>
 #include <CSession.h>
 #include "KnocknockConst.h"
 
 namespace knocknock
 {
-CLoginProcessor::CLoginProcessor(IKnocknockService& knocknockService)
+CTouchProcessor::CTouchProcessor(IKnocknockService& knocknockService)
   : m_knocknockService(knocknockService)
 {
 }
 
-bool CLoginProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
+bool CTouchProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
                                       const HTTPServer::tHeadersMap& requestHeaders,    
                                       const std::string& requestBody, 
                                       HTTPServer::tHeadersMap& responseHeaders,
@@ -21,22 +21,15 @@ bool CLoginProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
   CJSONSerializer serializer(input);
   serializer.Deserialize(requestBody);
 
-  tKeyValueMap output; 
+  const CSession session = m_knocknockService.Touch(input, responseHeaders);
+  tKeyValueMap output;
 
-  // Call the Login method of the IKnocknockService implementation
-  const CSession session = m_knocknockService.Login(input, output);
-
-  switch ( session.GetUserSessionState() )
+  switch( session.GetUserSessionState() )
   {
     case UserSessionState::INVALID_SESSION:
     case UserSessionState::AUTH_FAILED:
       requestResponse.responseCode = cHTTPResult_Unauthorized;
-      output["message"] = "Invalid credentials";
-      break;
-    case UserSessionState::AUTH_IN_PROGRESS:
-      requestResponse.responseCode = cHTTPResult_Created;
-      output["sessionId"] = session.GetSessionId();
-
+      output["message"] = "Invalid session";
       break;
     case UserSessionState::AUTH_SUCCESS:
       requestResponse.responseCode = cHTTPResult_OK;
@@ -46,13 +39,12 @@ bool CLoginProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
       break;
     default:
       requestResponse.responseCode = cHTTPResult_InternalServerError;
-      output["message"] = "Internal server error";
+      output["message"] = "Internal server error";  
       break;
-  } 
+  }
 
   CJSONSerializer responseSerializer(output);
   responseSerializer.Serialize(requestResponse.responseBody);
-  responseHeaders["Content-Type"] = "application/json";
 
   return true; // Return true if processing is successful, false otherwise
 }

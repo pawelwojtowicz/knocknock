@@ -7,6 +7,12 @@ CHTTPChannel.cpp
 CHTTPChannel.h
 CLoginProcessor.cpp
 CLoginProcessor.h
+CLogoutProcessor.cpp
+CLogoutProcessor.h
+CAuthProcessor.cpp
+CAuthProcessor.h
+CTouchProcessor.cpp
+CTouchProcessor.h
 CMain.cpp
 CMain.h
 main.cpp

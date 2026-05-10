@@ -1,6 +1,9 @@
 #include "CHTTPChannel.h"
 #include <HTTPServerConfig.h>
 #include "CLoginProcessor.h"
+#include "CAuthProcessor.h"
+#include "CTouchProcessor.h"
+#include "CLogoutProcessor.h"
 #include <memory>
 
 namespace knocknock
@@ -21,7 +24,10 @@ bool CHTTPChannel::Initialize( const CConfiguration& config )
   httpConfig.port = config.GetParamInt("httpServer.port", 8080);
   httpConfig.threadPoolSize = config.GetParamInt("httpServer.threadPoolSize", 4);
 
-  m_httpController.RegisterProcessor( HTTPServer::HttpMethod::mthd_GET, "/login", std::make_shared<CLoginProcessor>(m_knocknockService) );
+  m_httpController.RegisterProcessor( HTTPServer::HttpMethod::mthd_POST, "/login", std::make_shared<CLoginProcessor>(m_knocknockService) );
+  m_httpController.RegisterProcessor( HTTPServer::HttpMethod::mthd_POST, "/auth", std::make_shared<CAuthProcessor>(m_knocknockService) );
+  m_httpController.RegisterProcessor( HTTPServer::HttpMethod::mthd_POST, "/touch", std::make_shared<CTouchProcessor>(m_knocknockService) );
+  m_httpController.RegisterProcessor( HTTPServer::HttpMethod::mthd_POST, "/logout", std::make_shared<CLogoutProcessor>(m_knocknockService) );
 
   return m_httpController.Initialize( httpConfig );
 }

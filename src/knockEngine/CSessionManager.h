@@ -25,12 +25,17 @@ public:
   virtual ~CSessionManager();
 
   bool Initialize();
+  void Tick();
   void Shutdown();
 private:
   const CSession Login(const tKeyValueMap& input, tKeyValueMap& output) override;
   const CSession Authenticate(const tKeyValueMap& input, tKeyValueMap& output) override;
   const CSession Touch(const tKeyValueMap& input, tKeyValueMap& output) override;
   bool Logout(const tKeyValueMap& input, tKeyValueMap& output) override;
+
+private:
+  //internal utility method to cleanup expired sessions, called periodically by Tick()
+  void CleanupExpiredSessions();
 
 private:
   DBAccess::IDBAccess& m_rDBAccess;

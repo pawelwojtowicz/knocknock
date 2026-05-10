@@ -1,4 +1,5 @@
 #include "CSessionManager.h"
+#include <algorithm>
 #include "CKeyValueHelper.h"
 #include "KnocKnockDictionary.h"
 #include "CTimespan.h"
@@ -152,5 +153,32 @@ bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
   return false;
 }
 
-
+void CSessionManager::Tick()
+{
+  CleanupExpiredSessions();
 }
+
+void CSessionManager::CleanupExpiredSessions()
+{
+    std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
+    int now = CTimespan::GetEpochSeconds();
+
+    for (auto it = m_sessions.begin(); it != m_sessions.end(); )
+    {
+        const CSession& session = it->second;
+        if (session.GetSessionExpires() <= now ||
+            session.GetUserSessionState() == UserSessionState::LOGGED_OUT ||
+            session.GetUserSessionState() == UserSessionState::AUTH_FAILED)
+        {
+            it = m_sessions.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+} // namespace knocknock
+
+

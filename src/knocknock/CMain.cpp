@@ -90,7 +90,8 @@ int CMain::Run()
   LOG( INFO, "CMain::Run() called" );
 
 	while (1) {
-		std::this_thread::sleep_for(std::chrono::seconds(1));	
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		m_sessionManager.Tick();
 	}
 
 
