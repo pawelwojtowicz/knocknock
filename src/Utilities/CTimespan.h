@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 namespace Utilities
 {
@@ -8,11 +9,11 @@ private:
   CTimespan() = default;
 
 public:
-  static int GetEpochSeconds();
-  static void SetTimeline(int seconds);
-  static void AddTimespan(int seconds);
+  static int64_t GetEpochSeconds();
+  static void SetTimeline(int64_t seconds);
+  static void AddTimespan(int64_t seconds);
 
 private:
-  static int m_timestamp;
+  static int64_t m_timestamp;
 };
 } 

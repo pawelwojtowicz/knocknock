@@ -32,6 +32,10 @@ bool CSessionManager::Initialize()
 {
   m_sessionExpirationTimeout = m_rConfiguration.GetParamInt( "sessionExpirationTimeout", m_sessionExpirationTimeout);
 
+  int maxLoginAttempts = m_rConfiguration.GetParamInt(cParamName_MaxLoginAttempts, cParamValue_MaxLoginAttempts);
+  int64_t loginLockoutSeconds = m_rConfiguration.GetParamInt(cParamName_LoginLockoutSeconds, cParamValue_LoginLockoutSeconds);
+  m_loginRateLimiter.Configure(maxLoginAttempts, loginLockoutSeconds);
+
   if ( !m_sessionBuilder.Initialize() )
   {
     return false;
@@ -57,6 +61,14 @@ const CSession CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& o
   std::string userId = {};
   if (inputHelper.GetValue(sLoginUserId, userId))
   {
+    // Rate limiting check
+    int64_t now = CTimespan::GetEpochSeconds();
+    if (!m_loginRateLimiter.IsLoginAllowed(userId, now))
+    {
+      output["message"] = "Too many failed attempts. Try again later.";
+      return m_emptySession;
+    }
+
     auto newSession = m_sessionBuilder.CreateSession(userId);
     if ( newSession && newSession->GetUserSessionState() == UserSessionState::CREATED )
     {
@@ -65,10 +77,15 @@ const CSession CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& o
       if ( session.GetUserSessionState() == UserSessionState::AUTH_SUCCESS )
       {
         session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
+        m_loginRateLimiter.RecordSuccess(userId);
       } 
       else if ( session.GetUserSessionState() == UserSessionState::AUTH_IN_PROGRESS )
       {
         session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_authenticationChallengeTimeout);
+      }
+      else if ( session.GetUserSessionState() == UserSessionState::AUTH_FAILED )
+      {
+        m_loginRateLimiter.RecordFailure(userId, CTimespan::GetEpochSeconds());
       }
 
       {
@@ -112,7 +129,7 @@ const CSession CSessionManager::Touch(const tKeyValueMap& input, tKeyValueMap& o
 {
   CKeyValueHelper inputHelper(input);
   std::string sessionId{};
-  int currentTime = CTimespan::GetEpochSeconds();
+  int64_t currentTime = CTimespan::GetEpochSeconds();
   if ( inputHelper.GetValue(sLoginSessionId, sessionId) && !sessionId.empty() )
   {
     std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
@@ -156,12 +173,13 @@ bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
 void CSessionManager::Tick()
 {
   CleanupExpiredSessions();
+  m_loginRateLimiter.Cleanup(CTimespan::GetEpochSeconds());
 }
 
 void CSessionManager::CleanupExpiredSessions()
 {
     std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
-    int now = CTimespan::GetEpochSeconds();
+    int64_t now = CTimespan::GetEpochSeconds();
 
     for (auto it = m_sessions.begin(); it != m_sessions.end(); )
     {

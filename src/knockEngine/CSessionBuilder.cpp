@@ -42,7 +42,7 @@ std::optional<CSession> CSessionBuilder::CreateSession(const std::string& userId
       if ( userTemplate.has_value() )
       {
         const CUser& userTemplateRef = userTemplate.value();
-        userInfo = CUser(userId, userTemplateRef.getFirstName(), userTemplateRef.getLastName(), userTemplateRef.getAuthenticationMethod(), userTemplateRef.getAuthenticationString() );
+        userInfo = CUser(userId, userTemplateRef.GetFirstName(), userTemplateRef.GetLastName(), userTemplateRef.GetAuthenticationMethod(), userTemplateRef.GetAuthenticationString() );
       }
     }
   }
@@ -56,20 +56,20 @@ std::optional<CSession> CSessionBuilder::CreateSession(const std::string& userId
   std::string sessionId = CAuthenticationChallengeTools::GenerateSessionId(userId);
 
   std::string userAuthMethod( m_defaultAuthMethod );
-  if ( !userInfo->getAuthenticationMethod().empty() ) 
+  if ( !userInfo->GetAuthenticationMethod().empty() ) 
   {
-    userAuthMethod = userInfo->getAuthenticationMethod(); 
+    userAuthMethod = userInfo->GetAuthenticationMethod(); 
   }
 
   std::string userAuthString( m_defaultAuthString );
-  if ( !userInfo->getAuthenticationString().empty() ) 
+  if ( !userInfo->GetAuthenticationString().empty() ) 
   {
-    userAuthString = userInfo->getAuthenticationString(); 
+    userAuthString = userInfo->GetAuthenticationString(); 
   }
 
   CSession newSession(  sessionId,
-                        userInfo->getUserId(), 
-                        userInfo->getFirstName() + " " + userInfo->getLastName(),
+                        userInfo->GetUserId(), 
+                        userInfo->GetFirstName() + " " + userInfo->GetLastName(),
                         userAuthMethod, 
                         userAuthString);
   newSession.UpdateUserSessionState(UserSessionState::CREATED);

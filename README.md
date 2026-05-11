@@ -27,4 +27,6 @@ The configuration can be read from the configuration file and also from the data
 | cookiePath | string | "/"|
 | cookieSecure| bool |false|
 | cookieSameSite |[STRICT\|LAX\|NONE] | |
+| maxLoginAttempts | integer | Maximum number of consecutive failed login attempts per userId before lockout. Default: 5 |
+| loginLockoutSeconds | integer | Base lockout duration in seconds after exceeding max attempts. Doubles with each subsequent failure (exponential backoff), capped at 64x the base value. Default: 30 |
 

@@ -29,7 +29,7 @@ public:
   }
 
   IApplicationParamData& GetApplicationParamData() override {
-    return m_applicatonParamData;
+    return m_applicationParamData;
   }
 
   IPrivilegeData& GetPrivilegeData() override {
@@ -68,7 +68,7 @@ private:
 
   CApplicationData m_applicationData;
 
-  CApplicationParamData m_applicatonParamData;
+  CApplicationParamData m_applicationParamData;
 
   CPrivilegeData m_privilegeData;
 

@@ -1,13 +1,14 @@
 #pragma once
 #include <string>
+#include <map>
 
 namespace HTTPServer
 {
 
 struct RequestResponse
 {
-std::string responseBody;
-int responseCode;
+std::string responseBody = {};
+int responseCode = { -1 };
 };
 
 enum class HttpMethod 

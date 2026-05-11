@@ -10,11 +10,11 @@ public:
   CUser() = default;
   CUser( const std::string& userId, const std::string& userFirstName, const std::string& userLastName,const std::string& authMethod, const std::string& authString );
 
-  const std::string& getUserId() const;
-  const std::string& getFirstName() const;
-  const std::string& getLastName() const;
-  const std::string& getAuthenticationMethod() const;
-  const std::string& getAuthenticationString() const;
+  const std::string& GetUserId() const;
+  const std::string& GetFirstName() const;
+  const std::string& GetLastName() const;
+  const std::string& GetAuthenticationMethod() const;
+  const std::string& GetAuthenticationString() const;
 
 private:
   std::string m_userId = {};
