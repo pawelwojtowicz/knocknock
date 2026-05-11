@@ -4,6 +4,8 @@
 #include <CAuthenticationChallengeTools.h>
 #include <CAESCipherWrapper.h>
 #include "CKeyValueHelper.h"
+#include <algorithm>
+#include <iostream>
 
 namespace knocknock {
 
@@ -42,6 +44,9 @@ tKeyValueMap CSCRAuthMethod::Authenticate(CSession& session, const tKeyValueMap&
     response["error"] = "missing_response";
     return response;
   }
+
+  // convert to lowercase for case-insensitive comparison
+  std::transform(challengeResponse.begin(), challengeResponse.end(), challengeResponse.begin(), ::tolower);
 
   const std::string authChallenge = session.GetAuthenticationStateVariable(SCR_KEY_CHALLENGE);
   if (authChallenge.empty())
