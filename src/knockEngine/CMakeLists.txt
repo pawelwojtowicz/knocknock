@@ -11,6 +11,8 @@ CJSONSerializer.cpp
 CJSONSerializer.h
 CKeyValueHelper.cpp 
 CKeyValueHelper.h
+CLoginRateLimiter.cpp
+CLoginRateLimiter.h
 CSessionManager.cpp
 CSessionManager.h
 CSCRAuthMethod.cpp

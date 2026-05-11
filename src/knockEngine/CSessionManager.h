@@ -6,6 +6,7 @@
 #include "CSession.h"
 #include "CSessionBuilder.h"
 #include "CAuthenticator.h"
+#include "CLoginRateLimiter.h"
 #include "CSessionVerifier.h"
 
 namespace DBAccess
@@ -56,6 +57,8 @@ private:
   int64_t m_sessionExpirationTimeout;
 
   int64_t m_authenticationChallengeTimeout;
+
+  CLoginRateLimiter m_loginRateLimiter;
 };
 
 }
