@@ -98,10 +98,10 @@ TEST( CSQLiteDriver, Users_GetUserById_Existing )
   auto user = database.GetUserData().GetUserByUserId( "don");
 
   ASSERT_TRUE( user );
-  EXPECT_EQ( "John", user->getFirstName());
-  EXPECT_EQ( "Doe", user->getLastName());
-  EXPECT_EQ( "otp", user->getAuthenticationMethod() );
-  EXPECT_EQ( "1234567890", user->getAuthenticationString() );
+  EXPECT_EQ( "John", user->GetFirstName());
+  EXPECT_EQ( "Doe", user->GetLastName());
+  EXPECT_EQ( "otp", user->GetAuthenticationMethod() );
+  EXPECT_EQ( "1234567890", user->GetAuthenticationString() );
 
   database.Close();
 }
@@ -141,10 +141,10 @@ TEST( CSQLiteDriver, Users_UpdateUser_Existing )
 
   auto user = database.GetUserData().GetUserByUserId( userId );
   ASSERT_TRUE( user );
-  EXPECT_EQ( firstNameAfterUpdate, user->getFirstName() );
-  EXPECT_EQ( lastNameAfterUpdate, user->getLastName() );
-  EXPECT_EQ( authMethodAfterUpdate, user->getAuthenticationMethod() );
-  EXPECT_EQ( authStringAfterUpdate, user->getAuthenticationString() );
+  EXPECT_EQ( firstNameAfterUpdate, user->GetFirstName() );
+  EXPECT_EQ( lastNameAfterUpdate, user->GetLastName() );
+  EXPECT_EQ( authMethodAfterUpdate, user->GetAuthenticationMethod() );
+  EXPECT_EQ( authStringAfterUpdate, user->GetAuthenticationString() );
   database.Close();
 }
 

@@ -112,7 +112,7 @@ const CSession CSessionManager::Touch(const tKeyValueMap& input, tKeyValueMap& o
 {
   CKeyValueHelper inputHelper(input);
   std::string sessionId{};
-  int currentTime = CTimespan::GetEpochSeconds();
+  int64_t currentTime = CTimespan::GetEpochSeconds();
   if ( inputHelper.GetValue(sLoginSessionId, sessionId) && !sessionId.empty() )
   {
     std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
@@ -161,7 +161,7 @@ void CSessionManager::Tick()
 void CSessionManager::CleanupExpiredSessions()
 {
     std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
-    int now = CTimespan::GetEpochSeconds();
+    int64_t now = CTimespan::GetEpochSeconds();
 
     for (auto it = m_sessions.begin(); it != m_sessions.end(); )
     {

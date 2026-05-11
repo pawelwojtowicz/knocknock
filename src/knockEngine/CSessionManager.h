@@ -1,5 +1,6 @@
 #pragma once
 #include "IKnocknockService.h"
+#include <cstdint>
 #include <map>
 #include <shared_mutex>
 #include "CSession.h"
@@ -52,9 +53,9 @@ private:
 
   tSessionMap m_sessions;
 
-  int m_sessionExpirationTimeout;
+  int64_t m_sessionExpirationTimeout;
 
-  int m_authenticationChallengeTimeout;
+  int64_t m_authenticationChallengeTimeout;
 };
 
 }

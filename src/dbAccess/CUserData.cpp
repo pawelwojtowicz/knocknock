@@ -14,11 +14,11 @@ bool CUserData::AddUser( const knocknock::CUser& user )
 {
   const std::string sql = "INSERT INTO USERS (USER_ID, FIRST_NAME, LAST_NAME, AUTH_METHOD, AUTH_STRING) VALUES (?, ?, ?, ?, ?);";
   std::vector<std::string> params = {
-    user.getUserId(),
-    user.getFirstName(),
-    user.getLastName(),
-    user.getAuthenticationMethod(),
-    user.getAuthenticationString()
+    user.GetUserId(),
+    user.GetFirstName(),
+    user.GetLastName(),
+    user.GetAuthenticationMethod(),
+    user.GetAuthenticationString()
   };
 
   return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
@@ -28,11 +28,11 @@ bool CUserData::UpdateUser( const knocknock::CUser& user )
 {
   const std::string sql = "UPDATE USERS SET FIRST_NAME=?, LAST_NAME=?, AUTH_METHOD=?, AUTH_STRING=? WHERE USER_ID=?;";
   std::vector<std::string> params = {
-    user.getFirstName(),
-    user.getLastName(),
-    user.getAuthenticationMethod(),
-    user.getAuthenticationString(),
-    user.getUserId()
+    user.GetFirstName(),
+    user.GetLastName(),
+    user.GetAuthenticationMethod(),
+    user.GetAuthenticationString(),
+    user.GetUserId()
   };
 
   return m_rDBDriver.ExecutePreparedStatement(sql, params, nullptr, nullptr);
@@ -64,7 +64,7 @@ std::optional<knocknock::CUser> CUserData::GetUserByUserId( const std::string& u
 
   if ( m_rDBDriver.ExecutePreparedStatement(sql, params, getUserCallback, &user) )
   {
-    if ( !user.getUserId().empty() )
+    if ( !user.GetUserId().empty() )
     {
       return std::optional<knocknock::CUser>(user);
     }

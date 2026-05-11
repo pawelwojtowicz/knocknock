@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <cstdint>
 #include "knocknockTypes.h"
 
 namespace knocknock
@@ -23,8 +24,8 @@ public:
   void AddAuthenticationStateVariable( const std::string& key, const std::string& value ) { m_authenticationState[key] = value; }
   const std::string GetAuthenticationStateVariable( const std::string& key ) const;
 
-  void SetSessionExpires(int expires) { m_sessionExpires = expires; }
-  int GetSessionExpires() const { return m_sessionExpires; }
+  void SetSessionExpires(int64_t expires) { m_sessionExpires = expires; }
+  int64_t GetSessionExpires() const { return m_sessionExpires; }
 
 
 private:
@@ -33,8 +34,8 @@ private:
   std::string m_userName;
   std::string m_authMethod;
   std::string m_authString;
-  int m_sessionMaxAge;
-  int m_sessionExpires;
+  int64_t m_sessionMaxAge;
+  int64_t m_sessionExpires;
 
   UserSessionState m_userSessionState;
 

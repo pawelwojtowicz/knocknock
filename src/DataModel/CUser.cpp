@@ -13,27 +13,27 @@ CUser::CUser( const std::string& userId, const std::string& userFirstName, const
 
 }
 
-const std::string& CUser::getUserId() const
+const std::string& CUser::GetUserId() const
 {
   return m_userId;
 }
 
-const std::string& CUser::getFirstName() const
+const std::string& CUser::GetFirstName() const
 {
   return m_firstName;
 }
 
-const std::string& CUser::getLastName() const
+const std::string& CUser::GetLastName() const
 {
   return m_lastName;
 }
 
-const std::string& CUser::getAuthenticationMethod() const
+const std::string& CUser::GetAuthenticationMethod() const
 {
   return m_authMethod;
 }
 
-const std::string& CUser::getAuthenticationString() const
+const std::string& CUser::GetAuthenticationString() const
 {
   return m_authString;
 }

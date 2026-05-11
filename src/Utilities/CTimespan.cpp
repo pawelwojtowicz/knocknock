@@ -3,9 +3,9 @@
 
 namespace Utilities
 {
-int CTimespan::m_timestamp = -1;
+int64_t CTimespan::m_timestamp = -1;
 
-int CTimespan::GetEpochSeconds()
+int64_t CTimespan::GetEpochSeconds()
 {
   if (m_timestamp < 0 )
   {
@@ -22,12 +22,12 @@ int CTimespan::GetEpochSeconds()
   return m_timestamp;
 }
 
-void CTimespan::SetTimeline(int seconds)
+void CTimespan::SetTimeline(int64_t seconds)
 {
   m_timestamp = seconds;
 }
 
-void CTimespan::AddTimespan(int seconds)
+void CTimespan::AddTimespan(int64_t seconds)
 {
   m_timestamp += seconds;
 }
