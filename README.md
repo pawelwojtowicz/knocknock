@@ -10,7 +10,7 @@ The server is implemented in the C++ with the intention to avoid newest C++ synt
 
 ### Installing the dependencies (on ubuntu)
 
-`sudo apt-get install nlohmann-json3-dev sqlite3 libsqlite3-dev openssl libssl-dev libboost1.83-all-dev` 
+`sudo apt-get install nlohmann-json3-dev sqlite3 libsqlite3-dev openssl libssl-dev libboost1.83-all-dev libargon2-dev` 
 
 ## Configuration
 
