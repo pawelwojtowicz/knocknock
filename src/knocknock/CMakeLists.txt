@@ -3,6 +3,8 @@ project (knocknock CXX)
 SET( OUTPUT_NAME knocknock )
 
 add_executable ( ${OUTPUT_NAME}
+CCookieBuilder.cpp
+CCookieBuilder.h
 CHTTPChannel.cpp
 CHTTPChannel.h
 CLoginProcessor.cpp

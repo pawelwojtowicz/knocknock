@@ -1,12 +1,14 @@
 #include "CAuthProcessor.h"
 #include <CJSONSerializer.h>
 #include <CSession.h>
+#include "CCookieBuilder.h"
 #include "KnocknockConst.h"
 
 namespace knocknock
 {
-CAuthProcessor::CAuthProcessor(IKnocknockService& knocknockService)
+CAuthProcessor::CAuthProcessor(IKnocknockService& knocknockService, CCookieBuilder& cookieBuilder)
   : m_knocknockService(knocknockService)
+  , m_cookieBuilder(cookieBuilder)
 {
 }
 
@@ -51,6 +53,7 @@ bool CAuthProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
   CJSONSerializer responseSerializer(output);
   responseSerializer.Serialize(requestResponse.responseBody);
   responseHeaders["Content-Type"] = "application/json";
+  responseHeaders["Set-Cookie"] = m_cookieBuilder.BuildCookie(session);
 
   return true;
 }

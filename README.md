@@ -23,10 +23,10 @@ The configuration can be read from the configuration file and also from the data
 | defaultAuthenticationString | string | The default parameterization of the authentication method, the semanticsdo of the contents is specific to the authentication method determined for the user |
 | allowedAuthMethods | string | Allowed Auth methods: <br> * checksum <br> * sha256 <br> * simpledb <br> * scr |
 | sessionMaxAge | integer | |
-| cookieHttpOnly | bool | |
-| cookiePath | string | "/"|
-| cookieSecure| bool |false|
-| cookieSameSite |[STRICT\|LAX\|NONE] | |
+| http.cookieHttpOnly | bool | |
+| http.cookiePath | string | "/"|
+| http.cookieSecure| bool |false|
+| http.cookieSameSite |[STRICT\|LAX\|NONE] | |
 | maxLoginAttempts | integer | Maximum number of consecutive failed login attempts per userId before lockout. Default: 5 |
 | loginLockoutSeconds | integer | Base lockout duration in seconds after exceeding max attempts. Doubles with each subsequent failure (exponential backoff), capped at 64x the base value. Default: 30 |
 

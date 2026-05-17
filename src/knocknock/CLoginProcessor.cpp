@@ -1,12 +1,13 @@
 #include "CLoginProcessor.h"
 #include <CJSONSerializer.h>
 #include <CSession.h>
+#include "CCookieBuilder.h"
 #include "KnocknockConst.h"
 
 namespace knocknock
 {
-CLoginProcessor::CLoginProcessor(IKnocknockService& knocknockService)
-  : m_knocknockService(knocknockService)
+CLoginProcessor::CLoginProcessor(IKnocknockService& knocknockService, CCookieBuilder& cookieBuilder)
+  : m_knocknockService(knocknockService), m_cookieBuilder(cookieBuilder)
 {
 }
 
@@ -53,6 +54,7 @@ bool CLoginProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
   CJSONSerializer responseSerializer(output);
   responseSerializer.Serialize(requestResponse.responseBody);
   responseHeaders["Content-Type"] = "application/json";
+  responseHeaders["Set-Cookie"] = m_cookieBuilder.BuildCookie(session);
 
   return true; // Return true if processing is successful, false otherwise
 }

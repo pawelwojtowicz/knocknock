@@ -1,7 +1,8 @@
 #pragma once
-#include <CHTTPRestController.h>
 #include <CConfiguration.h>
+#include "CCookieBuilder.h"
 #include <IKnocknockService.h>
+#include <CHTTPRestController.h>
 
 namespace knocknock
 {
@@ -15,6 +16,7 @@ public:
   void Shutdown();
 
 private:
+  CCookieBuilder m_cookieBuilder;
   IKnocknockService& m_knocknockService;
   HTTPServer::CHTTPRestController m_httpController;
 };

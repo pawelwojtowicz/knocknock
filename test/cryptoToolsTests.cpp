@@ -2,6 +2,7 @@
 #include <string.h>
 #include <CAESCipherWrapper.h>
 #include <CSHA256Hash.h>
+#include <CArgon2idWrapper.h>
 #include <iostream>
 
 TEST( CSHA256Hash , Base )
@@ -41,6 +42,15 @@ TEST( CAESCipherWrapper, Basic)
 
   EXPECT_EQ(planTextToEncrypt, plainDecrypted);
 
+}
+
+TEST( CArgon2idWrapper, Basic)
+{
+  std::string password("ThisIsThePassword");
+  std::string hash;
+  ASSERT_TRUE(CryptoTools::CArgon2idWrapper::HashPassword(password, 0, 0, 0, 0, hash));
+
+  std::cout << "Hash: " << hash << std::endl;
 }
 
 

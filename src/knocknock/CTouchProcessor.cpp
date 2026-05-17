@@ -5,8 +5,8 @@
 
 namespace knocknock
 {
-CTouchProcessor::CTouchProcessor(IKnocknockService& knocknockService)
-  : m_knocknockService(knocknockService)
+CTouchProcessor::CTouchProcessor(IKnocknockService& knocknockService, CCookieBuilder& cookieBuilder)
+  : m_knocknockService(knocknockService), m_cookieBuilder(cookieBuilder)
 {
 }
 

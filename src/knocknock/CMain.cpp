@@ -73,7 +73,6 @@ bool CMain::Initialize()
 		{
 			LOG( WARNING, "Database file %s not found in secondary location", dbLocation.c_str() );
 		  LOG( WARNING, "Creating empty DB in primary location: %s", dbLocation.c_str() );
-
 		}
 	}
 	m_database.OpenDatabase( dbLocation );

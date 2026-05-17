@@ -4,10 +4,12 @@
 
 namespace knocknock
 {
+class CCookieBuilder;
+
 class CLogoutProcessor : public HTTPServer::IRequestProcessor
 {
 public:
-  CLogoutProcessor(IKnocknockService& knocknockService);
+  CLogoutProcessor(IKnocknockService& knocknockService, CCookieBuilder& cookieBuilder);
   ~CLogoutProcessor() override = default;
 
   bool ProcessRequest(  const HTTPServer::URLInfo& urlInfo,
@@ -18,6 +20,7 @@ public:
 
 private:
   IKnocknockService& m_knocknockService;
+  CCookieBuilder& m_cookieBuilder;
 };
 
 } // namespace knocknock

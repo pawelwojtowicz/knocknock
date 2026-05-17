@@ -24,6 +24,8 @@ public:
   void AddAuthenticationStateVariable( const std::string& key, const std::string& value ) { m_authenticationState[key] = value; }
   const std::string GetAuthenticationStateVariable( const std::string& key ) const;
 
+  int64_t GetMaxAge() const { return m_sessionMaxAge; }
+
   void SetSessionExpires(int64_t expires) { m_sessionExpires = expires; }
   int64_t GetSessionExpires() const { return m_sessionExpires; }
 

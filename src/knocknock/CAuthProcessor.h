@@ -4,10 +4,12 @@
 
 namespace knocknock
 {
+class CCookieBuilder;
+
 class CAuthProcessor : public HTTPServer::IRequestProcessor
 {
 public:
-  CAuthProcessor(IKnocknockService& knocknockService);
+  CAuthProcessor(IKnocknockService& knocknockService, CCookieBuilder& cookieBuilder);
   ~CAuthProcessor() override = default;
 
   bool ProcessRequest(  const HTTPServer::URLInfo& urlInfo,
@@ -18,6 +20,7 @@ public:
 
 private:
   IKnocknockService& m_knocknockService;
+  CCookieBuilder& m_cookieBuilder;
 };
 
 } // namespace knocknock
