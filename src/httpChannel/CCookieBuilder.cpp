@@ -7,13 +7,6 @@ namespace knocknock
 {
 bool CCookieBuilder::Initialize( const CConfiguration& config )
 {  
-  constexpr char cParamNameHTTPCookieHttpOnly[] = "http.cookieHttpOnly";
-  constexpr char cParamNameHTTPCookiePath[] = "http.cookiePath";
-  constexpr char cParamNameHTTPCookieSecure[] = "http.cookieSecure";
-  constexpr char cParamNameHTTPCookieSameSite[] = "http.cookieSameSite";
-
-
-
   std::string paramValueString = config.GetParamString(cParamNameHTTPCookieHttpOnly, "true") ;
   if (paramValueString == "true" || paramValueString == "1" || paramValueString == "TRUE")
   {

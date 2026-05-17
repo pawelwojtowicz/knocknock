@@ -10,6 +10,8 @@ CSession::CSession(const std::string& sessionId, const std::string& userId, cons
 , m_authMethod(authMethod)
 , m_authString(authString)
 , m_userSessionState(UserSessionState::INVALID_SESSION)
+, m_sessionMaxAge(0)
+, m_sessionExpires(0)
 {
 }
 
