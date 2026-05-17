@@ -4,7 +4,7 @@
 #include "CAuthProcessor.h"
 #include "CTouchProcessor.h"
 #include "CLogoutProcessor.h"
-#include "KnocknockConst.h"
+#include "httpChannelConst.h"
 #include <memory>
 
 namespace knocknock

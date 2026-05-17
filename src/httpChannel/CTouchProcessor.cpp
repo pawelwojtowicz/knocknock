@@ -1,12 +1,14 @@
 #include "CTouchProcessor.h"
 #include <CJSONSerializer.h>
 #include <CSession.h>
-#include "KnocknockConst.h"
+#include "httpChannelConst.h"
+#include "CCookieBuilder.h"
 
 namespace knocknock
 {
 CTouchProcessor::CTouchProcessor(IKnocknockService& knocknockService, CCookieBuilder& cookieBuilder)
-  : m_knocknockService(knocknockService), m_cookieBuilder(cookieBuilder)
+  : m_knocknockService(knocknockService)
+  , m_cookieBuilder(cookieBuilder)
 {
 }
 
@@ -36,6 +38,7 @@ bool CTouchProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
       output["sessionId"] = session.GetSessionId();
       output["userId"] = session.GetUserId();
       output["userName"] = session.GetUserName();
+      responseHeaders["Set-Cookie"] = m_cookieBuilder.BuildCookie(session);
       break;
     default:
       requestResponse.responseCode = cHTTPResult_InternalServerError;

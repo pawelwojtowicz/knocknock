@@ -2,7 +2,7 @@
 #include <CJSONSerializer.h>
 #include <CSession.h>
 #include "CCookieBuilder.h"
-#include "KnocknockConst.h"
+#include "httpChannelConst.h"
 
 namespace knocknock
 {
@@ -44,6 +44,7 @@ bool CLoginProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
       output["sessionId"] = session.GetSessionId();
       output["userId"] = session.GetUserId();
       output["userName"] = session.GetUserName();
+      responseHeaders["Set-Cookie"] = m_cookieBuilder.BuildCookie(session);
       break;
     default:
       requestResponse.responseCode = cHTTPResult_InternalServerError;
@@ -54,7 +55,6 @@ bool CLoginProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
   CJSONSerializer responseSerializer(output);
   responseSerializer.Serialize(requestResponse.responseBody);
   responseHeaders["Content-Type"] = "application/json";
-  responseHeaders["Set-Cookie"] = m_cookieBuilder.BuildCookie(session);
 
   return true; // Return true if processing is successful, false otherwise
 }

@@ -2,7 +2,7 @@
 #include <CJSONSerializer.h>
 #include <CSession.h>
 #include "CCookieBuilder.h"
-#include "KnocknockConst.h"
+#include "httpChannelConst.h"
 
 namespace knocknock
 {

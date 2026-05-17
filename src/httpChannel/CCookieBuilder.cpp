@@ -1,7 +1,7 @@
 #include "CCookieBuilder.h"
 #include <CSession.h>
 #include <CConfiguration.h>
-#include "KnocknockConst.h"
+#include "httpChannelConst.h"
 #include <algorithm>
 namespace knocknock
 {
