@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <atomic>
 #include <CConfiguration.h>
 #include <CSQLiteDriver.h>
 #include <CDatabase.h>
@@ -23,6 +24,8 @@ public:
 	int Run();
 	void Shutdown();
 
+	void RequestStop();
+
 protected:
 	const std::string& GetArgument( const int& argNo );
 	int GetArgumentCount();
@@ -39,9 +42,9 @@ private:
 
 	CHTTPChannel m_httpChannel;
 
+	Logger::CSimpleLogger m_logger;
 
-  Logger::CSimpleLogger m_logger;
-
+	std::atomic<bool> m_running{false};
 };
 
 }

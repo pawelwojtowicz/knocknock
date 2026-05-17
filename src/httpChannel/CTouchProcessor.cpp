@@ -23,8 +23,8 @@ bool CTouchProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
   CJSONSerializer serializer(input);
   serializer.Deserialize(requestBody);
 
-  const CSession session = m_knocknockService.Touch(input, responseHeaders);
   tKeyValueMap output;
+  const CSession session = m_knocknockService.Touch(input, output);
 
   switch( session.GetUserSessionState() )
   {

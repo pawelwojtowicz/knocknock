@@ -88,13 +88,19 @@ int CMain::Run()
 {
   LOG( INFO, "CMain::Run() called" );
 
-	while (1) {
+	m_running = true;
+	while (m_running) {
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 		m_sessionManager.Tick();
 	}
 
-
+	LOG( INFO, "CMain::Run() exiting gracefully" );
   return 0;
+}
+
+void CMain::RequestStop()
+{
+	m_running = false;
 }
 
 void CMain::Shutdown()
