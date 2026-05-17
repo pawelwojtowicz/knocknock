@@ -15,8 +15,8 @@ constexpr auto cParamName_MaxLoginAttempts = "maxLoginAttempts";
 constexpr auto cParamName_LoginLockoutSeconds = "loginLockoutSeconds";
 
 constexpr auto cParamValue_AnonymousUserTemplate = "";
-constexpr auto cParamValue_DefaultAuthenticationMethod = "sha256";
-constexpr auto cParamValue_DefaultAuthenticationString = "db89a15ca72c6c91a94c03e6b7973bbbf01b3e67988c9f79d6b764b36d913a66";
+constexpr auto cParamValue_DefaultAuthenticationMethod = "";
+constexpr auto cParamValue_DefaultAuthenticationString = "";
 constexpr auto cParamValue_AllowedAuthMethods = "simpledb,sha256,scr";
 
 constexpr int cParamValue_MaxLoginAttempts = 5;

@@ -24,8 +24,8 @@ CSessionBuilder::~CSessionBuilder()
 
 bool CSessionBuilder::Initialize()
 {
-  m_defaultAuthMethod = m_rConfiguration.GetParamString(cParamName_DefaultAuthenticationMethod, cParamValue_DefaultAuthenticationMethod);
-  m_defaultAuthString = m_rConfiguration.GetParamString(cParamName_DefaultAuthenticationString, cParamValue_DefaultAuthenticationString);
+  m_defaultAuthMethod = m_rConfiguration.GetParamString(cParamName_DefaultAuthenticationMethod);
+  m_defaultAuthString = m_rConfiguration.GetParamString(cParamName_DefaultAuthenticationString);
   m_anonymousTemplate = m_rConfiguration.GetParamString(cParamName_AnonymousUserTemplate, cParamValue_AnonymousUserTemplate);
 
   return ( !m_defaultAuthMethod.empty() && !m_defaultAuthString.empty() );

@@ -23,6 +23,7 @@ The configuration can be read from the configuration file and also from the data
 | defaultAuthenticationString | string | The default parameterization of the authentication method, the semanticsdo of the contents is specific to the authentication method determined for the user |
 | allowedAuthMethods | string | Allowed Auth methods: <br> * checksum <br> * sha256 <br> * simpledb <br> * scr |
 | sessionMaxAge | integer | |
+| http.port | integer | HTTP listener port |
 | http.cookieHttpOnly | bool | |
 | http.cookiePath | string | "/"|
 | http.cookieSecure| bool |false|
