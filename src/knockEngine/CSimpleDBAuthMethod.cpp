@@ -5,6 +5,8 @@ namespace knocknock {
 
 tKeyValueMap CSimpleDBAuthMethod::Login(CSession& session, const tKeyValueMap& loginPayload)
 {
+  // The authentication succeeds if the user's record can be found in the DB. It is sufficient
+  // to consider the user as succesfully authenticated.
   session.UpdateUserSessionState(UserSessionState::AUTH_SUCCESS);
   return {};
 }
