@@ -41,7 +41,8 @@ bool CLoginRateLimiter::IsLoginAllowed(const std::string& userId, int64_t curren
 void CLoginRateLimiter::RecordFailure(const std::string& userId, int64_t currentTime)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
-  LoginAttemptRecord& record = m_attempts[userId];
+  auto it = m_attempts.try_emplace(userId).first;
+  LoginAttemptRecord& record = it->second;
   record.failureCount++;
 
   if (record.failureCount >= m_maxAttempts)

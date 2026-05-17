@@ -14,7 +14,7 @@ bool CConfiguration::LoadConfig(DBAccess::IDBAccess& rDBAccess)
   const auto systemParams = rDBAccess.GetSystemParamData().GetAllSystemParams();
   for (const auto& param : systemParams)
   {
-    m_parameters[param.first] = param.second;
+    m_parameters.insert_or_assign(param.first, param.second);
   }
 
   return true;
@@ -44,7 +44,7 @@ bool CConfiguration::LoadConfig(const std::string& filename)
 
     std::string paramName = line.substr(0, pos);
     std::string paramValue = line.substr(pos + 1);
-    m_parameters[paramName] = paramValue;
+    m_parameters.insert_or_assign(paramName, paramValue);
   }
   configurationFile.close();
   return true;

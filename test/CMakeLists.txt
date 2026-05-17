@@ -14,4 +14,4 @@ TestCProcessorRegistry.cpp
 )
 
 target_link_libraries(tstHTTPRestSrv HTTPRestSrv ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} gmock pthread )
-add_dependencies( tstHTTPRestSrv tstHTTPRestSrv )
+add_dependencies( tstHTTPRestSrv HTTPRestSrv )

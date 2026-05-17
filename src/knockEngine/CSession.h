@@ -21,7 +21,7 @@ public:
   void UpdateUserSessionState(UserSessionState newState) { m_userSessionState = newState; }
   UserSessionState GetUserSessionState() const { return m_userSessionState; }
 
-  void AddAuthenticationStateVariable( const std::string& key, const std::string& value ) { m_authenticationState[key] = value; }
+  void AddAuthenticationStateVariable( const std::string& key, const std::string& value ) { m_authenticationState.insert_or_assign(key, value); }
   const std::string GetAuthenticationStateVariable( const std::string& key ) const;
 
   void SetMaxAge(int64_t maxAge) { m_sessionMaxAge = maxAge; }
