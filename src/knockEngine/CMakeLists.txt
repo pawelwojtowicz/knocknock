@@ -7,10 +7,6 @@ CAuthenticator.cpp
 CAuthenticator.h
 CAuthMethodFactory.cpp
 CAuthMethodFactory.h
-CJSONSerializer.cpp
-CJSONSerializer.h
-CKeyValueHelper.cpp 
-CKeyValueHelper.h
 CLoginRateLimiter.cpp
 CLoginRateLimiter.h
 CSessionManager.cpp

@@ -5,6 +5,10 @@ SET( OUTPUT_NAME Utilities )
 add_library( ${OUTPUT_NAME} STATIC
 CConfiguration.cpp
 CConfiguration.h
+CJSONSerializer.cpp
+CJSONSerializer.h
+CKeyValueHelper.cpp
+CKeyValueHelper.h
 CTimespan.cpp
 CTimespan.h
 )

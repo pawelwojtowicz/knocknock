@@ -15,5 +15,6 @@ constexpr char cParamNameHTTPServerPort[] = "http.port";
   constexpr int cHTTPResult_Unauthorized = 401;
   constexpr int cHTTPResult_Forbidden = 403;
   constexpr int cHTTPResult_NotFound = 404;
+  constexpr int cHTTPResult_Conflict = 409;
   constexpr int cHTTPResult_InternalServerError = 500;
 }

@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdint>
 #include "knocknockTypes.h"
+#include <UtilityTypes.h>
 
 namespace knocknock
 {

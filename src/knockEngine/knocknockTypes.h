@@ -5,10 +5,6 @@
 namespace knocknock
 {
  
-using tKeyValueMap = std::map<std::string, std::string>;
-using tKeyValueMapIterator = tKeyValueMap::iterator;
-using tKeyValueMapConstIterator = tKeyValueMap::const_iterator;
-
 enum class UserSessionState
 {
   INVALID_SESSION,   // the session is invalid, for example due to missing or invalid session ID
@@ -22,27 +18,6 @@ enum class UserSessionState
                      // world (for example through the express session)
   EXPIRED,           // The session has expired and is no longer valid, the session will be purged
   LOGGED_OUT         // The session has been logged out, the session will be purged
-};
-
-enum class CookieSameSite
-{
-  STRICT,
-  LAX,
-  NONE
-};
-
-enum class HTTPReturnCodes
-{
-  OK = 200, // the login request successful, either after login or authentication   
-  CREATED = 201,// the session has been created (after login)
-  NO_CONTENT = 204,
-  BAD_REQUEST = 400,
-  UNAUTHORIZED = 401,
-  FORBIDDEN = 403,
-  NOT_FOUND = 404,
-  CONFLICT = 409,
-  INTERNAL_SERVER_ERROR = 500,
-  SERVICE_UNAVAILABLE = 503
 };
 
 } // namespace knocknock  
