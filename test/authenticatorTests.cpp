@@ -174,3 +174,21 @@ TEST_F(AuthenticatorTests, Basic_scr_failure)
   authenticator.Shutdown();
 }
 
+TEST_F(AuthenticatorTests, Basic_Argon2id_success)
+{
+  std::string argon2IdHash = "$argon2id$v=19$m=16,t=4,p=2$NnFHeTJ2ckNXMFdKVENWVw$VhR9NKJHJ+pT7DVTqE7ksA";
+  CSession session("sessionId", "herrUser", "", "argon2id", argon2IdHash);
+
+  CAuthenticator authenticator;
+  authenticator.Initialize(m_configuration);
+
+  tKeyValueMap loginPayload;
+  loginPayload[sLoginPassword] = "secretWord$123";
+
+  authenticator.Login(session, loginPayload);
+
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+
+  authenticator.Shutdown();
+}
+

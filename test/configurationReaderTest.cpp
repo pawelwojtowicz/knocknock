@@ -19,7 +19,7 @@ TEST(CConfiguration, LoadFromFile)
   EXPECT_EQ(defaultAuthString, "db89a15ca72c6c91a94c03e6b7973bbbf01b3e67988c9f79d6b764b36d913a66");
 
   std::string allowedAuthMethods = config.GetParamString("allowedAuthMethods");
-  EXPECT_EQ(allowedAuthMethods, "simpledb,sha256,scr");
+  EXPECT_EQ(allowedAuthMethods, "simpledb,sha256,scr,argon2id");
 }
 
 TEST(CConfiguration, CommentLinesAreSkipped)
