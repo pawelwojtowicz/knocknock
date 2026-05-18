@@ -10,7 +10,41 @@ The server is implemented in the C++ with the intention to avoid newest C++ synt
 
 ### Installing the dependencies (on ubuntu)
 
-`sudo apt-get install nlohmann-json3-dev sqlite3 libsqlite3-dev openssl libssl-dev libboost1.83-all-dev libargon2-dev` 
+```
+$ sudo apt-get install nlohmann-json3-dev sqlite3 libsqlite3-dev openssl libssl-dev libboost1.83-all-dev libargon2-dev
+``` 
+
+### Building knocknock
+The compilation of the knocknock is orchestrated with the use of the cmake - in the basic use case following steps bring fully functional software:
+
+``` 
+$ cd knocknock
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make 
+```
+The ***knocknock*** requires two artifacts, that are instantiating the operational data: </br>
+* configuration - the default file knocknock.conf is available in the ```config/knocknock.conf ```. The name and location of the configuration is provided as the only command line parameter with which we start the server.
+* database - it includes the list of the users, along with the configuration of the authentication methods used by them, it also associates the roles and privileges to the users. The location of the database is specified in the configuration parameter (through the parameters: ```primaryDBLocation``` or ```secondaryDBLocation```).</br>
+Example database that includes the example data is delivered in the source tree in the folder ```autotest/testData/testDB.db```
+</br>
+
+[//]: (close)
+Starting up the server in the fresh environment, assuming the build procedure is completed:</br>
+```
+$ cd ..
+$ ./build/src/knocknock/knocknock autoTest/testData/knocknock.conf
+```
+
+### Automated tests
+The automated test procedures have been prepared with the use of the **pytest** .
+The test cases ilustrate the typical communication sequences that implemented in the servers logic.
+
+Running the pytests in Windows 11 environment - assuming the user console is navigated to autoTest (and knocknock in the test configuration is running):</br>
+```
+$ py -m pytest
+```
 
 ## Configuration
 
