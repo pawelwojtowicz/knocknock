@@ -1,4 +1,5 @@
 #include "CArgon2idWrapper.h"
+#include <openssl/rand.h>
 
 namespace CryptoTools
 {
@@ -16,9 +17,9 @@ bool CArgon2idWrapper::HashPassword(const std::string& password, uint32_t timeCo
   if (hashLength == 0) hashLength = DEFAULT_HASH_LENGTH;
 
   uint8_t salt[SALT_LENGTH];
-  for (size_t i = 0; i < SALT_LENGTH; ++i)
+  if (RAND_bytes(salt, SALT_LENGTH) != 1)
   {
-    salt[i] = static_cast<uint8_t>(rand() % 256);
+    return false;
   }
 
   size_t encodedLen = argon2_encodedlen(timeCost, memoryCost, parallelism, hashLength, SALT_LENGTH, Argon2_id);
@@ -43,5 +44,3 @@ bool CArgon2idWrapper::HashPassword(const std::string& password, uint32_t timeCo
 } 
 
 }
-
-
