@@ -46,8 +46,10 @@ bool CTouchProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
       break;
   }
 
+  responseHeaders["Content-Type"] = "application/json";
   CJSONSerializer responseSerializer(output);
   responseSerializer.Serialize(requestResponse.responseBody);
+
 
   return true; // Return true if processing is successful, false otherwise
 }

@@ -3,12 +3,12 @@
 #include "CURLParser.h"
 #include "CSimpleMatcher.h"
 
-#define METHOD 0
-#define URLMATCHER 1
-#define PROCESSOR 2
-
 namespace HTTPServer
 {
+
+static constexpr int METHOD = 0;
+static constexpr int URLMATCHER = 1;
+static constexpr int PROCESSOR = 2;
 
 bool CProcessorRegistry::RegisterRequestProcessor( const HTTPServer::HttpMethod method, const std::string& urlPattern, std::shared_ptr<IRequestProcessor>& processor )
 {

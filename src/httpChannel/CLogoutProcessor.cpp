@@ -38,7 +38,7 @@ bool CLogoutProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
   CJSONSerializer responseSerializer(output);
   responseSerializer.Serialize(requestResponse.responseBody);
   responseHeaders["Content-Type"] = "application/json";
-//  responseHeaders["Set-Cookie"] = m_cookieBuilder.BuildCookie(CSession()); // Clear
+  responseHeaders["Set-Cookie"] = m_cookieBuilder.BuildCookie(CSession());
 
   return true; // Return true if processing is successful, false otherwise
 }

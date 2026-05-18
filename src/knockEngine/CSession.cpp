@@ -2,6 +2,19 @@
 
 namespace knocknock
 {
+CSession::CSession ()
+: m_sid{}
+, m_userId{}
+, m_userName{}
+, m_authMethod{}
+, m_authString{}
+, m_userSessionState(UserSessionState::INVALID_SESSION)
+, m_sessionMaxAge(0)
+, m_sessionExpires(0)
+{
+
+}
+
 
 CSession::CSession(const std::string& sessionId, const std::string& userId, const std::string& userName, const std::string& authMethod, const std::string& authString) 
 : m_sid(sessionId)

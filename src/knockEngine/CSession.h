@@ -10,6 +10,7 @@ namespace knocknock
 class CSession
 {
 public:
+  CSession ();
   CSession(const std::string& sessionId, const std::string& userId, const std::string& userName, const std::string& authMethod, const std::string& authString);
   virtual ~CSession() = default;
 
