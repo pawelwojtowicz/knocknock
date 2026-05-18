@@ -1,7 +1,17 @@
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-add_executable( dbAccessTests dbAccessTests.cpp cookieBuilderTest.cpp authenticationToolsTests.cpp sessionBuilderTests.cpp authenticatorTests.cpp configurationReaderTest.cpp jsonSerializerTest.cpp sessionManagerTests.cpp loginRateLimiterTests.cpp)
+add_executable( dbAccessTests 
+dbAccessTests.cpp 
+cookieBuilderTest.cpp 
+authenticationToolsTests.cpp 
+sessionBuilderTests.cpp 
+authenticatorTests.cpp 
+configurationReaderTest.cpp 
+jsonSerializerTest.cpp 
+sessionManagerTests.cpp 
+loginRateLimiterTests.cpp
+cryptoToolsTests.cpp)
 
 target_link_libraries(dbAccessTests DataModel dbAccess knockEngine CryptoTools ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread )
 add_dependencies( dbAccessTests DataModel dbAccess knockEngine CryptoTools)

@@ -41,6 +41,12 @@ bool CArgon2idWrapper::HashPassword(const std::string& password, uint32_t timeCo
 
   outputHash.assign(encoded.c_str(), encoded.size());
   return true;
-} 
+}
+
+bool CArgon2idWrapper::VerifyPassword(const std::string& password, const std::string& expectedHash)
+{
+  int result = argon2id_verify(expectedHash.c_str(), password.c_str(), password.size());
+  return (result == ARGON2_OK);
+}
 
 }

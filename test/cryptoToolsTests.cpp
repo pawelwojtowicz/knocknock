@@ -44,13 +44,19 @@ TEST( CAESCipherWrapper, Basic)
 
 }
 
-TEST( CArgon2idWrapper, Basic)
+TEST( CArgon2idWrapper, Basic_InOut)
 {
   std::string password("ThisIsThePassword");
   std::string hash;
   ASSERT_TRUE(CryptoTools::CArgon2idWrapper::HashPassword(password, 0, 0, 0, 0, hash));
+  ASSERT_TRUE( CryptoTools::CArgon2idWrapper::VerifyPassword( password, hash));
+}
 
-  std::cout << "Hash: " << hash << std::endl;
+TEST( CArgon2idWrapper, OnlineExample)
+{
+  std::string password("secretWord$123");
+  std::string hash("$argon2id$v=19$m=16,t=4,p=2$NnFHeTJ2ckNXMFdKVENWVw$VhR9NKJHJ+pT7DVTqE7ksA");
+  ASSERT_TRUE( CryptoTools::CArgon2idWrapper::VerifyPassword( password, hash));
 }
 
 
