@@ -7,8 +7,9 @@ namespace knocknock
   constexpr char cParamNameHTTPCookieSecure[] = "http.cookieSecure";
   constexpr char cParamNameHTTPCookieSameSite[] = "http.cookieSameSite";
 
-constexpr char cParamNameHTTPServerPort[] = "http.port";
+  constexpr char cParamNameHTTPServerPort[] = "http.port";
   constexpr char cParamNameHTTPServerThreadPoolSize[] = "http.threadPoolSize";
+
   constexpr int cHTTPResult_OK = 200;
   constexpr int cHTTPResult_Created = 201;
   constexpr int cHTTPResult_BadRequest = 400;

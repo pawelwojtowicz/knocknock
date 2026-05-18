@@ -5,7 +5,6 @@
 #include <CAESCipherWrapper.h>
 #include "CKeyValueHelper.h"
 #include <algorithm>
-#include <iostream>
 
 namespace knocknock {
 

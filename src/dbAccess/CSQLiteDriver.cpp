@@ -1,5 +1,4 @@
 #include "CSQLiteDriver.h"
-#include <iostream>
 
 namespace DBAccess
 {

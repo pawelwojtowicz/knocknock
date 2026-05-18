@@ -7,8 +7,6 @@
 #include <boost/url/parse_path.hpp>
 #include <boost/url/string_view.hpp>
 
-#include <iostream>
-
 namespace urls = boost::urls;
 
 namespace HTTPServer

@@ -1,6 +1,5 @@
 #include "CUserData.h"
 #include "IDBDriver.h"
-#include <iostream>
 
 namespace DBAccess
 {

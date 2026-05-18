@@ -1,7 +1,6 @@
 #include "CHTTPConnection.h"
 #include "HTTPServerTypes.h"
 #include <map>
-#include <iostream>
 #include "IRequestProcessor.h"
 
 namespace HTTPServer

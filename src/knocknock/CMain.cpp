@@ -72,7 +72,7 @@ bool CMain::Initialize()
 		else
 		{
 			LOG( WARNING, "Database file %s not found in secondary location", dbLocation.c_str() );
-		  LOG( WARNING, "Creating empty DB in primary location: %s", dbLocation.c_str() );
+			LOG( WARNING, "Creating empty DB in primary location: %s", dbLocation.c_str() );
 		}
 	}
 	m_database.OpenDatabase( dbLocation );
@@ -86,7 +86,7 @@ bool CMain::Initialize()
 
 int CMain::Run()
 {
-  LOG( INFO, "CMain::Run() called" );
+	LOG( INFO, "CMain::Run() called" );
 
 	m_running = true;
 	while (m_running) {
@@ -95,7 +95,7 @@ int CMain::Run()
 	}
 
 	LOG( INFO, "CMain::Run() exiting gracefully" );
-  return 0;
+	return 0;
 }
 
 void CMain::RequestStop()
@@ -108,7 +108,7 @@ void CMain::Shutdown()
 	m_httpChannel.Shutdown();
 
 	m_sessionManager.Shutdown();
-  LOG( INFO, "CMain::Shutdown() called" );
+	LOG( INFO, "CMain::Shutdown() called" );
 }
 
 }
