@@ -15,7 +15,7 @@ static std::string hexEncode(const std::string& input) {
     return ss.str();
 }
 
-bool CSHA256Hash::CalculateHash( const std::string& message, std::string& rawHex, std::string& stringHex)
+bool CSHA256Hash::CalculateHash( const std::string& message, std::string& rawBinary, std::string& hexString)
 {
     EVP_MD_CTX* ctx = EVP_MD_CTX_new();
     if (!ctx)
@@ -46,8 +46,8 @@ bool CSHA256Hash::CalculateHash( const std::string& message, std::string& rawHex
 
     EVP_MD_CTX_free(ctx);
 
-    rawHex = std::string(reinterpret_cast<char*>(hash), hashLen);
-    stringHex = hexEncode(rawHex);
+    rawBinary = std::string(reinterpret_cast<char*>(hash), hashLen);
+    hexString = hexEncode(rawBinary);
 
     return true;
 }

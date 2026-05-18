@@ -1,4 +1,4 @@
-project( dbAccess )
+project( DataModel )
 
 SET( OUTPUT_NAME DataModel )
 

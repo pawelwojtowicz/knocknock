@@ -8,7 +8,7 @@ class CApplication
 {
 public:
   CApplication();
-  CApplication( const int id, const std::string& name, const std::string& datePublisher, const std::string& accessTOken);
+  CApplication( const int id, const std::string& name, const std::string& dataPublisher, const std::string& accessToken);
   ~CApplication() = default;
 
   void SetName( const std::string& name ) {

@@ -1,7 +1,7 @@
 #include "CLoggerMsg.h"
 #include "Logger.h"
 #include "ILogger.h"
-#include <sys/time.h>
+#include <chrono>
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -35,9 +35,9 @@ CLoggerMsg::CLoggerMsg(const uint16_t debugZone, const char* srcFileName, const 
 , m_srcLineNo(srcLineNo)
 , m_timeStamp(0)
 {
-  struct timeval currentTime;
-	gettimeofday(&currentTime, NULL);
-	m_timeStamp = ( currentTime.tv_sec*1000 + currentTime.tv_usec/1000 );
+  auto now = std::chrono::system_clock::now();
+  auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+  m_timeStamp = static_cast<uint32_t>(ms.count() & 0xFFFFFFFF);
 }
 CLoggerMsg::~CLoggerMsg()
 {
