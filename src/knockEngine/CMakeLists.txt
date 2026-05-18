@@ -3,6 +3,8 @@ project( knockEngine )
 SET( OUTPUT_NAME knockEngine )
 
 add_library( ${OUTPUT_NAME} STATIC
+CArgon2idAuthMethod.cpp
+CArgon2idAuthMethod.h
 CAuthenticator.cpp
 CAuthenticator.h
 CAuthMethodFactory.cpp

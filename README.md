@@ -55,7 +55,7 @@ The configuration can be read from the configuration file and also from the data
 | anonymousUserTemplate | string | Parameter specifies the userId of the template that will be used to create a anonymous user session. <br> If the parameter is equal to empty string - the anonumous login is dissallowed. |
 | defaultAuthenticationMethod | string | The name of the user authentication method that is used in case there is not user specific method defined in the database <br> Supported authentication methods: <br> * checksum <br> * sha256 <br> * simpledb <br> * scr |
 | defaultAuthenticationString | string | The default parameterization of the authentication method, the semanticsdo of the contents is specific to the authentication method determined for the user |
-| allowedAuthMethods | string | Allowed Auth methods: <br> * checksum <br> * sha256 <br> * simpledb <br> * scr |
+| allowedAuthMethods | string | Allowed Auth methods: <br> * argon2id <br> * checksum <br> * sha256 <br> * simpledb <br> * scr|
 | sessionMaxAge | integer | |
 | http.port | integer | HTTP listener port |
 | http.cookieHttpOnly | bool | |
