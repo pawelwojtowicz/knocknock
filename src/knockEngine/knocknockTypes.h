@@ -1,9 +1,12 @@
 #pragma once
 #include <string>
 #include <map>
+#include <vector>
 
 namespace knocknock
 {
+
+using tStringVector = std::vector<std::string>;
  
 enum class UserSessionState
 {

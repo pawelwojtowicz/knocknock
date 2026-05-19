@@ -2,6 +2,7 @@
 #include <CUser.h>
 #include <CAuthenticationChallengeTools.h>
 #include "KnocKnockDictionary.h"
+#include <CUser2RoleMappingData.h>
 
 
 namespace knocknock
@@ -75,6 +76,23 @@ std::optional<CSession> CSessionBuilder::CreateSession(const std::string& userId
   newSession.UpdateUserSessionState(UserSessionState::CREATED);
 
   return newSession;
+}
+
+bool CSessionBuilder::FinalizeBuildingSession( CSession& rSession )
+{
+  std::string userId = rSession.GetUserId();
+  knocknock::tRoles userRoles = m_rDBAccess.GetUser2RoleMappingData().GetUserRoles( userId);
+  for (const auto& role : userRoles)
+  {
+    rSession.AddUserRole(role.GetName());
+  }
+  knocknock::tPrivilegeArray userPrivileges = m_rDBAccess.GetUser2RoleMappingData().GetUserPrivileges(userId);
+  for (const auto& privilege : userPrivileges )
+  {
+    rSession.AddPrivilege(privilege.GetShortDesc());
+  }
+
+  return true;
 }
 
 }

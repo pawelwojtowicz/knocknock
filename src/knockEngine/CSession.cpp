@@ -11,6 +11,9 @@ CSession::CSession ()
 , m_userSessionState(UserSessionState::INVALID_SESSION)
 , m_sessionMaxAge(0)
 , m_sessionExpires(0)
+, m_roles{}
+, m_privileges{}
+
 {
 
 }
@@ -52,6 +55,27 @@ const std::string CSession::GetAuthenticationStateVariable( const std::string& k
   }
   return "";
 }
+
+void CSession::AddUserRole( const std::string& role )
+{
+  m_roles.push_back(role);
+}
+
+const tStringVector& CSession::GetRoles() const
+{
+  return m_roles;
+}
+
+void CSession::AddPrivilege( const std::string& privilege)
+{
+  m_privileges.push_back(privilege);
+}
+
+const tStringVector& CSession::GetPrivileges() const
+{
+  return m_privileges;
+} 
+
 
 
 }

@@ -17,6 +17,8 @@ public:
 
   std::optional<CSession> CreateSession(const std::string& userId);
 
+  bool FinalizeBuildingSession( CSession& rSession );
+
 private:
   CConfiguration& m_rConfiguration;
 

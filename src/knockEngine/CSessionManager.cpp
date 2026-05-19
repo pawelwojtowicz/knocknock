@@ -76,6 +76,7 @@ const CSession CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& o
       output = m_authenticator.Login(session, input);
       if ( session.GetUserSessionState() == UserSessionState::AUTH_SUCCESS )
       {
+        m_sessionBuilder.FinalizeBuildingSession(session);
         session.SetMaxAge(m_sessionExpirationTimeout);
         session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
         m_loginRateLimiter.RecordSuccess(userId);
@@ -117,6 +118,7 @@ const CSession CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValu
         output = m_authenticator.Authenticate(session, input);
         if ( session.GetUserSessionState() == UserSessionState::AUTH_SUCCESS )
         {
+          m_sessionBuilder.FinalizeBuildingSession(session);
           session.SetMaxAge(m_sessionExpirationTimeout);
           session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
           return session;

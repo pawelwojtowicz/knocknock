@@ -32,6 +32,12 @@ public:
   void SetSessionExpires(int64_t expires) { m_sessionExpires = expires; }
   int64_t GetSessionExpires() const { return m_sessionExpires; }
 
+  void AddUserRole( const std::string& role );
+  const tStringVector& GetRoles() const;
+
+  void AddPrivilege( const std::string& privilege);
+  const tStringVector& GetPrivileges() const; 
+
 
 private:
   std::string m_sid;
@@ -45,6 +51,9 @@ private:
   UserSessionState m_userSessionState;
 
   tKeyValueMap m_authenticationState;
+
+  tStringVector m_roles;
+  tStringVector m_privileges;
 };
 
 }

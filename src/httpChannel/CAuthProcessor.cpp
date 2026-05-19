@@ -39,12 +39,25 @@ bool CAuthProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
       output["sessionId"] = session.GetSessionId();
       break;
     case UserSessionState::AUTH_SUCCESS:
+    {
       requestResponse.responseCode = cHTTPResult_OK;
       output["sessionId"] = session.GetSessionId();
       output["userId"] = session.GetUserId();
       output["userName"] = session.GetUserName();
+      std::string roles = {};
+      for ( const auto& role : session.GetRoles())
+      {
+        roles += role + ";";
+      }
+      std::string privileges = {};
+      for (const auto& privilege : session.GetPrivileges() )
+      {
+        privileges += privilege + ";";
+      }
+      output["roles"] = roles;
+      output["privileges"] = privileges;
       responseHeaders["Set-Cookie"] = m_cookieBuilder.BuildCookie(session);
-      break;
+    };break;
     default:
       requestResponse.responseCode = cHTTPResult_InternalServerError;
       output["message"] = "Internal server error";
