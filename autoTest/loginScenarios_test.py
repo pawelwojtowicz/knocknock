@@ -112,6 +112,8 @@ def test_scr_Logon_Success():
     assert authResponse.json()["userId"] == "chuck"
     assert authResponse.json()["userName"] == "Chuck Norris"
     assert authResponse.json()["sessionId"] == loginResponse.json()["sessionId"]
+    assert "roles" in authResponse.json()
+    assert "KARATE_MASTER" in authResponse.json()["roles"]
 
 def test_scr_Logon_Failure_AuthTooLate():
     # the scr - simple-challenge-response auth method is a subject of the test
@@ -176,4 +178,37 @@ def test_scr_Logon_Failure_WrongPassword():
     assert authResponse.status_code == 401
     assert not ("userId" in authResponse.json())
     assert not ("userName" in authResponse.json())
-    assert not ("sessionId" in authResponse.json())   
+    assert not ("sessionId" in authResponse.json())
+
+
+def test_argon2id_Logon_Success():
+    # the test of the argon2id logon authentication method.
+    # The authentication is successful if the user is found in the DB and the password is correct.
+    # The auth method of the herrUser is set up to argon2id .
+
+    data = {}
+    data["userId"] = "herrUser"
+    data["password"] = "secretWord$1"
+
+    response = knocknockHTTP.login(data)
+
+    assert response.status_code == 200
+    assert "sessionId" in response.json()
+    assert response.json()["userId"] == "herrUser"
+    assert "roles" in response.json()
+    assert "BOXER" in response.json()["roles"]
+
+def test_argon2id_Logon_Failure_WrongPassword():
+    # the test of the argon2id logon authentication method.
+    # The authentication is successful if the user is found in the DB and the password is correct.
+    # The auth method of the herrUser is set up to argon2id .
+
+    data = {}
+    data["userId"] = "herrUser"
+    data["password"] = "atosPontos$1"
+
+    response = knocknockHTTP.login(data)
+
+    assert response.status_code == 401
+    assert not ("sessionId" in response.json() )
+    assert not ( "roles" in response.json() )
