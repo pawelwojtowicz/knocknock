@@ -4,76 +4,75 @@
 hide circle
 skinparam linetype ortho
 
-' comment
-
 entity "APPLICATIONS" as app {
-APP_ID : int
---
-APP_NAME : string
-APP_DATA_PUBLISHER : string
+  *APP_ID : INTEGER <<PK, AUTOINCREMENT>>
+  --
+  APP_NAME : TEXT
+  APP_DATA_PUBLISHER : TEXT
+  APP_ACCESS_TOKEN : TEXT
 }
 
 entity "SYSTEM_PARAMS" as sysParam {
-PARAM_NAME : string
---
-PARAM_VALUE : string
+  *VALUE_KEY : TEXT <<PK>>
+  --
+  VALUE : TEXT
 }
 
 entity "APPLICATION_PARAMS" as appParam {
-APPLICATION_ID : int
-NAME : string
---
-PUBLIC : int
-VALUE : string
+  *APPLICATION_ID : INTEGER <<PK, FK>>
+  *NAME : TEXT <<PK>>
+  --
+  PUBLIC : INTEGER
+  VALUE : TEXT
 }
 
-entity "USER_SETTINGS" as userParams {
-APPLICATION_ID : int
-APPLICATION_PARAM_NAME : string
-USER_ID : string
---
-VALUE : string
-}
-
-entity "ROLES" as userRoles {
-NAME : string
---
-DESCRIPTION : string
+entity "USER_SETTINGS" as userSettings {
+  *APPLICATION_ID : INTEGER <<PK, FK>>
+  *APPLICATION_PARAM_NAME : TEXT <<PK, FK>>
+  *USER_ID : TEXT <<PK, FK>>
+  --
+  VALUE : TEXT
 }
 
 entity "USERS" as user {
-USER_ID : string
---
-FIRST_NAME : string 
-LAST_NAME : string
-AUTH_METHOD : string
-AUTH_STRING : string 
+  *USER_ID : TEXT <<PK>>
+  --
+  FIRST_NAME : TEXT
+  LAST_NAME : TEXT
+  AUTH_METHOD : TEXT
+  AUTH_STRING : TEXT
 }
 
+entity "ROLES" as roles {
+  *NAME : TEXT <<PK>>
+  --
+  DESCRIPTION : TEXT
+}
 
-entity "PRIVILEGES" as rolePrivileges {
-SHORT_DESC : string
---
-LONG_DESC : string
+entity "PRIVILEGES" as privileges {
+  *SHORT_DESC : TEXT <<PK>>
+  --
+  LONG_DESC : TEXT
+}
+
+entity "USER2ROLES" as u2r {
+  *USER_ID : TEXT <<PK, FK>>
+  *ROLE_NAME : TEXT <<PK, FK>>
 }
 
 entity "ROLE2PRIVILEGE" as r2p {
-ROLE_NAME : string
-PRIVILEGE_SHORT_DESC : string  
+  *ROLE_NAME : TEXT <<PK, FK>>
+  *PRIVILEGE_SHORT_DESC : TEXT <<PK, FK>>
 }
 
-entity "USER2ROLE" as u2p {
-USER_ID : string
-ROLE_NAME : string
-}
+' Relationships
+appParam }o--|| app : APPLICATION_ID
+userSettings }o--|| app : APPLICATION_ID
+userSettings }o--|| appParam : APPLICATION_PARAM_NAME
+userSettings }o--|| user : USER_ID
+u2r }o--|| user : USER_ID
+u2r }o--|| roles : ROLE_NAME
+r2p }o--|| roles : ROLE_NAME
+r2p }o--|| privileges : PRIVILEGE_SHORT_DESC
 
-
-userParams }o--|| app
-userParams  }o--|| user
-appParam }o--|| app
-userParams |o--|| appParam 
-user }o--|| u2p
-userRoles }o--|| u2p
-userRoles }o--|| r2p
-rolePrivileges }o--|| r2p
 @enduml
