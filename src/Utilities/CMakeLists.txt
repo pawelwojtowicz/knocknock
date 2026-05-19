@@ -11,6 +11,8 @@ CKeyValueHelper.cpp
 CKeyValueHelper.h
 CTimespan.cpp
 CTimespan.h
+CTokenizer.cpp
+CTokenizer.h
 )
 
 #set_target_properties(${OUTPUT_NAME} PROPERTIES VERSION ${HOME_AUTOMATION_SERVICES_VERSION} SOVERSION ${HOME_AUTOMATION_SERVICES_VERSION} )

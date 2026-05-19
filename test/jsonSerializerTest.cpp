@@ -113,3 +113,23 @@ TEST(CJSONSerializer, RoundTrip_SerializeDeserialize)
     EXPECT_EQ(deserializedMap.size(), originalMap.size());
     EXPECT_EQ(deserializedMap, originalMap);
 }
+
+TEST(CJSONSerializer, DetectVectorElement_ValidInput)
+{
+    tKeyValueMap keyValueMap;
+    keyValueMap.insert({"array[0]", "value1"});
+    keyValueMap.insert({"array[1]", "value2"});
+    keyValueMap.insert({"array[2]", "value3"});
+    keyValueMap.insert({"array[3]", "value4"});
+    keyValueMap.insert({"nested.key1", "value5"});
+    keyValueMap.insert({"nested.key2", "value6"});
+    keyValueMap.insert({"nested.key3", "value7"});
+
+    CJSONSerializer serializer(keyValueMap);
+
+    std::string output{};
+    serializer.Serialize(output);
+
+    std::cout << output << std::endl; // Output the JSON string for verification
+   // EXPECT_EQ(output, "{\"array\":[\"value1\",\"value2\",\"value3\",\"value4\"]}");
+}
