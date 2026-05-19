@@ -44,18 +44,18 @@ bool CAuthProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
       output["sessionId"] = session.GetSessionId();
       output["userId"] = session.GetUserId();
       output["userName"] = session.GetUserName();
-      std::string roles = {};
+      int id = 0;
       for ( const auto& role : session.GetRoles())
       {
-        roles += role + ";";
+        std::string roleKey = "roles[" + std::to_string(id++) +"]"; 
+        output[roleKey] = role;
       }
-      std::string privileges = {};
+      id = 0;
       for (const auto& privilege : session.GetPrivileges() )
       {
-        privileges += privilege + ";";
+        std::string privilegeKey = "privileges[" + std::to_string(id++) + "]";
+        output[privilegeKey] = privilege;
       }
-      output["roles"] = roles;
-      output["privileges"] = privileges;
       responseHeaders["Set-Cookie"] = m_cookieBuilder.BuildCookie(session);
     };break;
     default:

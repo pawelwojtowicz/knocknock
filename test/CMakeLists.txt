@@ -11,7 +11,9 @@ configurationReaderTest.cpp
 jsonSerializerTest.cpp 
 sessionManagerTests.cpp 
 loginRateLimiterTests.cpp
-cryptoToolsTests.cpp)
+cryptoToolsTests.cpp
+tokenizerTests.cpp
+)
 
 target_link_libraries(dbAccessTests DataModel dbAccess knockEngine CryptoTools ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread )
 add_dependencies( dbAccessTests DataModel dbAccess knockEngine CryptoTools)
