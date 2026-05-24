@@ -3,7 +3,6 @@
 #include <CKeyValueHelper.h>
 #include "KnocKnockDictionary.h"
 #include "CTimespan.h"
-#include <iostream>
 
 using namespace Utilities;
 
@@ -78,9 +77,7 @@ const CSession CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& o
       output = m_authenticator.Login(session, input);
       if ( session.GetUserSessionState() == UserSessionState::AUTH_SUCCESS )
       {
-        std::cout << "Session " << session.GetSessionId() << " for user " << session.GetUserId() << " created, authentication successful." << std::endl;
         m_policyGuard.VerifySession(session);
-        std::cout << "Session " << session.GetSessionId() << " for user " << session.GetUserId() << " AUTH_SUCCESS  , Verification successful." << std::endl;
 
         if (session.GetUserSessionState() == UserSessionState::VALID)
         {
