@@ -76,7 +76,7 @@ protected:
     // Clean up test database
     if (std::filesystem::exists(testDBFileName))
     {
-      //std::filesystem::remove(testDBFileName);
+      std::filesystem::remove(testDBFileName);
     }
 
     CTimespan::SetTimeline(-1); // reset time to real current time
