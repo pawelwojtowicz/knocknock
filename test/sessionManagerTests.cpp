@@ -97,7 +97,7 @@ TEST_F(SessionManagerTests, Login_ValidUser)
 
   EXPECT_EQ(session.GetUserId(), "user3");
   EXPECT_EQ(session.GetUserName(), "Third User");
-  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::VALID);
 
 
 }
@@ -121,7 +121,7 @@ TEST_F(SessionManagerTests, Login_ValidUser_Logoff)
 
   EXPECT_EQ(session.GetUserId(), "user3");
   EXPECT_EQ(session.GetUserName(), "Third User");
-  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::VALID);
 
   // Now log off
   tKeyValueMap logoutInput = {{"sessionId", session.GetSessionId()}};
@@ -139,7 +139,7 @@ TEST_F(SessionManagerTests, Login_ValidUser_Timeout200_Logoff)
 
   EXPECT_EQ(session.GetUserId(), "user3");
   EXPECT_EQ(session.GetUserName(), "Third User");
-  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::VALID);
 
   // Simulate time passing to trigger session timeout
   CTimespan::AddTimespan(200); // Add 200 seconds to the timeline
@@ -160,7 +160,7 @@ TEST_F(SessionManagerTests, Login_ValidUser_Touching)
 
   EXPECT_EQ(session.GetUserId(), "user3");
   EXPECT_EQ(session.GetUserName(), "Third User");
-  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::VALID);
   EXPECT_EQ(session.GetSessionExpires(),  180); // default session expiration timeout is 300 seconds
 
   // Simulate time passing to trigger session timeout
@@ -171,7 +171,7 @@ TEST_F(SessionManagerTests, Login_ValidUser_Touching)
   tKeyValueMap logoutOutput;
   const CSession touchedSession =  m_knocknockService->Touch(logoutInput, logoutOutput);
 
-  EXPECT_EQ(touchedSession.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+  EXPECT_EQ(touchedSession.GetUserSessionState(), UserSessionState::VALID);
   EXPECT_EQ(touchedSession.GetSessionExpires(), 280); // session expiration should be extended 
   
   CTimespan::AddTimespan(200); // Add 200 seconds to the timeline
@@ -189,7 +189,7 @@ TEST_F(SessionManagerTests, Login_sha256AuthMethod_ValidUser_Logoff)
 
   EXPECT_EQ(session.GetUserId(), "user1");
   EXPECT_EQ(session.GetUserName(), "First User");
-  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+  EXPECT_EQ(session.GetUserSessionState(), UserSessionState::VALID);
 
   // Now log off
   tKeyValueMap logoutInput = {{"sessionId", session.GetSessionId()}};
@@ -225,7 +225,7 @@ TEST_F(SessionManagerTests, Login_scrAuthMethod_ValidUser_Logoff)
   tKeyValueMap authOutput;
   const CSession authSession = m_knocknockService->Authenticate(authInput, authOutput); 
 
-  EXPECT_EQ(authSession.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+  EXPECT_EQ(authSession.GetUserSessionState(), UserSessionState::VALID);
   // Now log off
   tKeyValueMap logoutInput = {{"sessionId", session.GetSessionId()}};
   tKeyValueMap logoutOutput;

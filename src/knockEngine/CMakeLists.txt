@@ -19,8 +19,8 @@ CSession.cpp
 CSession.h
 CSessionBuilder.cpp
 CSessionBuilder.h
-CSessionVerifier.cpp
-CSessionVerifier.h
+CPolicyGuard.cpp
+CPolicyGuard.h
 IAuthenticationMethod.h
 IKnocknockService.h
 CSHA256AuthMethod.cpp

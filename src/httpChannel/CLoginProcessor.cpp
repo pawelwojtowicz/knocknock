@@ -39,7 +39,7 @@ bool CLoginProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
       output["sessionId"] = session.GetSessionId();
 
       break;
-    case UserSessionState::AUTH_SUCCESS:
+    case UserSessionState::VALID:
     {
       requestResponse.responseCode = cHTTPResult_OK;
       output["sessionId"] = session.GetSessionId();

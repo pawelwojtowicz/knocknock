@@ -7,7 +7,7 @@
 #include "CSessionBuilder.h"
 #include "CAuthenticator.h"
 #include "CLoginRateLimiter.h"
-#include "CSessionVerifier.h"
+#include "CPolicyGuard.h"
 
 namespace DBAccess
 {
@@ -21,7 +21,6 @@ class CConfiguration;
 
 class CSessionManager : public IKnocknockService
 {
-  using tSessionMap = std::map<std::string, CSession>;
 public:
   CSessionManager( DBAccess::IDBAccess& rDBAccess, CConfiguration& rConfiguration );
   virtual ~CSessionManager();
@@ -59,6 +58,8 @@ private:
   int64_t m_authenticationChallengeTimeout;
 
   CLoginRateLimiter m_loginRateLimiter;
+
+  CPolicyGuard m_policyGuard;
 };
 
 }

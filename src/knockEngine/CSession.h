@@ -56,4 +56,5 @@ private:
   tStringVector m_privileges;
 };
 
+using tSessionMap = std::map<std::string, CSession>;
 }

@@ -268,7 +268,7 @@ TEST_F(SessionManagerRateLimitTests, LoginAllowedAfterLockoutExpires)
     tKeyValueMap input = {{"userId", "testuser"}, {"password", "buongiorno$123"}};
     tKeyValueMap output;
     const CSession session = m_knocknockService->Login(input, output);
-    EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+    EXPECT_EQ(session.GetUserSessionState(), UserSessionState::VALID);
   }
 }
 
@@ -287,7 +287,7 @@ TEST_F(SessionManagerRateLimitTests, SuccessfulLoginResetsRateLimit)
     tKeyValueMap input = {{"userId", "testuser"}, {"password", "buongiorno$123"}};
     tKeyValueMap output;
     const CSession session = m_knocknockService->Login(input, output);
-    EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+    EXPECT_EQ(session.GetUserSessionState(), UserSessionState::VALID);
   }
 
   // Should be able to fail 4 more times without lockout
@@ -304,7 +304,7 @@ TEST_F(SessionManagerRateLimitTests, SuccessfulLoginResetsRateLimit)
     tKeyValueMap input = {{"userId", "testuser"}, {"password", "buongiorno$123"}};
     tKeyValueMap output;
     const CSession session = m_knocknockService->Login(input, output);
-    EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+    EXPECT_EQ(session.GetUserSessionState(), UserSessionState::VALID);
   }
 }
 
@@ -331,6 +331,6 @@ TEST_F(SessionManagerRateLimitTests, RateLimitIsPerUser)
     tKeyValueMap input = {{"userId", "easyuser"}};
     tKeyValueMap output;
     const CSession session = m_knocknockService->Login(input, output);
-    EXPECT_EQ(session.GetUserSessionState(), UserSessionState::AUTH_SUCCESS);
+    EXPECT_EQ(session.GetUserSessionState(), UserSessionState::VALID);
   }
 }

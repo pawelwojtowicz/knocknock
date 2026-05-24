@@ -37,6 +37,13 @@ protected:
 
   virtual void TearDown() override
   {
+    m_database.Close();
+
+    std::string testDBFileName = "test.db";
+    if (std::filesystem::exists(testDBFileName))
+    {
+      std::filesystem::remove(testDBFileName);
+    }
   }
 };
 

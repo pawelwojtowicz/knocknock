@@ -33,7 +33,7 @@ bool CTouchProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
       requestResponse.responseCode = cHTTPResult_Unauthorized;
       output["message"] = "Invalid session";
       break;
-    case UserSessionState::AUTH_SUCCESS:
+    case UserSessionState::VALID:
       requestResponse.responseCode = cHTTPResult_OK;
       output["sessionId"] = session.GetSessionId();
       output["userId"] = session.GetUserId();

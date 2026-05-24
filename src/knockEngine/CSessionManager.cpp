@@ -3,6 +3,7 @@
 #include <CKeyValueHelper.h>
 #include "KnocKnockDictionary.h"
 #include "CTimespan.h"
+#include <iostream>
 
 using namespace Utilities;
 
@@ -19,8 +20,9 @@ CSessionManager::CSessionManager( DBAccess::IDBAccess& rDBAccess, CConfiguration
 , m_sessions()
 , m_sessionExpirationTimeout{180} // default to 3 minutes, can be overridden by configuration
 , m_authenticationChallengeTimeout{3}
+, m_loginRateLimiter()
+, m_policyGuard(m_sessions)
 {
-
 }
 
 CSessionManager::~CSessionManager()
@@ -76,10 +78,17 @@ const CSession CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& o
       output = m_authenticator.Login(session, input);
       if ( session.GetUserSessionState() == UserSessionState::AUTH_SUCCESS )
       {
-        m_sessionBuilder.FinalizeBuildingSession(session);
-        session.SetMaxAge(m_sessionExpirationTimeout);
-        session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
-        m_loginRateLimiter.RecordSuccess(userId);
+        std::cout << "Session " << session.GetSessionId() << " for user " << session.GetUserId() << " created, authentication successful." << std::endl;
+        m_policyGuard.VerifySession(session);
+        std::cout << "Session " << session.GetSessionId() << " for user " << session.GetUserId() << " AUTH_SUCCESS  , Verification successful." << std::endl;
+
+        if (session.GetUserSessionState() == UserSessionState::VALID)
+        {
+          m_sessionBuilder.FinalizeBuildingSession(session);
+          session.SetMaxAge(m_sessionExpirationTimeout);
+          session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
+          m_loginRateLimiter.RecordSuccess(userId);
+        } 
       } 
       else if ( session.GetUserSessionState() == UserSessionState::AUTH_IN_PROGRESS )
       {
@@ -118,10 +127,15 @@ const CSession CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValu
         output = m_authenticator.Authenticate(session, input);
         if ( session.GetUserSessionState() == UserSessionState::AUTH_SUCCESS )
         {
-          m_sessionBuilder.FinalizeBuildingSession(session);
-          session.SetMaxAge(m_sessionExpirationTimeout);
-          session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
-          return session;
+          m_policyGuard.VerifySession(session);
+          if (session.GetUserSessionState() == UserSessionState::VALID)
+          {
+            m_sessionBuilder.FinalizeBuildingSession(session);
+            session.SetMaxAge(m_sessionExpirationTimeout);
+            session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
+            m_loginRateLimiter.RecordSuccess(session.GetUserId());
+            return session;
+          }  
         }
       }
     }
@@ -142,7 +156,7 @@ const CSession CSessionManager::Touch(const tKeyValueMap& input, tKeyValueMap& o
     {
       CSession& session = sessionIt->second;
       
-      if ( UserSessionState::AUTH_SUCCESS == session.GetUserSessionState() && session.GetSessionExpires() > currentTime )
+      if ( UserSessionState::VALID == session.GetUserSessionState() && session.GetSessionExpires() > currentTime )
       {
         session.SetSessionExpires(currentTime + m_sessionExpirationTimeout);
         return session;
@@ -163,7 +177,7 @@ bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
     if ( sessionIt != m_sessions.end() )
     {
       CSession& session = sessionIt->second;
-      if (  session.GetUserSessionState() == UserSessionState::AUTH_SUCCESS && session.GetSessionExpires() > CTimespan::GetEpochSeconds() )
+      if (  session.GetUserSessionState() == UserSessionState::VALID && session.GetSessionExpires() > CTimespan::GetEpochSeconds() )
       {
         session.UpdateUserSessionState(UserSessionState::LOGGED_OUT);
         return true;

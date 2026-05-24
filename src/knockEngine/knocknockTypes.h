@@ -17,8 +17,7 @@ enum class UserSessionState
                      // whenever the auth method allows it
   AUTH_SUCCESS,      // the authentication process has been completed successfully
   AUTH_FAILED,       // The authentication process has failed, the session will be removed purged
- // READY,             // The session has been properly authenticated - only the READY sessions are published to the external
-                     // world (for example through the express session)
+  VALID,             // The session has been properly authenticated and crossed checked for compliance with active policies
   EXPIRED,           // The session has expired and is no longer valid, the session will be purged
   LOGGED_OUT         // The session has been logged out, the session will be purged
 };
