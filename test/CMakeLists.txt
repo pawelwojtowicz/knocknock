@@ -10,6 +10,7 @@ authenticatorTests.cpp
 configurationReaderTest.cpp 
 jsonSerializerTest.cpp 
 sessionManagerTests.cpp 
+sessionPublisherTests.cpp
 loginRateLimiterTests.cpp
 cryptoToolsTests.cpp
 tokenizerTests.cpp

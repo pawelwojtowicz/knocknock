@@ -19,6 +19,8 @@ CSession.cpp
 CSession.h
 CSessionBuilder.cpp
 CSessionBuilder.h
+CSessionPublisher.cpp
+CSessionPublisher.h
 CPolicyGuard.cpp
 CPolicyGuard.h
 IAuthenticationMethod.h
