@@ -57,4 +57,5 @@ private:
 };
 
 using tSessionMap = std::map<std::string, CSession>;
+using tSessionList = std::vector<CSession>;
 }

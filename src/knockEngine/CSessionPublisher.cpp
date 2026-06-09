@@ -6,15 +6,24 @@ namespace knocknock
 {
 CSessionPublisher::CSessionPublisher()
 : m_dataReady(false)
-, m_sessionData("")
 , m_running(false)
 , m_publisherThread()
+, m_publishers()
 {
 
 }
 
 bool CSessionPublisher::Initialize( CConfiguration& config )
 {
+  for (const auto& publisher : m_publishers)
+  {
+    if (!publisher->Initialize())
+    {
+      std::cerr << "Failed to initialize a session publisher." << std::endl;
+      return false;
+    }
+  }
+
   // Implementation for initialization
   
   m_running = true;
@@ -31,16 +40,17 @@ void CSessionPublisher::Shutdown()
   {
     m_publisherThread.join();
   }
+
+  for (const auto& publisher : m_publishers)
+  {
+    publisher->Shutdown();
+  }
 }
 
-void CSessionPublisher::PublishSessions( const std::string& data)
+void CSessionPublisher::PublishSessions( tSessionList& activeSessions)
 {
-  // Implementation for publishing sessions
-  std::cout << "PublishSessions: before mutex" << std::endl;
   std::lock_guard<std::mutex> lock(m_dataReadyMutex);
-  std::cout << "PublishSessions: after mutex" << std::endl;
-
-  m_sessionData = data;
+  m_sessionData = std::move(activeSessions);
   m_dataReady = true;
   m_dataReadyCondition.notify_one();
 }
@@ -49,30 +59,25 @@ void CSessionPublisher::Run()
 {
   while (m_running)
   {
-    std::cout << "Run: before mutex" << std::endl;
-
-    std::string dataToPublish{};
+    bool hasDataToPublish = false;
+    tSessionList dataToPublish;
     {
       std::unique_lock<std::mutex> lock(m_dataReadyMutex);
-      std::cout << "Run: beforeAfter mutex" << std::endl;
 
       m_dataReadyCondition.wait(lock, [this] { return m_dataReady || !m_running; });
-      std::cout << "Run: after mutex" << std::endl;
       if (m_dataReady)
       {
-        std::cout << "Run: data ready" << std::endl;
-        dataToPublish = m_sessionData;
+        hasDataToPublish = true;
+        dataToPublish = std::move(m_sessionData);
         m_dataReady = false;
       }
     }
 
-    if (!dataToPublish.empty())
+    if (hasDataToPublish)
     {
-      for (int i = 0 ; i < 5; ++i) // Simulate publishing data multiple times
+      for (const auto& publisher : m_publishers)
       {
-        // Simulate publishing the session data
-        std::cout << "Publishing session data: " << dataToPublish << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Simulate time taken to publish
+        publisher->PublishSession(dataToPublish);
       }
     }
   }
