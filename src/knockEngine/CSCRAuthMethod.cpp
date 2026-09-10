@@ -5,11 +5,22 @@
 #include <CAESCipherWrapper.h>
 #include "CKeyValueHelper.h"
 #include <algorithm>
+#include <openssl/crypto.h>
 
 namespace knocknock {
 
 constexpr const char* SCR_KEY_CHALLENGE = "challenge";
 constexpr const char* SCR_KEY_RESPONSE = "challenge_response";
+
+// Constant-time comparison to avoid leaking the expected response via response-time side channels
+static bool ConstantTimeEquals(const std::string& a, const std::string& b)
+{
+  if (a.size() != b.size())
+  {
+    return false;
+  }
+  return CRYPTO_memcmp(a.data(), b.data(), a.size()) == 0;
+}
 
 tKeyValueMap CSCRAuthMethod::Login(CSession& session, const tKeyValueMap&)
 {
@@ -57,7 +68,7 @@ tKeyValueMap CSCRAuthMethod::Authenticate(CSession& session, const tKeyValueMap&
   std::string expectedResponse{};
   if (CAESCipherWrapper::EncryptString(authChallenge, session.GetSessionId(), session.GetAuthString(), expectedResponse))
   {
-    if (expectedResponse == challengeResponse)
+    if (ConstantTimeEquals(expectedResponse, challengeResponse))
     {
       // authentication successful
       session.UpdateUserSessionState(UserSessionState::AUTH_SUCCESS);

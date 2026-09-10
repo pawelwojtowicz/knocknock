@@ -75,11 +75,24 @@ bool CMain::Initialize()
 			LOG( WARNING, "Creating empty DB in primary location: %s", dbLocation.c_str() );
 		}
 	}
-	m_database.OpenDatabase( dbLocation );
+	if ( !m_database.OpenDatabase( dbLocation ) )
+	{
+		LOG( ERROR, "Failed to open database at %s", dbLocation.c_str() );
+		return false;
+	}
 
-	m_sessionManager.Initialize();
+	if ( !m_sessionManager.Initialize() )
+	{
+		LOG( ERROR, "Failed to initialize session manager" );
+		return false;
+	}
 
-	m_httpChannel.Initialize( m_configuration );
+	if ( !m_httpChannel.Initialize( m_configuration ) )
+	{
+		LOG( ERROR, "Failed to initialize HTTP channel" );
+		return false;
+	}
+
 	return true;
 }
 

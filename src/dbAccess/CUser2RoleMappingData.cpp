@@ -48,7 +48,7 @@ knocknock::tPrivilegeArray CUser2RoleMappingData::GetUserPrivileges( const std::
 {
   knocknock::tPrivilegeArray privileges;
 
-  const std::string sql = "SELECT P.SHORT_DESC, P.LONG_DESC FROM USERS U JOIN USER2ROLES U2R ON (U.USER_ID = U2R.USER_ID) JOIN ROLE2PRIVILEGE R2P ON (U2R.ROLE_NAME = R2P.ROLE_NAME) JOIN PRIVILEGES P ON (R2P.PRIVILEGE_SHORT_DESC = P.SHORT_DESC) WHERE U.USER_ID = ?;";
+  const std::string sql = "SELECT P.SHORT_DESC, P.LONG_DESC FROM USERS U JOIN USER2ROLES U2R ON (U.USER_ID = U2R.USER_ID) JOIN ROLES R ON (U2R.ROLE_NAME = R.NAME) JOIN ROLE2PRIVILEGE R2P ON (U2R.ROLE_NAME = R2P.ROLE_NAME) JOIN PRIVILEGES P ON (R2P.PRIVILEGE_SHORT_DESC = P.SHORT_DESC) WHERE U.USER_ID = ?;";
   std::vector<std::string> params = { userId };
 
   auto getUserPrivilegesCallback = [](void *data, int argc, char **argv, char **azColName) {

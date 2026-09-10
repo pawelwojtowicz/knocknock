@@ -16,7 +16,7 @@ bool CCookieBuilder::Initialize( const CConfiguration& config )
   paramValueString = config.GetParamString(cParamNameHTTPCookiePath, "/" );
   m_cookiePostfix += "; Path=" + paramValueString;
 
-  paramValueString = config.GetParamString(cParamNameHTTPCookieSecure, "false");
+  paramValueString = config.GetParamString(cParamNameHTTPCookieSecure, "true");
   if  (paramValueString == "true" || paramValueString == "1" || paramValueString == "TRUE")
   {
     m_cookiePostfix += "; Secure";

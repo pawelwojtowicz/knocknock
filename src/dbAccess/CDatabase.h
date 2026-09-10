@@ -21,7 +21,7 @@ public:
   CDatabase( IDBDriver& rDBDriver );
   virtual ~CDatabase() = default;
 
-  void OpenDatabase( const std::string& dbFilename );
+  bool OpenDatabase( const std::string& dbFilename );
   void Close( );
 
   CApplicationData& GetApplicationData() override {

@@ -14,7 +14,6 @@ CSessionManager::CSessionManager( DBAccess::IDBAccess& rDBAccess, CConfiguration
 , m_rConfiguration(rConfiguration)
 , m_sessionBuilder(rConfiguration, rDBAccess)
 , m_authenticator()
-, m_emptySession("", "", "", "", "")
 , m_sessionsMutex()
 , m_sessions()
 , m_sessionExpirationTimeout{180} // default to 3 minutes, can be overridden by configuration
@@ -132,7 +131,11 @@ const CSession CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValu
             session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
             m_loginRateLimiter.RecordSuccess(session.GetUserId());
             return session;
-          }  
+          }
+        }
+        else if ( session.GetUserSessionState() == UserSessionState::AUTH_FAILED )
+        {
+          m_loginRateLimiter.RecordFailure(session.GetUserId(), CTimespan::GetEpochSeconds());
         }
       }
     }

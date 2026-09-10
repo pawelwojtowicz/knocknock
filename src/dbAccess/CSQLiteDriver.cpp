@@ -13,6 +13,9 @@ bool CSQLiteDriver::Open( const std::string& dbFilename)
     fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(m_pDBEngine));
     return( false );
   }
+
+  sqlite3_exec(m_pDBEngine, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+
   return true;
 }
 

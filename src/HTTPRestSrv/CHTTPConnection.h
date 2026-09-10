@@ -28,6 +28,7 @@ private:
   boost::asio::thread_pool& m_threadPool;
 
   boost::asio::ip::tcp::socket m_socket;
+  boost::asio::strand<boost::asio::ip::tcp::socket::executor_type> m_strand;
   std::string m_remoteAddress;
 
   boost::beast::flat_buffer m_buffer { 8192 };

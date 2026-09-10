@@ -20,16 +20,21 @@ CDatabase::CDatabase( IDBDriver& rDBDriver )
 {
 }
 
-void CDatabase::OpenDatabase( const std::string& dbFilename )
+bool CDatabase::OpenDatabase( const std::string& dbFilename )
 {
   bool dbExisted ( std::filesystem::exists( dbFilename) );
-  m_rDBDriver.Open(dbFilename);
+  if (!m_rDBDriver.Open(dbFilename))
+  {
+    return false;
+  }
 
   if (!dbExisted)
   {
     CDBStructureBuilder dbBuilder( m_rDBDriver );
-    dbBuilder.PrepareDatabaseStructure();
+    return dbBuilder.PrepareDatabaseStructure();
   }
+
+  return true;
 }
 
 void CDatabase::Close()

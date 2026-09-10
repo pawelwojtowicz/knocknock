@@ -384,10 +384,14 @@ TEST( CSQLiteDriver, ApplicationParams )
 
   database.OpenDatabase("test.db");
 
-  knocknock::CApplicationParam applicationParameter(100 , "IPADDRESS", true, "192.168.1.1");
+  ASSERT_TRUE(database.GetApplicationData().AddApplication(knocknock::CApplication(-1, "ParamsTestOtherApp", "MQTT", "token1")));
+  const int otherApplicationId = database.GetApplicationData().GetAllApplications().back().GetAppId();
+
+  knocknock::CApplicationParam applicationParameter(otherApplicationId , "IPADDRESS", true, "192.168.1.1");
   database.GetApplicationParamData().AddApplicationParam(applicationParameter);
 
-  int applicationId(15);
+  ASSERT_TRUE(database.GetApplicationData().AddApplication(knocknock::CApplication(-1, "ParamsTestApp", "MQTT", "token2")));
+  const int applicationId = database.GetApplicationData().GetAllApplications().back().GetAppId();
   std::string paramName( "BROKER_IP");
   bool publicParam(false);
   std::string paramValue("192.168.1.100");
@@ -446,7 +450,7 @@ TEST( CSQLiteDriver, ApplicationParams )
 
   //Deleting the single param 
   {
-    ASSERT_TRUE( database.GetApplicationParamData().DeleteApplicationParameter(100, "IPADDRESS") );
+    ASSERT_TRUE( database.GetApplicationParamData().DeleteApplicationParameter(otherApplicationId, "IPADDRESS") );
     knocknock::tApplicationParamsArray allAppParams = database.GetApplicationParamData().GetAllParams();
     EXPECT_EQ( allAppParams.size() , 0 );
   }
@@ -460,9 +464,15 @@ TEST( CSQLiteDriver, UserSettings )
 
   database.OpenDatabase("test.db");
 
-  int appId = { 100 };
+  ASSERT_TRUE(database.GetApplicationData().AddApplication(knocknock::CApplication(-1, "SettingsTestApp", "MQTT", "token")));
+  const int appId = database.GetApplicationData().GetAllApplications().back().GetAppId();
+
   std::string userId = { "skull" };
+  ASSERT_TRUE(database.GetUserData().AddUser(knocknock::CUser(userId, "Skull", "User", "otp", "1234567890")));
+
   std::string paramName = { "SCREEN_PALETTE" };
+  ASSERT_TRUE(database.GetApplicationParamData().AddApplicationParam(knocknock::CApplicationParam(appId, paramName, true, "WHITE")));
+  ASSERT_TRUE(database.GetApplicationParamData().AddApplicationParam(knocknock::CApplicationParam(appId, "USER_PREFIX", true, "Ms.")));
 
   knocknock::CUserSetting userSetting ( appId, paramName , userId, "BLACK");
   ASSERT_TRUE(database.GetUserSettingsData().AddUserSetting(userSetting));

@@ -2,8 +2,19 @@
 #include "CSession.h"
 #include <CSHA256Hash.h>
 #include "CKeyValueHelper.h"
+#include <openssl/crypto.h>
 
 namespace knocknock {
+
+// Constant-time comparison to avoid leaking the stored hash via response-time side channels
+static bool ConstantTimeEquals(const std::string& a, const std::string& b)
+{
+  if (a.size() != b.size())
+  {
+    return false;
+  }
+  return CRYPTO_memcmp(a.data(), b.data(), a.size()) == 0;
+}
 
 tKeyValueMap CSHA256AuthMethod::Login(CSession& session, const tKeyValueMap& loginPayload)
 {
@@ -23,7 +34,7 @@ tKeyValueMap CSHA256AuthMethod::Login(CSession& session, const tKeyValueMap& log
     return {};
   }
 
-  if ( session.GetAuthString() != passwordHashString)
+  if ( !ConstantTimeEquals(session.GetAuthString(), passwordHashString) )
   {
     session.UpdateUserSessionState(UserSessionState::AUTH_FAILED);
     return { tKeyValueMap::value_type("error", "invalid_credentials") };

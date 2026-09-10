@@ -47,7 +47,7 @@ private:
 
   CAuthenticator m_authenticator;
 
-  CSession m_emptySession;
+  const CSession m_emptySession {"", "", "", "", ""}; // Represents an empty session, used when no valid session is found
 
   std::shared_mutex m_sessionsMutex;
 

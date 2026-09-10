@@ -8,10 +8,13 @@
 namespace knocknock
 {
 
-static std::string generateRandomHex(int byteCount)
+static bool generateRandomHex(int byteCount, std::string& output)
 {
   std::vector<unsigned char> buffer(byteCount);
-  RAND_bytes(buffer.data(), byteCount);
+  if (RAND_bytes(buffer.data(), byteCount) != 1)
+  {
+    return false;
+  }
 
   std::stringstream ss;
   ss << std::hex << std::setfill('0');
@@ -19,17 +22,27 @@ static std::string generateRandomHex(int byteCount)
   {
     ss << std::setw(2) << static_cast<int>(b);
   }
-  return ss.str();
+  output = ss.str();
+  return true;
 }
 
 std::string CAuthenticationChallengeTools::GenerateAuthenticationChallenge(const std::string& userId)
 {
-  return generateRandomHex(32);
+  std::string challenge;
+  if (!generateRandomHex(32, challenge))
+  {
+    return std::string{};
+  }
+  return challenge;
 }
 
 std::string CAuthenticationChallengeTools::GenerateSessionId(const std::string& userId)
 {
-  std::string rawChallenge = generateRandomHex(32);
+  std::string rawChallenge;
+  if (!generateRandomHex(32, rawChallenge))
+  {
+    return std::string{};
+  }
   std::string rawBinarySessionId;
   std::string hexEncodedSessionId;
 

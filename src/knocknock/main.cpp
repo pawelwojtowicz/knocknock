@@ -1,5 +1,7 @@
 #include "CMain.h"
 #include <csignal>
+#include <cstdio>
+#include <exception>
 
 knocknock::CMain* __pExecutable;
 
@@ -20,9 +22,17 @@ int main(int argc, char** argv )
 
 	if ( 0 != __pExecutable )
 	{
-		if ( __pExecutable->InitModule(argc,argv) )
+		try
 		{
-			retVal = __pExecutable->Run();
+			if ( __pExecutable->InitModule(argc,argv) )
+			{
+				retVal = __pExecutable->Run();
+			}
+		}
+		catch ( const std::exception& e )
+		{
+			fprintf(stderr, "Fatal error during startup: %s\n", e.what());
+			retVal = 1;
 		}
 		__pExecutable->Shutdown();
 	}
