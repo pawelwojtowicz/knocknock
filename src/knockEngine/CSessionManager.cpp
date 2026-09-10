@@ -20,6 +20,7 @@ CSessionManager::CSessionManager( DBAccess::IDBAccess& rDBAccess, CConfiguration
 , m_authenticationChallengeTimeout{3}
 , m_loginRateLimiter()
 , m_policyGuard(m_sessions)
+, m_sessionPublisher()
 {
 }
 
@@ -46,11 +47,17 @@ bool CSessionManager::Initialize()
     return false;
   }
 
+  if ( !m_sessionPublisher.Initialize(m_rConfiguration) )
+  {
+    return false;
+  }
+
   return true;
 }
 
 void CSessionManager::Shutdown()
 {
+  m_sessionPublisher.Shutdown();
   m_authenticator.Shutdown();
 }
 
@@ -100,10 +107,17 @@ const CSession CSessionManager::Login(const tKeyValueMap& input, tKeyValueMap& o
         m_sessions.insert({session.GetSessionId(), session});
       }
 
+      if (session.GetUserSessionState() == UserSessionState::VALID)
+      {
+        // Publish immediately rather than waiting for the next Tick() -
+        // this session is eligible (properly authenticated) right now.
+        PublishActiveSessions();
+      }
+
       return session;
     }
 
-  }  
+  }
   return m_emptySession;
 }
 
@@ -111,6 +125,9 @@ const CSession CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValu
 {
   CKeyValueHelper inputHelper(input);
   std::string sessionId{};
+  bool becameValid = false;
+  CSession resultSession = m_emptySession;
+
   if ( inputHelper.GetValue(sLoginSessionId, sessionId) && !sessionId.empty() )
   {
     std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
@@ -130,7 +147,8 @@ const CSession CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValu
             session.SetMaxAge(m_sessionExpirationTimeout);
             session.SetSessionExpires(CTimespan::GetEpochSeconds() + m_sessionExpirationTimeout);
             m_loginRateLimiter.RecordSuccess(session.GetUserId());
-            return session;
+            resultSession = session;
+            becameValid = true;
           }
         }
         else if ( session.GetUserSessionState() == UserSessionState::AUTH_FAILED )
@@ -139,7 +157,17 @@ const CSession CSessionManager::Authenticate(const tKeyValueMap& input, tKeyValu
         }
       }
     }
-  } 
+  }
+
+  if (becameValid)
+  {
+    // Publish immediately rather than waiting for the next Tick() - deferred
+    // until here, outside the m_sessionsMutex lock above, since
+    // PublishActiveSessions() takes that same mutex itself.
+    PublishActiveSessions();
+    return resultSession;
+  }
+
   return m_emptySession;
 }
 
@@ -192,6 +220,7 @@ void CSessionManager::Tick()
 {
   CleanupExpiredSessions();
   m_loginRateLimiter.Cleanup(CTimespan::GetEpochSeconds());
+  PublishActiveSessions();
 }
 
 void CSessionManager::CleanupExpiredSessions()
@@ -213,6 +242,27 @@ void CSessionManager::CleanupExpiredSessions()
             ++it;
         }
     }
+}
+
+void CSessionManager::PublishActiveSessions()
+{
+    // Only VALID sessions are meaningful to an external consumer of the
+    // publisher (e.g. an express-session-backed app reading the SQLite
+    // publisher) - CREATED/AUTH_IN_PROGRESS sessions have no confirmed
+    // identity yet, and LOGGED_OUT/AUTH_FAILED/EXPIRED are about to be
+    // purged by CleanupExpiredSessions() anyway.
+    tSessionList activeSessions;
+    {
+        std::shared_lock<std::shared_mutex> lock(m_sessionsMutex);
+        for (const auto& [sessionId, session] : m_sessions)
+        {
+            if (session.GetUserSessionState() == UserSessionState::VALID)
+            {
+                activeSessions.push_back(session);
+            }
+        }
+    }
+    m_sessionPublisher.PublishSessions(activeSessions);
 }
 
 } // namespace knocknock

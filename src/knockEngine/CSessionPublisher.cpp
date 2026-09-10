@@ -1,5 +1,6 @@
 #include "CSessionPublisher.h"
 #include "CConfiguration.h"
+#include "CSQLiteSessionPublisher.h"
 #include <iostream>
 
 namespace knocknock
@@ -15,6 +16,13 @@ CSessionPublisher::CSessionPublisher()
 
 bool CSessionPublisher::Initialize( CConfiguration& config )
 {
+  // Build the publisher list from available plugins. This is the only place
+  // m_publishers is ever populated - it is fixed for the rest of this
+  // object's lifetime once Initialize() returns. Each publisher owns
+  // reading and interpreting its own config keys (including whether it's
+  // enabled at all) - CSessionPublisher just wires the shared config in.
+  m_publishers.push_back(std::make_shared<CSQLiteSessionPublisher>(config));
+
   for (const auto& publisher : m_publishers)
   {
     if (!publisher->Initialize())
@@ -24,8 +32,6 @@ bool CSessionPublisher::Initialize( CConfiguration& config )
     }
   }
 
-  // Implementation for initialization
-  
   m_running = true;
   m_publisherThread = std::thread([this]() { Run(); });
   return true;
@@ -33,7 +39,9 @@ bool CSessionPublisher::Initialize( CConfiguration& config )
 
 void CSessionPublisher::Shutdown()
 {
-  // Implementation for shutdown
+  // Signal Run() to stop and join it. Any snapshot sitting in m_sessionData
+  // at this point (from a PublishSessions() call the background thread
+  // hasn't drained yet) is intentionally discarded rather than published.
   m_running = false;
   m_dataReadyCondition.notify_one();
   if (m_publisherThread.joinable())
@@ -49,6 +57,9 @@ void CSessionPublisher::Shutdown()
 
 void CSessionPublisher::PublishSessions( tSessionList& activeSessions)
 {
+  // Latest-wins by design: if a previous snapshot hasn't been picked up by
+  // Run() yet, it is overwritten and never published. Callers that need
+  // every snapshot delivered should not rely on this method.
   std::lock_guard<std::mutex> lock(m_dataReadyMutex);
   m_sessionData = std::move(activeSessions);
   m_dataReady = true;
@@ -81,7 +92,6 @@ void CSessionPublisher::Run()
       }
     }
   }
-  // Implementation for the main loop or processing
 };
 
 }

@@ -21,6 +21,8 @@ CSessionBuilder.cpp
 CSessionBuilder.h
 CSessionPublisher.cpp
 CSessionPublisher.h
+CSQLiteSessionPublisher.cpp
+CSQLiteSessionPublisher.h
 CPolicyGuard.cpp
 CPolicyGuard.h
 IAuthenticationMethod.h

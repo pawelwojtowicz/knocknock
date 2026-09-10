@@ -1,2 +1,6 @@
 __pycache__
 .pytest_cache
+.venv
+testData/sessionPublisher.db
+testData/sessionPublisher.db-shm
+testData/sessionPublisher.db-wal

@@ -41,6 +41,32 @@ $ ./build/src/knocknock/knocknock autoTest/testData/knocknock.conf
 The automated test procedures have been prepared with the use of the **pytest** .
 The test cases ilustrate the typical communication sequences that implemented in the servers logic.
 
+#### Configuring and running the autotests on Ubuntu
+
+Ubuntu (24.04 and later) ships Python 3 by default, but blocks installing packages into the system Python directly (PEP 668) - a virtual environment is required. From the repo root:
+
+```
+$ sudo apt-get install python3-venv python3-pip
+$ python3 -m venv autoTest/.venv
+$ source autoTest/.venv/bin/activate
+$ pip install -r autoTest/requirements.txt
+```
+
+With the venv still active, start the server (see "Starting up the server" above) in one terminal:
+```
+$ ./build/src/knocknock/knocknock autoTest/testData/knocknock.conf
+```
+
+Then, in another terminal (with `source autoTest/.venv/bin/activate` run again), execute the tests:
+```
+$ cd autoTest
+$ pytest -v
+```
+
+Deactivate the virtual environment when done with `deactivate`. You do not need to recreate the venv or reinstall dependencies on subsequent runs - just re-activate it.
+
+#### Running the autotests on Windows
+
 Running the pytests in Windows 11 environment - assuming the user console is navigated to autoTest (and knocknock in the test configuration is running):</br>
 ```
 $ py -m pytest
@@ -64,8 +90,37 @@ The configuration can be read from the configuration file and also from the data
 | http.cookieSameSite |[STRICT\|LAX\|NONE] | |
 | maxLoginAttempts | integer | Maximum number of consecutive failed login attempts per userId before lockout. Default: 5 |
 | loginLockoutSeconds | integer | Base lockout duration in seconds after exceeding max attempts. Doubles with each subsequent failure (exponential backoff), capped at 64x the base value. Default: 30 |
+| sqlite3.SessionExpressPublisher.dbPath | string | Path to a dedicated SQLite file that active (VALID) sessions are published into, in a schema compatible with the `connect-sqlite3` store for the Node.js `express-session` middleware. Left empty (the default) disables the publisher entirely - it is opt-in. |
 
 ## Features
 ### HTTPS
     The support TLS/HTTPS shall be facilitated by utilizing the reverse proxies that can provide the TLS termination.
+
+### Session publisher (Node.js / express-session integration)
+When `sqlite3.SessionExpressPublisher.dbPath` is configured (see Configuration above), knocknock periodically publishes its currently active (`VALID`) sessions into a dedicated SQLite file, using the same table schema as the [`connect-sqlite3`](https://www.npmjs.com/package/connect-sqlite3) session store for the [`express-session`](https://www.npmjs.com/package/express-session) middleware. A Node.js/Express application can point `express-session` at that same file and read sessions created by knocknock directly, with no glue code of its own.
+
+Install the two packages:
+```
+$ npm install express-session connect-sqlite3
+```
+
+Wire them up, pointing at the same file and table configured in knocknock's `sqlite3.SessionExpressPublisher.dbPath`:
+```js
+const express = require('express');
+const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
+
+app.use(session({
+  store: new SQLiteStore({
+    db: 'sessionPublisher.db',   // filename part of sqlite3.SessionExpressPublisher.dbPath
+    dir: 'autoTest/testData',    // directory part of sqlite3.SessionExpressPublisher.dbPath
+    table: 'sessions',           // default table name used by the publisher
+  }),
+  secret: 'whatever',
+  resave: false,
+  saveUninitialized: false,
+}));
+```
+
+Once configured, `req.session.userId`, `.userName`, `.state`, `.roles` and `.privileges` become directly readable on any request whose session cookie matches a session knocknock published. Sessions are removed from the table once they are logged out or expire (published sessions reflect the currently active set, not a permanent log). The password hash / authentication secret is deliberately never included in the published data.
 

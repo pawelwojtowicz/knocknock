@@ -8,6 +8,7 @@
 #include "CAuthenticator.h"
 #include "CLoginRateLimiter.h"
 #include "CPolicyGuard.h"
+#include "CSessionPublisher.h"
 
 namespace DBAccess
 {
@@ -38,6 +39,9 @@ private:
   //internal utility method to cleanup expired sessions, called periodically by Tick()
   void CleanupExpiredSessions();
 
+  //internal utility method to hand a snapshot of active sessions to the session publisher, called periodically by Tick()
+  void PublishActiveSessions();
+
 private:
   DBAccess::IDBAccess& m_rDBAccess;
 
@@ -60,6 +64,8 @@ private:
   CLoginRateLimiter m_loginRateLimiter;
 
   CPolicyGuard m_policyGuard;
+
+  CSessionPublisher m_sessionPublisher;
 };
 
 }
