@@ -3,6 +3,8 @@ project (knocknock CXX)
 SET( OUTPUT_NAME knocknock )
 
 add_executable ( ${OUTPUT_NAME}
+CPluginManager.cpp
+CPluginManager.h
 CMain.cpp
 CMain.h
 main.cpp

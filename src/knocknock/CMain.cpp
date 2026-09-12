@@ -59,6 +59,8 @@ bool CMain::Initialize()
 	}
 	LOG( INFO, "Configuration file %s loaded successfully", configFileName.c_str() );
 
+	m_pluginManager.Initialize();
+
 	std::string dbLocation = m_configuration.GetParamString(cParamNamePrimaryDBLocation, cDefaultDBLocation);
 	if ( !std::filesystem::exists(dbLocation) )
 	{
@@ -121,6 +123,8 @@ void CMain::Shutdown()
 	m_httpChannel.Shutdown();
 
 	m_sessionManager.Shutdown();
+
+	m_pluginManager.Shutdown();
 	LOG( INFO, "CMain::Shutdown() called" );
 }
 

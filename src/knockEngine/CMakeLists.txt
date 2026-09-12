@@ -27,6 +27,7 @@ CPolicyGuard.cpp
 CPolicyGuard.h
 IAuthenticationMethod.h
 IKnocknockService.h
+IKnockKnockPlugin.h
 CSHA256AuthMethod.cpp
 CSHA256AuthMethod.h
 CSimpleDBAuthMethod.cpp

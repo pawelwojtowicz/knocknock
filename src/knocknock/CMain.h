@@ -8,6 +8,7 @@
 #include <CSessionManager.h>
 #include <CSimpleLogger.h>
 #include "CHTTPChannel.h"
+#include "CPluginManager.h"
 
 namespace knocknock
 {
@@ -43,6 +44,8 @@ private:
 	CHTTPChannel m_httpChannel;
 
 	Logger::CSimpleLogger m_logger;
+
+	CPluginManager m_pluginManager;
 
 	std::atomic<bool> m_running{false};
 };
