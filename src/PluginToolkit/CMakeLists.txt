@@ -10,6 +10,7 @@ IKnocknockPlugin.h
 ISessionPublisher.h
 KnocKnockDictionary.h
 knocknockTypes.h
+PluginManifest.h
 )
 
 target_compile_features( ${OUTPUT_NAME} INTERFACE cxx_std_17)
