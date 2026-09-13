@@ -1,16 +1,13 @@
 #pragma once
-#include <IKnocknockPlugin.h>
+#include <CPluginBase.h>
 
 namespace CMQTTConnectivityPlugin
 {
 
-class CMQTTConnectivityPlugin :public knocknock::IKnocknockPlugin
+class CMQTTConnectivityPlugin :public knocknock::CPluginBase
 {
 public:
-  CMQTTConnectivityPlugin() = default;
+  CMQTTConnectivityPlugin();
   virtual ~CMQTTConnectivityPlugin() = default;
-
-  std::string GetName() const override;
-  std::string GetVersion() const override;
 };
 }

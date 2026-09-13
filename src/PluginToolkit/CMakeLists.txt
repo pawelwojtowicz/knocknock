@@ -3,6 +3,8 @@ project( PluginToolkit )
 SET( OUTPUT_NAME PluginToolkit )
 
 add_library( ${OUTPUT_NAME} STATIC
+CPluginBase.cpp
+CPluginBase.h
 CSession.cpp
 CSession.h
 IAuthenticationMethod.h

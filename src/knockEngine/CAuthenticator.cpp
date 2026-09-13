@@ -3,6 +3,7 @@
 #include "CConfiguration.h"
 #include "CSession.h"
 #include "CKeyValueHelper.h"
+#include <CTokenizer.h>
 #include <sstream>
 
 namespace knocknock
@@ -19,15 +20,14 @@ CAuthenticator::~CAuthenticator()
 bool CAuthenticator::Initialize( const CConfiguration& config )
 {
   CAuthMethodFactory authMethodFactory;
-  std::stringstream authMethodsStream(config.GetParamString(cParamName_AllowedAuthMethods, cParamValue_AllowedAuthMethods));
-  std::string method;
+  const auto authMethodTokens = CTokenizer::Tokenize(config.GetParamString(cParamName_AllowedAuthMethods, cParamValue_AllowedAuthMethods), ',');
 
-  while (std::getline(authMethodsStream, method, ','))
+  for (const auto& token : authMethodTokens)
   {
-    auto authMethod = authMethodFactory.CreateAuthMethod(method);
+    auto authMethod = authMethodFactory.CreateAuthMethod(token);
     if (authMethod)
     {
-      m_authMethods.insert_or_assign(method, std::move(authMethod));
+      m_authMethods.insert_or_assign(token, std::move(authMethod));
     }
     else
     {

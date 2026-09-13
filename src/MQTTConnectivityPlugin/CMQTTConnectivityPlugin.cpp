@@ -2,15 +2,9 @@
 
 namespace CMQTTConnectivityPlugin
 {
-
-std::string CMQTTConnectivityPlugin::GetName() const
+CMQTTConnectivityPlugin::CMQTTConnectivityPlugin()
+  : knocknock::CPluginBase( "MQTTConnectivityPlugin", "1.0.0" )
 {
-  return "MQTTConnectivityPlugin";
-}
-
-std::string CMQTTConnectivityPlugin::GetVersion() const
-{
-  return "1.0.0";
 }
 
 }
