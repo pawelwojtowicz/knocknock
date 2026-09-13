@@ -1,10 +1,10 @@
 #pragma once
-#include <IKnockKnockPlugin.h>
+#include <IKnocknockPlugin.h>
 
 namespace CMQTTConnectivityPlugin
 {
 
-class CMQTTConnectivityPlugin :public knocknock::IKnockKnockPlugin
+class CMQTTConnectivityPlugin :public knocknock::IKnocknockPlugin
 {
 public:
   CMQTTConnectivityPlugin() = default;

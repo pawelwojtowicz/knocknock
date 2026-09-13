@@ -4,11 +4,11 @@
 namespace knocknock
 {
   
-class IKnockKnockPlugin
+class IKnocknockPlugin
 {
 public:
-  IKnockKnockPlugin() = default;
-  virtual ~IKnockKnockPlugin() = default;
+  IKnocknockPlugin() = default;
+  virtual ~IKnocknockPlugin() = default;
 
   virtual std::string GetName() const = 0;
   virtual std::string GetVersion() const = 0;

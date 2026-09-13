@@ -4,14 +4,14 @@
 #include <vector>
 #include <memory>
 #include <dlfcn.h>
-#include <IKnockKnockPlugin.h>
+#include <IKnocknockPlugin.h>
 
 namespace knocknock
 {
 
 class CPluginManager
 {
-  using tPluginTuple = std::tuple<void*, std::unique_ptr<IKnockKnockPlugin>>;
+  using tPluginTuple = std::tuple<void*, std::unique_ptr<IKnocknockPlugin>>;
   using tPluginList = std::vector<tPluginTuple>;
 public:
   CPluginManager() = default;

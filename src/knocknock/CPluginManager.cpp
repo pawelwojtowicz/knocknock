@@ -21,7 +21,7 @@ CPluginManager::~CPluginManager()
   }
 }
 
-using tPrCreatePluginInstanceFunc = std::unique_ptr<knocknock::IKnockKnockPlugin> (*)();
+using tPrCreatePluginInstanceFunc = std::unique_ptr<knocknock::IKnocknockPlugin> (*)();
 
 bool CPluginManager::Initialize()
 {
@@ -48,7 +48,7 @@ bool CPluginManager::LoadPlugin(const std::string& pluginPath)
       if ( componentGetter != nullptr )
       {
         LOG( INFO, "Found createInstance function in plugin: %s", pluginPath.c_str() );
-        std::unique_ptr<knocknock::IKnockKnockPlugin> pluginInstance = componentGetter();
+        std::unique_ptr<knocknock::IKnocknockPlugin> pluginInstance = componentGetter();
         if (pluginInstance)
         {
           LOG( INFO, "Loaded plugin: %s Version: %s", pluginInstance->GetName().c_str(), pluginInstance->GetVersion().c_str() );
