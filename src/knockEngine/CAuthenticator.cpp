@@ -24,7 +24,7 @@ bool CAuthenticator::Initialize( const CConfiguration& config )
 
   for (const auto& token : authMethodTokens)
   {
-    auto authMethod = authMethodFactory.CreateAuthMethod(token);
+    auto authMethod = authMethodFactory.Create(token);
     if (authMethod)
     {
       m_authMethods.insert_or_assign(token, std::move(authMethod));
