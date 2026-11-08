@@ -12,7 +12,7 @@ class TBuilderFactory
 {
 public:
     using tClassPtr = std::unique_ptr<T>;
-    using tCreationMethod = std::function<tClassPtr>;
+    using tCreationMethod = std::function<tClassPtr()>;
     using tCreationMethodMap = std::map<std::string, tCreationMethod>;
 
     TBuilderFactory() = default ;
@@ -34,7 +34,7 @@ public:
         auto iter = m_creationMap.find(name);
         if ( m_creationMap.end() == iter )
         {
-            m_creationMap.insert( tCreationMethodMap::value_type( name, builderMethod) );
+            m_creationMap.emplace( name, std::move(builderMethod) );
             return true;
         }
         return false;

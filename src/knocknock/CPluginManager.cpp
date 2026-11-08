@@ -25,7 +25,7 @@ using tPrCreatePluginInstanceFunc = std::unique_ptr<knocknock::IKnocknockPlugin>
 
 bool CPluginManager::Initialize()
 {
-  const std::string pluginPath = "/home/pawel/knocknock/build/src/MQTTConnectivityPlugin/libmqttConnectivityPlugin.so";
+  const std::string pluginPath = "/home/pawel/programy/knocknock/build/src/MQTTConnectivityPlugin/libmqttConnectivityPlugin.so";
   return LoadPlugin(pluginPath);
 }
 
