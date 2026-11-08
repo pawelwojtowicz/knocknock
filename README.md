@@ -8,6 +8,13 @@ The knocknock is an identity server that is dedicated for the embedded devices. 
 ## Development
 The server is implemented in the C++ with the intention to avoid newest C++ syntax, to make it possible to compile it with older C++ compilers.
 
+### Installing the base tools ( optional, when you developin )
+
+The basic tools needed to compile the whole complete C++ code:
+```
+sudo apt install -y build-essential cmake libgmock-dev libgtest-dev
+```
+
 ### Installing the dependencies (on ubuntu)
 
 ```
