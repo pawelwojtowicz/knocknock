@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <map>
 #include <shared_mutex>
+#include "CSecurityIndustrialComplex.h"
 #include "CSession.h"
 #include "CSessionBuilder.h"
 #include "CAuthenticator.h"
@@ -23,10 +24,10 @@ class CConfiguration;
 class CSessionManager : public IKnocknockService
 {
 public:
-  CSessionManager( DBAccess::IDBAccess& rDBAccess, CConfiguration& rConfiguration );
+  CSessionManager(  DBAccess::IDBAccess& rDBAccess, CConfiguration& rConfiguration  );
   virtual ~CSessionManager();
 
-  bool Initialize();
+  bool Initialize( const CSecurityIndustrialComplex& rFactories );
   void Tick();
   void Shutdown();
 private:

@@ -29,7 +29,7 @@ CSessionManager::~CSessionManager()
 
 }
 
-bool CSessionManager::Initialize()
+bool CSessionManager::Initialize( const CSecurityIndustrialComplex& rFactories )
 {
   m_sessionExpirationTimeout = m_rConfiguration.GetParamInt( "sessionExpirationTimeout", m_sessionExpirationTimeout);
 
@@ -42,7 +42,7 @@ bool CSessionManager::Initialize()
     return false;
   } 
   
-  if ( !m_authenticator.Initialize(m_rConfiguration) )
+  if ( !m_authenticator.Initialize(m_rConfiguration, rFactories) )
   {
     return false;
   }

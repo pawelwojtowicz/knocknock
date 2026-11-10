@@ -7,10 +7,10 @@ CArgon2idAuthMethod.cpp
 CArgon2idAuthMethod.h
 CAuthenticator.cpp
 CAuthenticator.h
-CAuthMethodFactory.cpp
-CAuthMethodFactory.h
 CLoginRateLimiter.cpp
 CLoginRateLimiter.h
+CSecurityIndustrialComplex.cpp
+CSecurityIndustrialComplex.h
 CSessionManager.cpp
 CSessionManager.h
 CSCRAuthMethod.cpp

@@ -18,9 +18,9 @@ public:
     TBuilderFactory() = default ;
     virtual ~TBuilderFactory() = default;
 
-    tClassPtr Create( const std::string& className ) 
+    tClassPtr Create( const std::string& className ) const
     {
-        auto iter = m_creationMap.find(className);
+        const auto iter = m_creationMap.find(className);
         if ( m_creationMap.end() != iter )
         {
             return iter->second();

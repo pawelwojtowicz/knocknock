@@ -1,6 +1,8 @@
 #include "CMain.h"
 #include "Logger.h"
 #include "KnocknockConst.h"
+#include <CSecurityIndustrialComplex.h>
+
 #include <filesystem>
 
 namespace knocknock
@@ -83,7 +85,9 @@ bool CMain::Initialize()
 		return false;
 	}
 
-	if ( !m_sessionManager.Initialize() )
+	CSecurityIndustrialComplex securityFactoriesCompound;
+
+	if ( !m_sessionManager.Initialize( securityFactoriesCompound ) )
 	{
 		LOG( ERROR, "Failed to initialize session manager" );
 		return false;

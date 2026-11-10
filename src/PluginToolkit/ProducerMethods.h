@@ -1,14 +1,11 @@
 #pragma once
-#include <functional>
-#include <memory>
-#include <map>
+#include "TBuilderFactory.h"
 #include "ISessionPublisher.h"
 #include "IAuthenticationMethod.h"
 
 namespace knocknock
 {
-using tSessionPublisherConstructionFunction = std::function<std::unique_ptr<ISessionPublisher>()>;
-using tSessionPublisherBuildersMap = std::map<std::string, tSessionPublisherConstructionFunction>;
+using tSessionPublisherBuildersMap = TBuilderFactory<ISessionPublisher>::tCreationMethodMap;
 using tAuthenticationMethodConstructionFunction = std::function<std::unique_ptr<IAuthenticationMethod>()>;
-using tAuthenticationMethodBuildersMap = std::map<std::string, tAuthenticationMethodConstructionFunction>;
+using tAuthenticationMethodBuildersMap = TBuilderFactory<IAuthenticationMethod>::tCreationMethodMap;
 }

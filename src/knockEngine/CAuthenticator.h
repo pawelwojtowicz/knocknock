@@ -1,7 +1,8 @@
 #pragma once
 #include <memory>
 #include <UtilityTypes.h>
-#include "IAuthenticationMethod.h"
+#include "CSecurityIndustrialComplex.h"
+
 
 
 namespace knocknock
@@ -18,7 +19,7 @@ public:
   CAuthenticator();
   ~CAuthenticator();
 
-  bool Initialize( const CConfiguration& config ); 
+  bool Initialize( const CConfiguration& config, const CSecurityIndustrialComplex& rFactories ); 
   void Shutdown();
 
   tKeyValueMap Login(CSession& session, const tKeyValueMap& loginPayload);

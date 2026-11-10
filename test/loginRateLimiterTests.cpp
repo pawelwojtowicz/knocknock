@@ -6,6 +6,7 @@
 #include <CConfiguration.h>
 #include <CUser.h>
 #include <CTimespan.h>
+#include <CSecurityIndustrialComplex.h>
 #include <filesystem>
 #include <memory>
 
@@ -197,8 +198,10 @@ protected:
 
     m_configuration.LoadConfig(m_database);
 
+    CSecurityIndustrialComplex securityFactories;
+
     m_pSessionManager = std::make_shared<CSessionManager>(m_database, m_configuration);
-    ASSERT_TRUE(m_pSessionManager->Initialize());
+    ASSERT_TRUE(m_pSessionManager->Initialize(securityFactories));
 
     m_knocknockService = m_pSessionManager;
   }
