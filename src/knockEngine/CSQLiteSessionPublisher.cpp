@@ -46,17 +46,16 @@ std::string ToISO8601( int64_t epochSeconds )
 
 }
 
-CSQLiteSessionPublisher::CSQLiteSessionPublisher( const CConfiguration& config, const std::string& tableName )
-: m_rConfiguration(config)
-, m_dbFilename()
-, m_tableName(tableName)
+CSQLiteSessionPublisher::CSQLiteSessionPublisher( )
+: m_dbFilename()
+, m_tableName("sessions")
 , m_dbDriver()
 {
 }
 
-bool CSQLiteSessionPublisher::Initialize()
+bool CSQLiteSessionPublisher::Initialize( const CConfiguration& rConfig )
 {
-  m_dbFilename = m_rConfiguration.GetParamString(cParamName_SQLiteDbPath, cParamValue_SQLiteDbPath);
+  m_dbFilename = rConfig.GetParamString(cParamName_SQLiteDbPath, cParamValue_SQLiteDbPath);
   if (m_dbFilename.empty())
   {
     // Not configured - stay disabled. PublishSession()/Shutdown() no-op.

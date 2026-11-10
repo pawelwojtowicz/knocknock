@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <CSecurityIndustrialComplex.h>
 #include <CSessionPublisher.h>
 #include <CSQLiteSessionPublisher.h>
 #include <CConfiguration.h>
@@ -18,10 +19,11 @@ TEST(CSessionPublisherTests, InitializeAndShutdown)
 {
   CConfiguration config;
   CSessionPublisher publisher;
+  CSecurityIndustrialComplex factories;
 
   tSessionList sessions;
 
-  EXPECT_TRUE(publisher.Initialize(config));
+  EXPECT_TRUE(publisher.Initialize(config,factories));
 
   publisher.PublishSessions(sessions);
   std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Wait for the publisher to process the data
@@ -88,8 +90,8 @@ TEST(CSQLiteSessionPublisherTests, PublishSession_WritesConnectSqlite3Compatible
   CConfiguration config;
   ASSERT_TRUE(config.LoadConfig(configFilename));
 
-  CSQLiteSessionPublisher publisher(config);
-  ASSERT_TRUE(publisher.Initialize());
+  CSQLiteSessionPublisher publisher;
+  ASSERT_TRUE(publisher.Initialize(config));
 
   CSession session("sid-123", "alice", "Alice Doe", "argon2id", "irrelevant-hash");
   session.SetMaxAge(180);
@@ -134,9 +136,9 @@ TEST(CSQLiteSessionPublisherTests, Initialize_UnconfiguredIsANoOp)
   // No sqlite3.SessionExpressPublisher.dbPath set - the publisher must stay
   // inert rather than fail or create a database file anywhere.
   CConfiguration config;
-  CSQLiteSessionPublisher publisher(config);
+  CSQLiteSessionPublisher publisher;
 
-  EXPECT_TRUE(publisher.Initialize());
+  EXPECT_TRUE(publisher.Initialize(config));
 
   tSessionList sessions{ CSession("sid-999", "bob", "Bob", "sha256", "hash") };
   publisher.PublishSession(sessions); // must not throw/crash despite no DB open

@@ -47,7 +47,7 @@ bool CSessionManager::Initialize( const CSecurityIndustrialComplex& rFactories )
     return false;
   }
 
-  if ( !m_sessionPublisher.Initialize(m_rConfiguration) )
+  if ( !m_sessionPublisher.Initialize(m_rConfiguration, rFactories) )
   {
     return false;
   }

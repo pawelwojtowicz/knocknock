@@ -22,6 +22,5 @@ private:
   tAuthMethodFactory m_authMethodFactory;
 
   tSessionPublisherFactory m_sessionPublisherFactory;
-
 };
 }

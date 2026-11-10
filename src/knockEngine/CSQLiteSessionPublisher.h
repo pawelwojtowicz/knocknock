@@ -25,10 +25,10 @@ public:
   // than an already-resolved path, so this class - not its caller - owns
   // reading and interpreting its own config keys (e.g. whether it's enabled
   // at all). Mirrors CSessionBuilder's constructor-injected-config pattern.
-  explicit CSQLiteSessionPublisher( const CConfiguration& config, const std::string& tableName = "sessions" );
+  explicit CSQLiteSessionPublisher();
   ~CSQLiteSessionPublisher() override = default;
 
-  bool Initialize() override;
+  bool Initialize( const CConfiguration& rConfig ) override;
   void Shutdown() override;
 
   void PublishSession( const tSessionList& activeSessions ) override;
@@ -37,8 +37,6 @@ private:
   static std::string BuildSessionJSON( const CSession& session );
 
 private:
-  const CConfiguration& m_rConfiguration;
-
   // Resolved from config in Initialize(). Empty means "not configured" -
   // this publisher then stays a no-op for its whole lifetime.
   std::string m_dbFilename;

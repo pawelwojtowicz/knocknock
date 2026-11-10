@@ -14,18 +14,18 @@ CSessionPublisher::CSessionPublisher()
 
 }
 
-bool CSessionPublisher::Initialize( CConfiguration& config )
+bool CSessionPublisher::Initialize( CConfiguration& config, const CSecurityIndustrialComplex& factories )
 {
   // Build the publisher list from available plugins. This is the only place
   // m_publishers is ever populated - it is fixed for the rest of this
   // object's lifetime once Initialize() returns. Each publisher owns
   // reading and interpreting its own config keys (including whether it's
   // enabled at all) - CSessionPublisher just wires the shared config in.
-  m_publishers.push_back(std::make_shared<CSQLiteSessionPublisher>(config));
+  m_publishers.push_back( factories.GetSessionPublisherFactory().Create("express") );
 
   for (const auto& publisher : m_publishers)
   {
-    if (!publisher->Initialize())
+    if (!publisher->Initialize(config))
     {
       std::cerr << "Failed to initialize a session publisher." << std::endl;
       return false;

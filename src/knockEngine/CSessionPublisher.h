@@ -4,6 +4,7 @@
 #include <condition_variable>
 #include "CSession.h"
 #include "ISessionPublisher.h"
+#include "CSecurityIndustrialComplex.h"
 
 namespace knocknock
 {
@@ -27,7 +28,7 @@ public:
   // background thread. Must be called exactly once (never concurrently with
   // itself, and never called again before a matching Shutdown()) - the
   // background-thread lifecycle here doesn't guard against re-entry.
-  bool Initialize( CConfiguration& config );
+  bool Initialize( CConfiguration& config, const CSecurityIndustrialComplex& factoriess);
   void Shutdown();
 
   void PublishSessions( tSessionList& activeSessions );
