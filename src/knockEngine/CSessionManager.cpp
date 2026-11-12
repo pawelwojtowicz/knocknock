@@ -218,30 +218,35 @@ bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
 
 void CSessionManager::Tick()
 {
-  CleanupExpiredSessions();
+  if (CleanupExpiredSessions())
+  {
+    PublishActiveSessions();
+  }
   m_loginRateLimiter.Cleanup(CTimespan::GetEpochSeconds());
-  PublishActiveSessions();
 }
 
-void CSessionManager::CleanupExpiredSessions()
+bool CSessionManager::CleanupExpiredSessions()
 {
-    std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
-    int64_t now = CTimespan::GetEpochSeconds();
+  bool sessionsChanged(false);  
+  std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
+  int64_t now = CTimespan::GetEpochSeconds();
 
-    for (auto it = m_sessions.begin(); it != m_sessions.end(); )
+  for (auto it = m_sessions.begin(); it != m_sessions.end(); )
+  {
+    const CSession& session = it->second;
+    if (session.GetSessionExpires() <= now ||
+        session.GetUserSessionState() == UserSessionState::LOGGED_OUT ||
+        session.GetUserSessionState() == UserSessionState::AUTH_FAILED)
     {
-        const CSession& session = it->second;
-        if (session.GetSessionExpires() <= now ||
-            session.GetUserSessionState() == UserSessionState::LOGGED_OUT ||
-            session.GetUserSessionState() == UserSessionState::AUTH_FAILED)
-        {
-            it = m_sessions.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
+      it = m_sessions.erase(it);
+      sessionsChanged = true;
     }
+    else
+    {
+      ++it;
+    }
+  }
+  return sessionsChanged;
 }
 
 void CSessionManager::PublishActiveSessions()

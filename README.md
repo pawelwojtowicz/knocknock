@@ -18,7 +18,7 @@ sudo apt install -y build-essential cmake libgmock-dev libgtest-dev
 ### Installing the dependencies (on ubuntu)
 
 ```
-$ sudo apt-get install nlohmann-json3-dev sqlite3 libsqlite3-dev openssl libssl-dev libboost1.83-all-dev libargon2-dev
+$ sudo apt-get install -y nlohmann-json3-dev sqlite3 libsqlite3-dev openssl libssl-dev libboost1.83-all-dev libargon2-dev libpaho-mqtt-dev libpaho-mqttpp-dev
 ``` 
 
 ### Building knocknock

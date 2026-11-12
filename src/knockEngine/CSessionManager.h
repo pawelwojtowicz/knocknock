@@ -38,7 +38,8 @@ private:
 
 private:
   //internal utility method to cleanup expired sessions, called periodically by Tick()
-  void CleanupExpiredSessions();
+  //returns true if the sessions list changes (outdated sessions are removed)
+  bool CleanupExpiredSessions();
 
   //internal utility method to hand a snapshot of active sessions to the session publisher, called periodically by Tick()
   void PublishActiveSessions();

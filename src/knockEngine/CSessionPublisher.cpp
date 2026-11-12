@@ -22,6 +22,7 @@ bool CSessionPublisher::Initialize( CConfiguration& config, const CSecurityIndus
   // reading and interpreting its own config keys (including whether it's
   // enabled at all) - CSessionPublisher just wires the shared config in.
   m_publishers.push_back( factories.GetSessionPublisherFactory().Create("express") );
+ // m_publishers.push_back( factories.GetSessionPublisherFactory().Create("mqtt"));
 
   for (const auto& publisher : m_publishers)
   {

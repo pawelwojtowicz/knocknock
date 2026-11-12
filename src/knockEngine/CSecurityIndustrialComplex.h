@@ -2,6 +2,7 @@
 #include <TBuilderFactory.h>
 #include <IAuthenticationMethod.h>
 #include <ISessionPublisher.h>
+#include <IPluginProvider.h>
 
 
 namespace knocknock
@@ -14,6 +15,8 @@ public:
 
   CSecurityIndustrialComplex();
   virtual ~CSecurityIndustrialComplex() = default;
+
+  void ImportPlugins( const IPluginProvider& pluginProvider);
 
   const tAuthMethodFactory& GetAuthMethodFactory() const { return m_authMethodFactory; };
 

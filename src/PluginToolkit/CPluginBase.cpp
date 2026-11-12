@@ -28,4 +28,9 @@ const tAuthenticationMethodBuildersMap& CPluginBase::GetAuthenticationMethodBuil
   return m_authenticationMethodBuilders;
 }
 
+void CPluginBase::RegisterSessionPublisher( const std::string& name, tSessionPublisherBuilder creationMethod)
+{
+  m_sessionPublisherBuilders.emplace(name, std::move(creationMethod) );
+}
+
 }

@@ -16,11 +16,13 @@ public:
   const tAuthenticationMethodBuildersMap& GetAuthenticationMethodBuilders() const override;
 
 protected:
-  tSessionPublisherBuildersMap m_sessionPublisherBuilders;
-  tAuthenticationMethodBuildersMap m_authenticationMethodBuilders;
+  void RegisterSessionPublisher( const std::string& name, tSessionPublisherBuilder creationMethod);
 
 private:
   std::string m_name;
   std::string m_version;
+
+  tSessionPublisherBuildersMap m_sessionPublisherBuilders;
+  tAuthenticationMethodBuildersMap m_authenticationMethodBuilders;
 };
 }

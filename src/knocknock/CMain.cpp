@@ -86,6 +86,7 @@ bool CMain::Initialize()
 	}
 
 	CSecurityIndustrialComplex securityFactoriesCompound;
+	securityFactoriesCompound.ImportPlugins(m_pluginManager);
 
 	if ( !m_sessionManager.Initialize( securityFactoriesCompound ) )
 	{

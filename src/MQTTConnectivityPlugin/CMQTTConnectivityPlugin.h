@@ -1,7 +1,7 @@
 #pragma once
 #include <CPluginBase.h>
 
-namespace CMQTTConnectivityPlugin
+namespace MQTTConnectivity
 {
 
 class CMQTTConnectivityPlugin :public knocknock::CPluginBase
