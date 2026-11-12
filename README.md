@@ -97,6 +97,7 @@ The configuration can be read from the configuration file and also from the data
 | http.cookieSameSite |[STRICT\|LAX\|NONE] | |
 | maxLoginAttempts | integer | Maximum number of consecutive failed login attempts per userId before lockout. Default: 5 |
 | loginLockoutSeconds | integer | Base lockout duration in seconds after exceeding max attempts. Doubles with each subsequent failure (exponential backoff), capped at 64x the base value. Default: 30 |
+| sessionPublishers | string | The coma separater list of the session publishers. The default value of the parameter is `express` (available without activating any plugins) <br> Available options: <br> * `express` - express-session publisher (embedded into the knocknock core version) <br> * `mqtt` - The mqtt session publisher available after activating the MQTTConnectivity plugin |
 | sqlite3.SessionExpressPublisher.dbPath | string | Path to a dedicated SQLite file that active (VALID) sessions are published into, in a schema compatible with the `connect-sqlite3` store for the Node.js `express-session` middleware. Left empty (the default) disables the publisher entirely - it is opt-in. |
 
 ## Features

@@ -23,4 +23,6 @@ constexpr int cParamValue_MaxLoginAttempts = 5;
 constexpr int64_t cParamValue_LoginLockoutSeconds = 30;
 
 
+constexpr auto cParamName_SessionPublishers = "sessionPublishers";
+constexpr auto cParamValue_DefaultSessionPublishers = "express";
 }
