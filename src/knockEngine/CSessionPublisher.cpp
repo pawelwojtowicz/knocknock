@@ -1,6 +1,5 @@
 #include "CSessionPublisher.h"
 #include "CConfiguration.h"
-#include "CSQLiteSessionPublisher.h"
 #include <CTokenizer.h>
 #include <iostream>
 

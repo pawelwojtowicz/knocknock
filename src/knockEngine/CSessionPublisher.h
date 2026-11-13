@@ -28,7 +28,7 @@ public:
   // background thread. Must be called exactly once (never concurrently with
   // itself, and never called again before a matching Shutdown()) - the
   // background-thread lifecycle here doesn't guard against re-entry.
-  bool Initialize( CConfiguration& config, const CSecurityIndustrialComplex& factoriess);
+  bool Initialize( CConfiguration& config, const CSecurityIndustrialComplex& factories);
   void Shutdown();
 
   void PublishSessions( tSessionList& activeSessions );

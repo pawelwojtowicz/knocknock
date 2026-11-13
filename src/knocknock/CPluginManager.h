@@ -3,7 +3,6 @@
 #include <tuple>
 #include <vector>
 #include <memory>
-#include <dlfcn.h>
 #include "IPluginProvider.h"
 #include <IKnocknockPlugin.h>
 
