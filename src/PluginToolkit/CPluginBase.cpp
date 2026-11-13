@@ -33,4 +33,9 @@ void CPluginBase::RegisterSessionPublisher( const std::string& name, tSessionPub
   m_sessionPublisherBuilders.emplace(name, std::move(creationMethod) );
 }
 
+void CPluginBase::RegisterAuthenticationMethod( const std::string& name, tAuthenticationMethodBuilder creationMethod)
+{
+  m_authenticationMethodBuilders.emplace(name, std::move(creationMethod) );
+}
+
 }

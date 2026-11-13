@@ -7,6 +7,6 @@ namespace knocknock
 {
 using tSessionPublisherBuilder = TBuilderFactory<ISessionPublisher>::tCreationMethod;
 using tSessionPublisherBuildersMap = TBuilderFactory<ISessionPublisher>::tCreationMethodMap;
-using tAuthenticationMethodConstructionFunction = std::function<std::unique_ptr<IAuthenticationMethod>()>;
+using tAuthenticationMethodBuilder = TBuilderFactory<IAuthenticationMethod>::tCreationMethod;
 using tAuthenticationMethodBuildersMap = TBuilderFactory<IAuthenticationMethod>::tCreationMethodMap;
 }

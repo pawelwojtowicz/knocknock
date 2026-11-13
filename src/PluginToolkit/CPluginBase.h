@@ -17,6 +17,7 @@ public:
 
 protected:
   void RegisterSessionPublisher( const std::string& name, tSessionPublisherBuilder creationMethod);
+  void RegisterAuthenticationMethod( const std::string& name, tAuthenticationMethodBuilder creationMethod);
 
 private:
   std::string m_name;

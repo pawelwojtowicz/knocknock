@@ -82,7 +82,7 @@ const char* ToString( UserSessionState state )
 
 std::string CMQTTSessionPublisher::BuildSessionJSON( const tSessionList& activeSessions )
 {
-  nlohmann::json jsonSessions;
+  nlohmann::json jsonSessions = nlohmann::json::array();
 
   for ( const auto& session : activeSessions)
   {
