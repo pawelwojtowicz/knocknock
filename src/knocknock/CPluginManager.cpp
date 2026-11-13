@@ -13,6 +13,7 @@ CPluginManager::~CPluginManager()
 {
   for (auto& pluginTuple : m_plugins)
   {
+    std::get<1>(pluginTuple).reset();
     void* fileHandle = std::get<0>(pluginTuple);
     if (fileHandle)
     {

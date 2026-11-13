@@ -27,6 +27,13 @@ void CSecurityIndustrialComplex::ImportPlugins( const IPluginProvider& pluginPro
     //			LOG(INFO, "Loading publisher %s from %s", name.c_str(), plugin->GetName().c_str());
     m_sessionPublisherFactory.RegisterBuilder( name, builder );
     }
+
+    for( const auto& [name, builder] : plugin->GetAuthenticationMethodBuilders() )
+    {
+    //			LOG(INFO, "Loading publisher %s from %s", name.c_str(), plugin->GetName().c_str());
+    m_authMethodFactory.RegisterBuilder( name, builder );
+    }
+
   }
 }
 
