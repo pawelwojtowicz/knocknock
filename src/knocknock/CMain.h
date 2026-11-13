@@ -36,6 +36,8 @@ private:
 
 	CConfiguration m_configuration;
 
+	CPluginManager m_pluginManager;
+
 	DBAccess::CSQLiteDriver m_sqliteDriver;
 	DBAccess::CDatabase m_database;
 
@@ -44,8 +46,6 @@ private:
 	CHTTPChannel m_httpChannel;
 
 	Logger::CSimpleLogger m_logger;
-
-	CPluginManager m_pluginManager;
 
 	std::atomic<bool> m_running{false};
 };

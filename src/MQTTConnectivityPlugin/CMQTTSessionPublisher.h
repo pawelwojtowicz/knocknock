@@ -21,6 +21,9 @@ public:
   virtual void PublishSession( const tSessionList& activeSessions ) override;
 
 private:
+  static std::string BuildSessionJSON( const tSessionList& activeSessions );
+
+private:
   std::unique_ptr<mqtt::async_client> m_asynClient;
 
 };

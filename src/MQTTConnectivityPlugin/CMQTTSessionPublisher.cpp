@@ -1,5 +1,6 @@
 #include "CMQTTSessionPublisher.h"
-#include <iostream>
+#include <nlohmann/json.hpp>
+#include <Logger.h>
 
 const std::string DFLT_ADDRESS { "tcp://127.0.0.1:1883" };
 const std::string TOPIC { "data/rand" };
@@ -11,7 +12,7 @@ namespace MQTTConnectivity
 {
 bool CMQTTSessionPublisher::Initialize( const CConfiguration& rConfig )
 {
-  std::cout << "initialize MQTT" << std::endl;
+  LOG(INFO, "initialize MQTT");
   m_asynClient = std::make_unique<mqtt::async_client>(DFLT_ADDRESS, "", MAX_BUFFERED_MSGS);
 
   mqtt::connect_options connOpts;
@@ -25,7 +26,7 @@ bool CMQTTSessionPublisher::Initialize( const CConfiguration& rConfig )
   }
   catch (const mqtt::exception& exc) 
   {
-    std::cerr << exc.what() << std::endl;
+    LOG(ERROR, "CMQTTSessionPublisher: Connect error: %s", exc.what());
     return false;
   }
 
@@ -39,21 +40,63 @@ void CMQTTSessionPublisher::Shutdown()
 {
   try
   {
-    std::cout << "shutdown MQTT" << std::endl;
+    LOG(INFO, "shutdown MQTT");
 
     m_asynClient->disconnect()->wait();
   }
   catch (const mqtt::exception& exc) 
   {
-    std::cerr << exc.what() << std::endl;
+    LOG(ERROR, "CMQTTSessionPublisher: Shutdown error: %s", exc.what());
   }
 }
   
 void CMQTTSessionPublisher::PublishSession( const tSessionList& activeSessions )
 {
   mqtt::topic top(*m_asynClient, TOPIC, QOS, true);
-  top.publish("temp");
-  std::cout << "publish" << std::endl;
+  try 
+  {
+    top.publish(BuildSessionJSON(activeSessions));
+  }
+  catch (const mqtt::exception& exc)
+  {
+    LOG(ERROR, "CMQTTSessionPublisher::PublishSession error: %s", exc.what());
+  }
+}
+
+const char* ToString( UserSessionState state )
+{
+  switch (state)
+  {
+    case UserSessionState::INVALID_SESSION:  return "INVALID_SESSION";
+    case UserSessionState::CREATED:          return "CREATED";
+    case UserSessionState::AUTH_IN_PROGRESS: return "AUTH_IN_PROGRESS";
+    case UserSessionState::AUTH_SUCCESS:     return "AUTH_SUCCESS";
+    case UserSessionState::AUTH_FAILED:      return "AUTH_FAILED";
+    case UserSessionState::VALID:            return "VALID";
+    case UserSessionState::EXPIRED:          return "EXPIRED";
+    case UserSessionState::LOGGED_OUT:       return "LOGGED_OUT";
+  }
+  return "UNKNOWN";
+}
+
+
+std::string CMQTTSessionPublisher::BuildSessionJSON( const tSessionList& activeSessions )
+{
+  nlohmann::json jsonSessions;
+
+  for ( const auto& session : activeSessions)
+  {
+    nlohmann::json jsonSession;
+    jsonSession["sessionId"] = session.GetSessionId();
+    jsonSession["userId"] = session.GetUserId();
+    jsonSession["userName"] = session.GetUserName();
+    jsonSession["state"] = ToString(session.GetUserSessionState());
+    jsonSession["roles"] = session.GetRoles();
+    jsonSession["privileges"] = session.GetPrivileges();
+    jsonSessions.push_back(jsonSession);
+  }
+
+  return jsonSessions.dump();
 }
 
 }

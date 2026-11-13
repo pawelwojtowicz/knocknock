@@ -1,7 +1,7 @@
 #include "CSessionPublisher.h"
 #include "CConfiguration.h"
 #include <CTokenizer.h>
-#include <iostream>
+#include <Logger.h>
 
 namespace knocknock
 {
@@ -29,12 +29,12 @@ bool CSessionPublisher::Initialize( CConfiguration& config, const CSecurityIndus
       }
       else
       {
-        std::cout << "Failed to Initialize " << publisherName << " - skipping" << std::endl;
+        LOG(ERROR, "CSessionPublisher - Failed to Initialize [%s] - skipping", publisherName.c_str() );
       }
     }
     else
     {
-      std::cout << "No " << publisherName << " available in the factory " << std::endl;
+      LOG(ERROR, "CSessionPublisher - No [%s] - available in the factory", publisherName.c_str() );
     }
   }
 

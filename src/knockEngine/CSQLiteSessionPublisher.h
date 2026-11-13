@@ -21,10 +21,6 @@ class CConfiguration;
 class CSQLiteSessionPublisher : public ISessionPublisher
 {
 public:
-  // Takes the shared configuration by reference (stored, not copied) rather
-  // than an already-resolved path, so this class - not its caller - owns
-  // reading and interpreting its own config keys (e.g. whether it's enabled
-  // at all). Mirrors CSessionBuilder's constructor-injected-config pattern.
   explicit CSQLiteSessionPublisher();
   ~CSQLiteSessionPublisher() override = default;
 
