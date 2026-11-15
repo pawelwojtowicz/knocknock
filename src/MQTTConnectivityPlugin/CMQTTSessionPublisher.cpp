@@ -1,6 +1,7 @@
 #include "CMQTTSessionPublisher.h"
 #include <nlohmann/json.hpp>
 #include <Logger.h>
+#include <CToStringTools.h>
 
 const int	 QOS = 1;
 const int MAX_BUFFERED_MSGS = 120;	// 120 * 5sec => 10min off-line buffering
@@ -86,23 +87,6 @@ void CMQTTSessionPublisher::PublishSession( const tSessionList& activeSessions )
   }
 }
 
-const char* ToString( UserSessionState state )
-{
-  switch (state)
-  {
-    case UserSessionState::INVALID_SESSION:  return "INVALID_SESSION";
-    case UserSessionState::CREATED:          return "CREATED";
-    case UserSessionState::AUTH_IN_PROGRESS: return "AUTH_IN_PROGRESS";
-    case UserSessionState::AUTH_SUCCESS:     return "AUTH_SUCCESS";
-    case UserSessionState::AUTH_FAILED:      return "AUTH_FAILED";
-    case UserSessionState::VALID:            return "VALID";
-    case UserSessionState::EXPIRED:          return "EXPIRED";
-    case UserSessionState::LOGGED_OUT:       return "LOGGED_OUT";
-  }
-  return "UNKNOWN";
-}
-
-
 std::string CMQTTSessionPublisher::BuildSessionJSON( const tSessionList& activeSessions )
 {
   nlohmann::json jsonSessions = nlohmann::json::array();
@@ -113,7 +97,7 @@ std::string CMQTTSessionPublisher::BuildSessionJSON( const tSessionList& activeS
     jsonSession["sessionId"] = session.GetSessionId();
     jsonSession["userId"] = session.GetUserId();
     jsonSession["userName"] = session.GetUserName();
-    jsonSession["state"] = ToString(session.GetUserSessionState());
+    jsonSession["state"] = CToStringTools::SessionState(session.GetUserSessionState());
     jsonSession["roles"] = session.GetRoles();
     jsonSession["privileges"] = session.GetPrivileges();
     jsonSessions.push_back(jsonSession);

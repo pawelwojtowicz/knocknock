@@ -7,6 +7,8 @@ CPluginBase.cpp
 CPluginBase.h
 CSession.cpp
 CSession.h
+CToStringTools.cpp
+CToStringTools.h
 IAuthenticationMethod.h
 IKnocknockPlugin.h
 ISessionPublisher.h

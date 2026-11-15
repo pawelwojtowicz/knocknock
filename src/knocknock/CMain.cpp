@@ -61,7 +61,7 @@ bool CMain::Initialize()
 	}
 	LOG( INFO, "Configuration file %s loaded successfully", configFileName.c_str() );
 
-	m_pluginManager.Initialize();
+	m_pluginManager.Initialize( m_configuration);
 
 	std::string dbLocation = m_configuration.GetParamString(cParamNamePrimaryDBLocation, cDefaultDBLocation);
 	if ( !std::filesystem::exists(dbLocation) )

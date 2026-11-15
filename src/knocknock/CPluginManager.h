@@ -8,6 +8,7 @@
 
 namespace knocknock
 {
+class CConfiguration;
 
 class CPluginManager : public IPluginProvider
 {
@@ -15,7 +16,7 @@ public:
   CPluginManager() = default;
   virtual ~CPluginManager();
 
-  bool Initialize();
+  void Initialize( CConfiguration& rConfiguration);
   void Shutdown();
 
 private:
