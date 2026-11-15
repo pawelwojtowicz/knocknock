@@ -114,6 +114,53 @@ TEST(CJSONSerializer, RoundTrip_SerializeDeserialize)
     EXPECT_EQ(deserializedMap, originalMap);
 }
 
+TEST(CJSONSerializer, Serialize_ArrayElements)
+{
+    tKeyValueMap keyValueMap;
+    keyValueMap["roles[0]"] = "admin";
+    keyValueMap["roles[1]"] = "user";
+    CJSONSerializer serializer(keyValueMap);
+    std::string output;
+
+    EXPECT_TRUE(serializer.Serialize(output));
+    EXPECT_EQ(output, "{\"roles\":[\"admin\",\"user\"]}");
+}
+
+TEST(CJSONSerializer, Serialize_NonNumericIndexIsPlainKey)
+{
+    tKeyValueMap keyValueMap;
+    keyValueMap["a[x]"] = "v1";
+    keyValueMap["b[-1]"] = "v2";
+    CJSONSerializer serializer(keyValueMap);
+    std::string output;
+
+    // Previously std::stoi threw (a[x]) or indexed with -1 (b[-1])
+    EXPECT_NO_THROW(EXPECT_TRUE(serializer.Serialize(output)));
+    EXPECT_EQ(output, "{\"a[x]\":\"v1\",\"b[-1]\":\"v2\"}");
+}
+
+TEST(CJSONSerializer, Serialize_HugeIndexRejected)
+{
+    tKeyValueMap keyValueMap;
+    keyValueMap["a[999999999999]"] = "v";
+    keyValueMap["b[65536]"] = "v";
+    CJSONSerializer serializer(keyValueMap);
+    std::string output;
+
+    EXPECT_NO_THROW(EXPECT_FALSE(serializer.Serialize(output)));
+}
+
+TEST(CJSONSerializer, Serialize_ConflictingTypesDoNotThrow)
+{
+    tKeyValueMap keyValueMap;
+    keyValueMap["a[0]"] = "scalar";
+    keyValueMap["a[0].b"] = "nested"; // a[0] is already a string
+    CJSONSerializer serializer(keyValueMap);
+    std::string output;
+
+    EXPECT_NO_THROW(serializer.Serialize(output));
+}
+
 TEST(CJSONSerializer, DetectVectorElement_ValidInput)
 {
     tKeyValueMap keyValueMap;

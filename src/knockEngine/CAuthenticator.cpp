@@ -17,7 +17,7 @@ CAuthenticator::~CAuthenticator()
 
 bool CAuthenticator::Initialize( const CConfiguration& config, const CSecurityIndustrialComplex& rFactories )
 {
-  const auto authMethodTokens = CTokenizer::Tokenize(config.GetParamString(cParamName_AllowedAuthMethods, cParamValue_AllowedAuthMethods), ',');
+  const auto authMethodTokens = CTokenizer::TokenizeTrimmed(config.GetParamString(cParamName_AllowedAuthMethods, cParamValue_AllowedAuthMethods), ',');
 
   for (const auto& token : authMethodTokens)
   {

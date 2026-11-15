@@ -66,6 +66,14 @@ void CLoggerMsg::SetLogger( ILogger* pLogger )
   spLogger = pLogger;
 }
 
+void CLoggerMsg::UnsetLogger( ILogger* pLogger )
+{
+  if ( spLogger == pLogger )
+  {
+    spLogger = nullptr;
+  }
+}
+
 void CLoggerMsg::SetDebugZone( const uint16_t dzMask)
 {
   sDebugZoneMask = dzMask;

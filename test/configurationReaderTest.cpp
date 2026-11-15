@@ -46,3 +46,27 @@ TEST(CConfiguration, CommentLinesAreSkipped)
 
   std::filesystem::remove(testFile);
 }
+
+TEST(CConfiguration, WhitespaceAndCRLFAreTrimmed)
+{
+  const std::string testFile = "test_whitespace.conf";
+  {
+    std::ofstream ofs(testFile, std::ios::binary);
+    ofs << "key1=value1\r\n";            // CRLF line ending
+    ofs << "  key2 = value2  \r\n";      // spaces around key and value
+    ofs << "   # indented comment\r\n";
+    ofs << " \t \r\n";                   // whitespace-only line
+    ofs << "list = a, b ,c\r\n";
+  }
+
+  knocknock::CConfiguration config;
+  EXPECT_TRUE(config.LoadConfig(testFile));
+
+  EXPECT_EQ(config.GetParamString("key1"), "value1");
+  EXPECT_EQ(config.GetParamString("key2"), "value2");
+  EXPECT_EQ(config.GetParamString("list"), "a, b ,c");
+  EXPECT_EQ(config.GetParamString("# indented comment"), "");
+  EXPECT_EQ(config.GetParamInt("missing", 7), 7);
+
+  std::filesystem::remove(testFile);
+}

@@ -85,7 +85,7 @@ TEST(CSQLiteSessionPublisherTests, PublishSession_WritesConnectSqlite3Compatible
   const std::string configFilename = "sessionPublisherTest.conf";
   {
     std::ofstream configFile(configFilename);
-    configFile << "sqlite3.SessionExpressPublisher.dbPath=" << dbFilename << "\n";
+    configFile << "sessionPublisher.sqlite.dbPath=" << dbFilename << "\n";
   }
   CConfiguration config;
   ASSERT_TRUE(config.LoadConfig(configFilename));
@@ -133,7 +133,7 @@ TEST(CSQLiteSessionPublisherTests, PublishSession_WritesConnectSqlite3Compatible
 
 TEST(CSQLiteSessionPublisherTests, Initialize_UnconfiguredIsANoOp)
 {
-  // No sqlite3.SessionExpressPublisher.dbPath set - the publisher must stay
+  // No sessionPublisher.sqlite.dbPath set - the publisher must stay
   // inert rather than fail or create a database file anywhere.
   CConfiguration config;
   CSQLiteSessionPublisher publisher;

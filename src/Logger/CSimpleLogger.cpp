@@ -17,7 +17,9 @@ CSimpleLogger::CSimpleLogger(const uint16_t loggerConfig, tLogEntryCfg entryConf
 
 CSimpleLogger::~CSimpleLogger()
 {
-
+  // Never leave CLoggerMsg pointing at a destroyed logger - any LOG() after
+  // this point is then silently dropped instead of a use-after-free.
+  CLoggerMsg::UnsetLogger(this);
 }
 
 void CSimpleLogger::RecordDebugMessage( const CLoggerMsg& rLoggerMsg)

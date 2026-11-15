@@ -6,7 +6,7 @@ from pathlib import Path
 import knocknockHTTP
 import cryptoTools
 
-# Must match testData/knocknock.conf's sqlite3.SessionExpressPublisher.dbPath,
+# Must match testData/knocknock.conf's sessionPublisher.sqlite.dbPath,
 # resolved relative to this file rather than the current working directory,
 # since the server (run from the repo root per the README) and pytest (run
 # from autoTest/) don't share a working directory.

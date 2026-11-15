@@ -32,6 +32,11 @@ protected:
 	int GetArgumentCount();
 
 private:
+	// Declared first on purpose: members are destroyed in reverse order, so the
+	// logger outlives every other member and LOG() stays valid in their
+	// destructors (and in their constructors, as it is also constructed first).
+	Logger::CSimpleLogger m_logger;
+
 	std::vector<std::string> m_arguments;
 
 	CConfiguration m_configuration;
@@ -44,8 +49,6 @@ private:
 	CSessionManager m_sessionManager;
 
 	CHTTPChannel m_httpChannel;
-
-	Logger::CSimpleLogger m_logger;
 
 	std::atomic<bool> m_running{false};
 };

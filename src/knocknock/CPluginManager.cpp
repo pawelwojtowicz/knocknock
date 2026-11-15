@@ -34,7 +34,7 @@ void CPluginManager::Initialize( CConfiguration& rConfiguration)
   const std::string pluginPathStr = rConfiguration.GetParamString( sParamName_pluginPath, "");
   if ( !pluginPathStr.empty() )
   {
-    const auto activePlugins = CTokenizer::Tokenize(rConfiguration.GetParamString( sParamName_activePlugins, ""), ',');
+    const auto activePlugins = CTokenizer::TokenizeTrimmed(rConfiguration.GetParamString( sParamName_activePlugins, ""), ',');
     for ( const auto& plugin : activePlugins )
     {
       std::filesystem::path pluginPath(pluginPathStr);

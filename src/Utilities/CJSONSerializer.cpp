@@ -1,8 +1,14 @@
 #include "CJSONSerializer.h"
 #include "CTokenizer.h"
+#include <algorithm>
+#include <cctype>
+#include <charconv>
 
 namespace knocknock
 {
+// Upper bound for "name[index]" keys - an array is resized to index+1, so an
+// unbounded index would allow a single key to allocate arbitrary memory.
+constexpr size_t cMaxArrayIndex = 65535;
 CJSONSerializer::CJSONSerializer(tKeyValueMap& rKeyValueMap)
     : m_rKeyValueMap(rKeyValueMap)
 {
@@ -16,13 +22,16 @@ CJSONSerializer::~CJSONSerializer()
 bool CJSONSerializer::Serialize(std::string& rOutput)
 {
   JSON jsonModel = {};
-  for (const auto& keyValuePair : m_rKeyValueMap)
+  try
   {
-    knocknock::tStringList keyTokens = CTokenizer::Tokenize(keyValuePair.first, '.');
-    BuildJSONModel(jsonModel, keyTokens, keyValuePair.second);
-  }
-  try 
-  {
+    for (const auto& keyValuePair : m_rKeyValueMap)
+    {
+      knocknock::tStringList keyTokens = CTokenizer::Tokenize(keyValuePair.first, '.');
+      if (!BuildJSONModel(jsonModel, keyTokens, keyValuePair.second))
+      {
+        return false;
+      }
+    }
     rOutput = jsonModel.dump();
   }
   catch (const std::exception& e)
@@ -82,7 +91,11 @@ bool CJSONSerializer::DetectVectorElement(const std::string& input, std::string&
       return false;  // extra characters after the closing bracket
   }
   
-  return !name.empty() && !id.empty();
+  // Only a plain non-negative decimal index makes this an array element;
+  // anything else (e.g. "a[x]", "a[-1]") is treated as an ordinary key.
+  const bool numericId = std::all_of(id.begin(), id.end(), [](unsigned char c) { return std::isdigit(c) != 0; });
+
+  return !name.empty() && !id.empty() && numericId;
 }
 
 bool CJSONSerializer::BuildJSONModel(JSON& jsonModel, tStringList& keyTokens, const std::string& value)
@@ -90,12 +103,17 @@ bool CJSONSerializer::BuildJSONModel(JSON& jsonModel, tStringList& keyTokens, co
   std::string keyString = keyTokens.front();
   keyTokens.pop_front();
 
-  int arrayIndex = -1;
   std::string name, id;
-  
+
   if (DetectVectorElement(keyString, name, id) )
   {
-    arrayIndex = std::stoi(id);
+    size_t arrayIndex = 0;
+    const auto [ptr, ec] = std::from_chars(id.data(), id.data() + id.size(), arrayIndex);
+    if (ec != std::errc() || arrayIndex > cMaxArrayIndex)
+    {
+      return false;
+    }
+
     if (!jsonModel.contains(name) || !jsonModel[name].is_array())
     {
       jsonModel[name] = JSON::array();
@@ -110,7 +128,7 @@ bool CJSONSerializer::BuildJSONModel(JSON& jsonModel, tStringList& keyTokens, co
     }
     else
     {
-      BuildJSONModel(jsonModel[name][arrayIndex], keyTokens, value);
+      return BuildJSONModel(jsonModel[name][arrayIndex], keyTokens, value);
     }
   }
   else
@@ -125,10 +143,9 @@ bool CJSONSerializer::BuildJSONModel(JSON& jsonModel, tStringList& keyTokens, co
       {
         jsonModel[keyString] = JSON::object();
       }
-      BuildJSONModel(jsonModel[keyString], keyTokens, value);
+      return BuildJSONModel(jsonModel[keyString], keyTokens, value);
     }
   }
-    // Implementation for building JSON model
   return true;
 }
 

@@ -1,5 +1,6 @@
 #include "CSQLiteSessionPublisher.h"
-#include "CConfiguration.h"
+#include <CConfiguration.h>
+#include <CToStringTools.h>
 #include <ctime>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -12,24 +13,8 @@ namespace
 // Path to this publisher's dedicated SQLite file. Left empty (the default)
 // disables it - this is the only config key CSQLiteSessionPublisher needs,
 // and CSessionPublisher has no knowledge of it.
-constexpr auto cParamName_SQLiteDbPath = "sqlite3.SessionExpressPublisher.dbPath";
+constexpr auto cParamName_SQLiteDbPath = "sessionPublisher.sqlite.dbPath";
 constexpr auto cParamValue_SQLiteDbPath = "";
-
-const char* ToString( UserSessionState state )
-{
-  switch (state)
-  {
-    case UserSessionState::INVALID_SESSION:  return "INVALID_SESSION";
-    case UserSessionState::CREATED:          return "CREATED";
-    case UserSessionState::AUTH_IN_PROGRESS: return "AUTH_IN_PROGRESS";
-    case UserSessionState::AUTH_SUCCESS:     return "AUTH_SUCCESS";
-    case UserSessionState::AUTH_FAILED:      return "AUTH_FAILED";
-    case UserSessionState::VALID:            return "VALID";
-    case UserSessionState::EXPIRED:          return "EXPIRED";
-    case UserSessionState::LOGGED_OUT:       return "LOGGED_OUT";
-  }
-  return "UNKNOWN";
-}
 
 // Formats an epoch-seconds timestamp the way JS's Date.toISOString() would,
 // matching what express-session itself writes into cookie.expires.
@@ -160,7 +145,7 @@ std::string CSQLiteSessionPublisher::BuildSessionJSON( const CSession& session )
 
   sess["userId"] = session.GetUserId();
   sess["userName"] = session.GetUserName();
-  sess["state"] = ToString(session.GetUserSessionState());
+  sess["state"] = CToStringTools::SessionState(session.GetUserSessionState());
   sess["roles"] = session.GetRoles();
   sess["privileges"] = session.GetPrivileges();
 

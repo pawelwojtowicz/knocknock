@@ -10,13 +10,13 @@ namespace knocknock
 CMain globalMain;
 
 CMain::CMain()
-: m_arguments()
+: m_logger( ALL, Logger::CSimpleLogger::eComplete )
+, m_arguments()
 , m_configuration()
 , m_sqliteDriver()
 , m_database(m_sqliteDriver)
 , m_sessionManager( m_database,m_configuration)
 , m_httpChannel( m_sessionManager )
-, m_logger( ALL, Logger::CSimpleLogger::eComplete )
 {
 	__pExecutable = this;
 }

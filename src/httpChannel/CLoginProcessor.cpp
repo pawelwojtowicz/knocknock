@@ -32,7 +32,9 @@ bool CLoginProcessor::ProcessRequest( const HTTPServer::URLInfo& urlInfo,
     case UserSessionState::INVALID_SESSION:
     case UserSessionState::AUTH_FAILED:
       requestResponse.responseCode = cHTTPResult_Unauthorized;
-      output["message"] = "Invalid credentials";
+      // Keep a more specific message set by the service (e.g. the rate
+      // limiter's "Too many failed attempts") - emplace doesn't overwrite.
+      output.emplace("message", "Invalid credentials");
       break;
     case UserSessionState::AUTH_IN_PROGRESS:
       requestResponse.responseCode = cHTTPResult_Created;

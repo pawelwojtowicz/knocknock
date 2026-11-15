@@ -16,7 +16,7 @@ CSessionPublisher::CSessionPublisher()
 
 bool CSessionPublisher::Initialize( CConfiguration& config, const CSecurityIndustrialComplex& factories )
 {
-  const auto publishers = CTokenizer::Tokenize(config.GetParamString(cParamName_SessionPublishers, cParamValue_DefaultSessionPublishers), ',');
+  const auto publishers = CTokenizer::TokenizeTrimmed(config.GetParamString(cParamName_SessionPublishers, cParamValue_DefaultSessionPublishers), ',');
 
   for (const auto& publisherName : publishers)
   {
