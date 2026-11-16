@@ -1,49 +1,72 @@
 #include "CLoginRateLimiter.h"
+#include "CConfiguration.h"
+#include "KnocKnockDictionary.h"
+#include <Logger.h>
 #include <algorithm>
 
 namespace knocknock
 {
 
 CLoginRateLimiter::CLoginRateLimiter()
-: m_maxAttempts{5}
-, m_baseLockoutSeconds{30}
-, m_mutex()
+: m_maxAttempts{cParamValue_MaxLoginAttempts}
+, m_baseLockoutSeconds{cParamValue_LoginLockoutSeconds}
+, m_failureResetSeconds{cParamValue_LoginFailureResetSeconds}
+, m_attemptsMutex()
 , m_attempts()
 {
 }
 
-void CLoginRateLimiter::Configure(int maxAttempts, int64_t baseLockoutSeconds)
+bool CLoginRateLimiter::Initialize( const CConfiguration& rConfig )
 {
-  m_maxAttempts = maxAttempts;
-  m_baseLockoutSeconds = baseLockoutSeconds;
+  m_maxAttempts = rConfig.GetParamInt(cParamName_MaxLoginAttempts, cParamValue_MaxLoginAttempts);
+  m_baseLockoutSeconds = rConfig.GetParamInt(cParamName_LoginLockoutSeconds, cParamValue_LoginLockoutSeconds);
+  m_failureResetSeconds = rConfig.GetParamInt(cParamName_LoginFailureResetSeconds, cParamValue_LoginFailureResetSeconds);
+
+  if ( m_maxAttempts < 1 || m_baseLockoutSeconds < 0 || m_failureResetSeconds < 0 )
+  {
+    LOG(ERROR, "CLoginRateLimiter - invalid configuration: %s=%d, %s=%lld, %s=%lld",
+        cParamName_MaxLoginAttempts, m_maxAttempts,
+        cParamName_LoginLockoutSeconds, static_cast<long long>(m_baseLockoutSeconds),
+        cParamName_LoginFailureResetSeconds, static_cast<long long>(m_failureResetSeconds) );
+    return false;
+  }
+
+  return true;
 }
 
-bool CLoginRateLimiter::IsLoginAllowed(const std::string& userId, int64_t currentTime)
+bool CLoginRateLimiter::IsStale( const LoginAttemptRecord& record, int64_t currentTime ) const
 {
-  std::lock_guard<std::mutex> lock(m_mutex);
+  // Dropping a record as soon as its lockout expires would reset
+  // failureCount and defeat the exponential backoff.
+  return record.lockoutExpiry <= currentTime &&
+         currentTime - record.lastFailureTime >= m_failureResetSeconds;
+}
+
+bool CLoginRateLimiter::IsLoginAllowed( const std::string& userId, int64_t currentTime )
+{
+  std::lock_guard<std::mutex> lock(m_attemptsMutex);
   auto it = m_attempts.find(userId);
   if (it == m_attempts.end())
   {
     return true;
   }
 
-  const LoginAttemptRecord& record = it->second;
-
   // If lockout has expired, allow the attempt
-  if (record.lockoutExpiry <= currentTime)
-  {
-    return true;
-  }
-
-  return false;
+  return it->second.lockoutExpiry <= currentTime;
 }
 
-void CLoginRateLimiter::RecordFailure(const std::string& userId, int64_t currentTime)
+void CLoginRateLimiter::RecordFailure( const std::string& userId, int64_t currentTime )
 {
-  std::lock_guard<std::mutex> lock(m_mutex);
+  std::lock_guard<std::mutex> lock(m_attemptsMutex);
   auto it = m_attempts.try_emplace(userId).first;
   LoginAttemptRecord& record = it->second;
+  if (record.failureCount > 0 && IsStale(record, currentTime))
+  {
+    // Old history that Cleanup() hasn't purged yet - start fresh
+    record = LoginAttemptRecord{};
+  }
   record.failureCount++;
+  record.lastFailureTime = currentTime;
 
   if (record.failureCount >= m_maxAttempts)
   {
@@ -54,19 +77,18 @@ void CLoginRateLimiter::RecordFailure(const std::string& userId, int64_t current
   }
 }
 
-void CLoginRateLimiter::RecordSuccess(const std::string& userId)
+void CLoginRateLimiter::RecordSuccess( const std::string& userId )
 {
-  std::lock_guard<std::mutex> lock(m_mutex);
+  std::lock_guard<std::mutex> lock(m_attemptsMutex);
   m_attempts.erase(userId);
 }
 
-void CLoginRateLimiter::Cleanup(int64_t currentTime)
+void CLoginRateLimiter::Cleanup( int64_t currentTime )
 {
-  std::lock_guard<std::mutex> lock(m_mutex);
+  std::lock_guard<std::mutex> lock(m_attemptsMutex);
   for (auto it = m_attempts.begin(); it != m_attempts.end(); )
   {
-    // Remove entries whose lockout has expired
-    if (it->second.lockoutExpiry > 0 && it->second.lockoutExpiry <= currentTime)
+    if (IsStale(it->second, currentTime))
     {
       it = m_attempts.erase(it);
     }

@@ -1,0 +1,41 @@
+#include "CPluginBase.h"
+
+namespace knocknock
+{
+CPluginBase::CPluginBase( const std::string& name, const std::string& version )
+: m_name( name )
+, m_version( version )
+{
+}
+
+const std::string& CPluginBase::GetName() const
+{
+  return m_name;
+}
+
+const std::string& CPluginBase::GetVersion() const
+{
+  return m_version;
+}
+
+const tSessionPublisherBuildersMap& CPluginBase::GetSessionPublisherBuilders() const
+{
+  return m_sessionPublisherBuilders;
+}
+
+const tAuthenticationMethodBuildersMap& CPluginBase::GetAuthenticationMethodBuilders() const
+{
+  return m_authenticationMethodBuilders;
+}
+
+void CPluginBase::RegisterSessionPublisher( const std::string& name, tSessionPublisherBuilder creationMethod)
+{
+  m_sessionPublisherBuilders.emplace(name, std::move(creationMethod) );
+}
+
+void CPluginBase::RegisterAuthenticationMethod( const std::string& name, tAuthenticationMethodBuilder creationMethod)
+{
+  m_authenticationMethodBuilders.emplace(name, std::move(creationMethod) );
+}
+
+}

@@ -18,6 +18,7 @@ CHTTPRestController::CHTTPRestController()
 , m_ioContext()
 , m_workGuard(boost::asio::make_work_guard(m_ioContext))
 , m_acceptor{ m_ioContext }
+, m_acceptRetryTimer{ m_ioContext }
 {
 
 }
@@ -80,6 +81,12 @@ void CHTTPRestController::Shutdown()
 void CHTTPRestController::AcceptConnection( std::shared_ptr<boost::asio::ip::tcp::socket> socket )
 {
   m_acceptor.async_accept(*socket, [this, socket] ( boost::beast::error_code ec ) {
+    // Shutting down (or the acceptor was closed) - stop the accept loop
+    if ( !m_run || ec == boost::asio::error::operation_aborted || !m_acceptor.is_open() )
+    {
+      return;
+    }
+
     if ( !ec )
     {
       auto connection = std::make_shared<CHTTPConnection>( m_processorRegistry, std::move( *socket ), *m_threadPool );
@@ -87,9 +94,20 @@ void CHTTPRestController::AcceptConnection( std::shared_ptr<boost::asio::ip::tcp
       {
         connection->WaitForRequest();
       }
+      AcceptConnection( std::make_shared<boost::asio::ip::tcp::socket>(m_ioContext) );
+      return;
     }
-    auto nextSocket = std::make_shared<boost::asio::ip::tcp::socket>(m_ioContext);
-    AcceptConnection( nextSocket );
+
+    // Accept failed (e.g. EMFILE - out of file descriptors). Re-arming
+    // immediately would fail again at once and spin an I/O thread at 100%
+    // CPU, so back off briefly to let resources free up.
+    m_acceptRetryTimer.expires_after( std::chrono::milliseconds(100) );
+    m_acceptRetryTimer.async_wait( [this] ( boost::beast::error_code timerEc ) {
+      if ( !timerEc && m_run )
+      {
+        AcceptConnection( std::make_shared<boost::asio::ip::tcp::socket>(m_ioContext) );
+      }
+    });
   });
 }
 

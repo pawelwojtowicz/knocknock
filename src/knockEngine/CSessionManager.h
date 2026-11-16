@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <map>
 #include <shared_mutex>
+#include "CSecurityIndustrialComplex.h"
 #include "CSession.h"
 #include "CSessionBuilder.h"
 #include "CAuthenticator.h"
@@ -23,10 +24,10 @@ class CConfiguration;
 class CSessionManager : public IKnocknockService
 {
 public:
-  CSessionManager( DBAccess::IDBAccess& rDBAccess, CConfiguration& rConfiguration );
+  CSessionManager(  DBAccess::IDBAccess& rDBAccess, CConfiguration& rConfiguration  );
   virtual ~CSessionManager();
 
-  bool Initialize();
+  bool Initialize( const CSecurityIndustrialComplex& rFactories );
   void Tick();
   void Shutdown();
 private:
@@ -37,7 +38,8 @@ private:
 
 private:
   //internal utility method to cleanup expired sessions, called periodically by Tick()
-  void CleanupExpiredSessions();
+  //returns true if the sessions list changes (outdated sessions are removed)
+  bool CleanupExpiredSessions();
 
   //internal utility method to hand a snapshot of active sessions to the session publisher, called periodically by Tick()
   void PublishActiveSessions();

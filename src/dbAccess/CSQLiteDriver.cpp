@@ -69,9 +69,13 @@ bool CSQLiteDriver::ExecutePreparedStatement( const std::string& sql,
       std::vector<char*> values(colCount);
       std::vector<char*> colNames(colCount);
 
+      // SQL NULL comes back from sqlite3_column_text as nullptr. Map it to an
+      // empty string so callbacks can safely build std::string from any column.
+      static char emptyValue[] = "";
       for (int col = 0; col < colCount; ++col)
       {
-        values[col] = (char*)sqlite3_column_text(stmt, col);
+        const unsigned char* text = sqlite3_column_text(stmt, col);
+        values[col] = text ? (char*)text : emptyValue;
         colNames[col] = (char*)sqlite3_column_name(stmt, col);
       }
 

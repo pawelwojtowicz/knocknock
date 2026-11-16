@@ -1,7 +1,7 @@
 #include "CSessionPublisher.h"
 #include "CConfiguration.h"
-#include "CSQLiteSessionPublisher.h"
-#include <iostream>
+#include <CTokenizer.h>
+#include <Logger.h>
 
 namespace knocknock
 {
@@ -14,21 +14,27 @@ CSessionPublisher::CSessionPublisher()
 
 }
 
-bool CSessionPublisher::Initialize( CConfiguration& config )
+bool CSessionPublisher::Initialize( CConfiguration& config, const CSecurityIndustrialComplex& factories )
 {
-  // Build the publisher list from available plugins. This is the only place
-  // m_publishers is ever populated - it is fixed for the rest of this
-  // object's lifetime once Initialize() returns. Each publisher owns
-  // reading and interpreting its own config keys (including whether it's
-  // enabled at all) - CSessionPublisher just wires the shared config in.
-  m_publishers.push_back(std::make_shared<CSQLiteSessionPublisher>(config));
+  const auto publishers = CTokenizer::TokenizeTrimmed(config.GetParamString(cParamName_SessionPublishers, cParamValue_DefaultSessionPublishers), ',');
 
-  for (const auto& publisher : m_publishers)
+  for (const auto& publisherName : publishers)
   {
-    if (!publisher->Initialize())
+    auto publisher = factories.GetSessionPublisherFactory().Create(publisherName);
+    if ( publisher )
     {
-      std::cerr << "Failed to initialize a session publisher." << std::endl;
-      return false;
+      if (publisher->Initialize(config))
+      {
+        m_publishers.push_back( std::move(publisher )  );
+      }
+      else
+      {
+        LOG(ERROR, "CSessionPublisher - Failed to Initialize [%s] - skipping", publisherName.c_str() );
+      }
+    }
+    else
+    {
+      LOG(ERROR, "CSessionPublisher - No [%s] - available in the factory", publisherName.c_str() );
     }
   }
 

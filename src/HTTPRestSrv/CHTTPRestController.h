@@ -36,6 +36,9 @@ private:
   
   boost::asio::ip::tcp::acceptor m_acceptor;
 
+  // delays the next accept after a failed one (e.g. out of file descriptors)
+  boost::asio::steady_timer m_acceptRetryTimer;
+
   std::unique_ptr<boost::asio::thread_pool> m_threadPool;
 
   std::vector<std::thread> m_ioThreads;

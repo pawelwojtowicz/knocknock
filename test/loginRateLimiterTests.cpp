@@ -6,7 +6,9 @@
 #include <CConfiguration.h>
 #include <CUser.h>
 #include <CTimespan.h>
+#include <CSecurityIndustrialComplex.h>
 #include <filesystem>
+#include <fstream>
 #include <memory>
 
 using namespace Utilities;
@@ -16,6 +18,29 @@ using namespace knocknock;
 // Unit tests for CLoginRateLimiter in isolation
 // ============================================================================
 
+static const std::string rateLimiterConfigFileName = "rateLimiter_test.conf";
+
+// Writes the rate limiter's config keys to a temporary file and initializes
+// the limiter from it. A negative resetSeconds leaves the key out, so the
+// default applies.
+static bool InitializeRateLimiter( CLoginRateLimiter& limiter, int maxAttempts, int lockoutSeconds, int resetSeconds = -1 )
+{
+  {
+    std::ofstream configFile(rateLimiterConfigFileName, std::ios::trunc);
+    configFile << cParamName_MaxLoginAttempts << "=" << maxAttempts << "\n";
+    configFile << cParamName_LoginLockoutSeconds << "=" << lockoutSeconds << "\n";
+    if (resetSeconds >= 0)
+    {
+      configFile << cParamName_LoginFailureResetSeconds << "=" << resetSeconds << "\n";
+    }
+  }
+
+  CConfiguration config;
+  const bool loaded = config.LoadConfig(rateLimiterConfigFileName);
+  std::filesystem::remove(rateLimiterConfigFileName);
+  return loaded && limiter.Initialize(config);
+}
+
 class LoginRateLimiterTests : public ::testing::Test
 {
 protected:
@@ -23,9 +48,34 @@ protected:
 
   virtual void SetUp() override
   {
-    m_rateLimiter.Configure(3, 10); // 3 attempts, 10 second base lockout
+    ASSERT_TRUE(InitializeRateLimiter(m_rateLimiter, 3, 10)); // 3 attempts, 10 second base lockout
   }
 };
+
+TEST_F(LoginRateLimiterTests, InitializeRejectsInvalidConfiguration)
+{
+  CLoginRateLimiter limiter;
+  EXPECT_FALSE(InitializeRateLimiter(limiter, 0, 10));
+  EXPECT_FALSE(InitializeRateLimiter(limiter, 3, -1));
+}
+
+TEST_F(LoginRateLimiterTests, InitializeUsesDefaultsWhenNotConfigured)
+{
+  CConfiguration emptyConfig;
+  CLoginRateLimiter limiter;
+  ASSERT_TRUE(limiter.Initialize(emptyConfig));
+
+  // Defaults: 5 attempts, 30s base lockout
+  for (int i = 0; i < 4; ++i)
+  {
+    limiter.RecordFailure("user1", 100 + i);
+  }
+  EXPECT_TRUE(limiter.IsLoginAllowed("user1", 104));
+
+  limiter.RecordFailure("user1", 104); // lockout: 104 + 30 = 134
+  EXPECT_FALSE(limiter.IsLoginAllowed("user1", 133));
+  EXPECT_TRUE(limiter.IsLoginAllowed("user1", 134));
+}
 
 TEST_F(LoginRateLimiterTests, FirstAttemptIsAlwaysAllowed)
 {
@@ -123,7 +173,7 @@ TEST_F(LoginRateLimiterTests, DifferentUsersAreIndependent)
   EXPECT_TRUE(m_rateLimiter.IsLoginAllowed("user2", 103));
 }
 
-TEST_F(LoginRateLimiterTests, CleanupRemovesExpiredEntries)
+TEST_F(LoginRateLimiterTests, CleanupKeepsHistoryAfterLockoutExpires)
 {
   m_rateLimiter.RecordFailure("user1", 100);
   m_rateLimiter.RecordFailure("user1", 101);
@@ -131,23 +181,62 @@ TEST_F(LoginRateLimiterTests, CleanupRemovesExpiredEntries)
 
   EXPECT_FALSE(m_rateLimiter.IsLoginAllowed("user1", 103));
 
-  // Cleanup after lockout expires
+  // Cleanup right after the lockout expires must NOT reset the history,
+  // otherwise exponential backoff never escalates
   m_rateLimiter.Cleanup(113);
-
-  // After cleanup, user is allowed (entry removed)
   EXPECT_TRUE(m_rateLimiter.IsLoginAllowed("user1", 113));
 
-  // And the counter is fully reset (need 3 new failures)
+  // The very next failure escalates: 114 + 20 = 134
   m_rateLimiter.RecordFailure("user1", 114);
-  m_rateLimiter.RecordFailure("user1", 115);
-  EXPECT_TRUE(m_rateLimiter.IsLoginAllowed("user1", 116));
+  EXPECT_FALSE(m_rateLimiter.IsLoginAllowed("user1", 133));
+  EXPECT_TRUE(m_rateLimiter.IsLoginAllowed("user1", 134));
+}
+
+TEST_F(LoginRateLimiterTests, CleanupRemovesEntriesAfterResetWindow)
+{
+  m_rateLimiter.RecordFailure("user1", 100);
+  m_rateLimiter.RecordFailure("user1", 101);
+  m_rateLimiter.RecordFailure("user1", 102); // lockout expires at 112
+
+  // Default reset window is 3600s after the last failure
+  m_rateLimiter.Cleanup(102 + 3599);
+  m_rateLimiter.RecordFailure("user1", 102 + 3599); // still remembered -> escalated lockout
+  EXPECT_FALSE(m_rateLimiter.IsLoginAllowed("user1", 102 + 3600));
+
+  CLoginRateLimiter limiter;
+  ASSERT_TRUE(InitializeRateLimiter(limiter, 3, 10, 100));
+  limiter.RecordFailure("user1", 100);
+  limiter.RecordFailure("user1", 101);
+  limiter.RecordFailure("user1", 102);
+
+  limiter.Cleanup(202); // 100s since last failure, lockout over -> forgotten
+
+  // Counter fully reset: need 3 new failures for a lockout
+  limiter.RecordFailure("user1", 203);
+  limiter.RecordFailure("user1", 204);
+  EXPECT_TRUE(limiter.IsLoginAllowed("user1", 205));
+}
+
+TEST_F(LoginRateLimiterTests, OldSubThresholdFailuresExpire)
+{
+  CLoginRateLimiter limiter;
+  ASSERT_TRUE(InitializeRateLimiter(limiter, 3, 10, 100));
+
+  // Two failures, then a long quiet period
+  limiter.RecordFailure("user1", 100);
+  limiter.RecordFailure("user1", 101);
+
+  // A single failure much later must not trigger a lockout, even if
+  // Cleanup() hasn't run in between
+  limiter.RecordFailure("user1", 1000);
+  EXPECT_TRUE(limiter.IsLoginAllowed("user1", 1001));
 }
 
 TEST_F(LoginRateLimiterTests, BackoffCappedAt64x)
 {
   // Configure with 1 attempt, 10s base for easier testing
   CLoginRateLimiter limiter;
-  limiter.Configure(1, 10);
+  ASSERT_TRUE(InitializeRateLimiter(limiter, 1, 10));
 
   // Trigger many failures to test cap
   for (int i = 0; i < 10; ++i)
@@ -197,8 +286,10 @@ protected:
 
     m_configuration.LoadConfig(m_database);
 
+    CSecurityIndustrialComplex securityFactories;
+
     m_pSessionManager = std::make_shared<CSessionManager>(m_database, m_configuration);
-    ASSERT_TRUE(m_pSessionManager->Initialize());
+    ASSERT_TRUE(m_pSessionManager->Initialize(securityFactories));
 
     m_knocknockService = m_pSessionManager;
   }

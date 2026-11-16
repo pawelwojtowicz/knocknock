@@ -3,6 +3,7 @@
 #include <CAuthenticator.h>
 #include <CConfiguration.h>
 #include <CAESCipherWrapper.h>
+#include <CSecurityIndustrialComplex.h>
 #include <iostream>
 
 using namespace knocknock;
@@ -17,6 +18,7 @@ class AuthenticatorTests : public ::testing::Test
 {
 protected:
   CConfiguration m_configuration;
+  CSecurityIndustrialComplex m_factories;
 
   virtual void SetUp() override
   {
@@ -36,7 +38,7 @@ TEST_F(AuthenticatorTests, Basic_unknown_failed)
 
   CAuthenticator authenticator;
 
-  authenticator.Initialize(m_configuration);
+  authenticator.Initialize(m_configuration,m_factories);
 
   tKeyValueMap loginPayload;
   loginPayload[sLoginPassword] = "";
@@ -56,7 +58,7 @@ TEST_F(AuthenticatorTests, Basic_sha256_failed)
 
   CAuthenticator authenticator;
 
-  authenticator.Initialize(m_configuration);
+  authenticator.Initialize(m_configuration,m_factories);
 
   tKeyValueMap loginPayload;
   loginPayload[sLoginPassword] = "testPassword";
@@ -74,7 +76,7 @@ TEST_F(AuthenticatorTests, Basic_sha256_success)
   CSession session("sessionId", "testUser", "", "sha256", TEST_SHA256_PASSWORD1);
 
   CAuthenticator authenticator;
-  authenticator.Initialize(m_configuration);
+  authenticator.Initialize(m_configuration,m_factories);
 
   tKeyValueMap loginPayload;
   loginPayload[sLoginPassword] = "italianoVero$123";
@@ -92,7 +94,7 @@ TEST_F(AuthenticatorTests, Basic_simpledb_success)
 
   CAuthenticator authenticator;
 
-  authenticator.Initialize(m_configuration);
+  authenticator.Initialize(m_configuration,m_factories);
 
   tKeyValueMap loginPayload;
   loginPayload[sLoginPassword] = "";
@@ -108,7 +110,7 @@ TEST_F(AuthenticatorTests, Basic_simpledb_success)
 TEST_F(AuthenticatorTests, Basic_scr_success)
 {
   CAuthenticator authenticator;
-  authenticator.Initialize(m_configuration);
+  authenticator.Initialize(m_configuration,m_factories);
 
   std::string sessionId{"6E7B30E57AC2B2E6A9FF079F623FE9D892CDD760227070FF2352CABEE60CEEFD"};
   std::string passwordHash{TEST_SHA256_PASSWORD1};
@@ -146,7 +148,7 @@ TEST_F(AuthenticatorTests, Basic_scr_success)
 TEST_F(AuthenticatorTests, Basic_scr_failure)
 {
   CAuthenticator authenticator;
-  authenticator.Initialize(m_configuration);
+  authenticator.Initialize(m_configuration,m_factories);
 
   std::string sessionId{"6E7B30E57AC2B2E6A9FF079F623FE9D892CDD760227070FF2352CABEE60CEEFD"};
   std::string passwordHash{TEST_SHA256_PASSWORD1};
@@ -180,7 +182,7 @@ TEST_F(AuthenticatorTests, Basic_Argon2id_success)
   CSession session("sessionId", "herrUser", "", "argon2id", argon2IdHash);
 
   CAuthenticator authenticator;
-  authenticator.Initialize(m_configuration);
+  authenticator.Initialize(m_configuration,m_factories);
 
   tKeyValueMap loginPayload;
   loginPayload[sLoginPassword] = "secretWord$123";

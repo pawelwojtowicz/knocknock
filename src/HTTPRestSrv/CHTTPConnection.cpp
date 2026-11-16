@@ -11,10 +11,17 @@ CHTTPConnection::CHTTPConnection( IServiceContext& serviceContext, boost::asio::
 , m_threadPool(threadPool)
 , m_socket( std::move( socket) )
 , m_strand( boost::asio::make_strand( m_socket.get_executor() ) )
-, m_remoteAddress ( m_socket.remote_endpoint().address().to_string() )
+, m_remoteAddress()
 , m_deadlineTimer( m_socket.get_executor(), std::chrono::seconds(30) )
 {
-
+  // Use the non-throwing overload: the peer may already have reset the
+  // connection, and an exception here would escape io_context::run().
+  boost::system::error_code ec;
+  const auto endpoint = m_socket.remote_endpoint(ec);
+  if ( !ec )
+  {
+    m_remoteAddress = endpoint.address().to_string();
+  }
 }
 
 void CHTTPConnection::WaitForRequest()

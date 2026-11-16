@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <CSecurityIndustrialComplex.h>
 #include <CSessionManager.h>
 #include <CDatabase.h>
 #include <CSQLiteDriver.h>
@@ -54,9 +55,11 @@ protected:
     // Load configuration
     m_configuration.LoadConfig(m_database);
 
+    CSecurityIndustrialComplex securityFactories;
+
     // Create session manager
     m_pSessionManager = std::make_shared<CSessionManager>(m_database, m_configuration);
-    ASSERT_TRUE(m_pSessionManager->Initialize());
+    ASSERT_TRUE(m_pSessionManager->Initialize(securityFactories));
     
     //for publishing in test cases
     m_knocknockService = m_pSessionManager;

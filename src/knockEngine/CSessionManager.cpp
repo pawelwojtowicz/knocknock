@@ -29,25 +29,26 @@ CSessionManager::~CSessionManager()
 
 }
 
-bool CSessionManager::Initialize()
+bool CSessionManager::Initialize( const CSecurityIndustrialComplex& rFactories )
 {
   m_sessionExpirationTimeout = m_rConfiguration.GetParamInt( "sessionExpirationTimeout", m_sessionExpirationTimeout);
 
-  int maxLoginAttempts = m_rConfiguration.GetParamInt(cParamName_MaxLoginAttempts, cParamValue_MaxLoginAttempts);
-  int64_t loginLockoutSeconds = m_rConfiguration.GetParamInt(cParamName_LoginLockoutSeconds, cParamValue_LoginLockoutSeconds);
-  m_loginRateLimiter.Configure(maxLoginAttempts, loginLockoutSeconds);
+  if ( !m_loginRateLimiter.Initialize(m_rConfiguration) )
+  {
+    return false;
+  }
 
   if ( !m_sessionBuilder.Initialize() )
   {
     return false;
   } 
   
-  if ( !m_authenticator.Initialize(m_rConfiguration) )
+  if ( !m_authenticator.Initialize(m_rConfiguration, rFactories) )
   {
     return false;
   }
 
-  if ( !m_sessionPublisher.Initialize(m_rConfiguration) )
+  if ( !m_sessionPublisher.Initialize(m_rConfiguration, rFactories) )
   {
     return false;
   }
@@ -176,6 +177,9 @@ const CSession CSessionManager::Touch(const tKeyValueMap& input, tKeyValueMap& o
   CKeyValueHelper inputHelper(input);
   std::string sessionId{};
   int64_t currentTime = CTimespan::GetEpochSeconds();
+  bool touched = false;
+  CSession resultSession = m_emptySession;
+
   if ( inputHelper.GetValue(sLoginSessionId, sessionId) && !sessionId.empty() )
   {
     std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
@@ -183,21 +187,32 @@ const CSession CSessionManager::Touch(const tKeyValueMap& input, tKeyValueMap& o
     if ( sessionIt != m_sessions.end() )
     {
       CSession& session = sessionIt->second;
-      
+
       if ( UserSessionState::VALID == session.GetUserSessionState() && session.GetSessionExpires() > currentTime )
       {
         session.SetSessionExpires(currentTime + m_sessionExpirationTimeout);
-        return session;
+        resultSession = session;
+        touched = true;
       }
     }
-  } 
-  return m_emptySession;
+  }
+
+  if (touched)
+  {
+    // The expiry changed, so external consumers (e.g. the SQLite publisher's
+    // `expired` column) must be told - otherwise they expire the session at
+    // its original deadline. Done outside the lock, as PublishActiveSessions()
+    // takes m_sessionsMutex itself.
+    PublishActiveSessions();
+  }
+  return resultSession;
 }
 
 bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
 {
   CKeyValueHelper inputHelper(input);
   std::string sessionId{};
+  bool loggedOut = false;
   if ( inputHelper.GetValue(sLoginSessionId, sessionId) && !sessionId.empty() )
   {
     std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
@@ -208,40 +223,51 @@ bool CSessionManager::Logout(const tKeyValueMap& input, tKeyValueMap& output)
       if (  session.GetUserSessionState() == UserSessionState::VALID && session.GetSessionExpires() > CTimespan::GetEpochSeconds() )
       {
         session.UpdateUserSessionState(UserSessionState::LOGGED_OUT);
-        return true;
-
+        loggedOut = true;
       }
     }
-  } 
-  return false;
+  }
+
+  if (loggedOut)
+  {
+    // Drop the session from external stores right away rather than waiting
+    // for the next Tick() cleanup (LOGGED_OUT sessions aren't published).
+    PublishActiveSessions();
+  }
+  return loggedOut;
 }
 
 void CSessionManager::Tick()
 {
-  CleanupExpiredSessions();
+  if (CleanupExpiredSessions())
+  {
+    PublishActiveSessions();
+  }
   m_loginRateLimiter.Cleanup(CTimespan::GetEpochSeconds());
-  PublishActiveSessions();
 }
 
-void CSessionManager::CleanupExpiredSessions()
+bool CSessionManager::CleanupExpiredSessions()
 {
-    std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
-    int64_t now = CTimespan::GetEpochSeconds();
+  bool sessionsChanged(false);  
+  std::lock_guard<std::shared_mutex> lock(m_sessionsMutex);
+  int64_t now = CTimespan::GetEpochSeconds();
 
-    for (auto it = m_sessions.begin(); it != m_sessions.end(); )
+  for (auto it = m_sessions.begin(); it != m_sessions.end(); )
+  {
+    const CSession& session = it->second;
+    if (session.GetSessionExpires() <= now ||
+        session.GetUserSessionState() == UserSessionState::LOGGED_OUT ||
+        session.GetUserSessionState() == UserSessionState::AUTH_FAILED)
     {
-        const CSession& session = it->second;
-        if (session.GetSessionExpires() <= now ||
-            session.GetUserSessionState() == UserSessionState::LOGGED_OUT ||
-            session.GetUserSessionState() == UserSessionState::AUTH_FAILED)
-        {
-            it = m_sessions.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
+      it = m_sessions.erase(it);
+      sessionsChanged = true;
     }
+    else
+    {
+      ++it;
+    }
+  }
+  return sessionsChanged;
 }
 
 void CSessionManager::PublishActiveSessions()

@@ -8,10 +8,17 @@ The knocknock is an identity server that is dedicated for the embedded devices. 
 ## Development
 The server is implemented in the C++ with the intention to avoid newest C++ syntax, to make it possible to compile it with older C++ compilers.
 
+### Installing the base tools ( optional, when you developin )
+
+The basic tools needed to compile the whole complete C++ code:
+```
+sudo apt install -y build-essential cmake libgmock-dev libgtest-dev
+```
+
 ### Installing the dependencies (on ubuntu)
 
 ```
-$ sudo apt-get install nlohmann-json3-dev sqlite3 libsqlite3-dev openssl libssl-dev libboost1.83-all-dev libargon2-dev
+$ sudo apt-get install -y nlohmann-json3-dev sqlite3 libsqlite3-dev openssl libssl-dev libboost1.83-all-dev libargon2-dev libpaho-mqtt-dev libpaho-mqttpp-dev
 ``` 
 
 ### Building knocknock
@@ -82,7 +89,7 @@ The configuration can be read from the configuration file and also from the data
 | defaultAuthenticationMethod | string | The name of the user authentication method that is used in case there is not user specific method defined in the database <br> Supported authentication methods: <br> * checksum <br> * sha256 <br> * simpledb <br> * scr |
 | defaultAuthenticationString | string | The default parameterization of the authentication method, the semanticsdo of the contents is specific to the authentication method determined for the user |
 | allowedAuthMethods | string | Allowed Auth methods: <br> * argon2id <br> * checksum <br> * sha256 <br> * simpledb <br> * scr|
-| sessionMaxAge | integer | |
+| sessionExpirationTimeout | integer | Session lifetime in seconds. A successfully authenticated session expires this long after login, and every `/touch` extends it by the same amount. Also used as the `Max-Age` of the session cookie. Default: 180 |
 | http.port | integer | HTTP listener port |
 | http.cookieHttpOnly | bool | |
 | http.cookiePath | string | "/"|
@@ -90,21 +97,30 @@ The configuration can be read from the configuration file and also from the data
 | http.cookieSameSite |[STRICT\|LAX\|NONE] | |
 | maxLoginAttempts | integer | Maximum number of consecutive failed login attempts per userId before lockout. Default: 5 |
 | loginLockoutSeconds | integer | Base lockout duration in seconds after exceeding max attempts. Doubles with each subsequent failure (exponential backoff), capped at 64x the base value. Default: 30 |
-| sqlite3.SessionExpressPublisher.dbPath | string | Path to a dedicated SQLite file that active (VALID) sessions are published into, in a schema compatible with the `connect-sqlite3` store for the Node.js `express-session` middleware. Left empty (the default) disables the publisher entirely - it is opt-in. |
+| loginFailureResetSeconds | integer | How long (in seconds) a userId must go without a failed login attempt, and without an active lockout, before its failure history is forgotten. Until then the failure count is kept, so each further failure past `maxLoginAttempts` keeps doubling the lockout. A successful login resets the history immediately. Default: 3600 |
+| pluginManager.pluginPath | string | Directory the plugins are loaded from. Left empty (the default) disables plugin loading entirely. |
+| pluginManager.activePlugins | string | The comma separated list of the plugin file names (relative to `pluginManager.pluginPath`) to load at startup, e.g. `libmqttConnectivityPlugin.so`. Ignored when `pluginManager.pluginPath` is empty. |
+| sessionPublishers | string | The coma separater list of the session publishers. The default value of the parameter is `express` (available without activating any plugins) <br> Available options: <br> * `express` - express-session publisher (embedded into the knocknock core version) <br> * `mqtt` - The mqtt session publisher available after activating the MQTTConnectivity plugin |
+| sessionPublisher.sqlite.dbPath | string | Path to a dedicated SQLite file that active (VALID) sessions are published into, in a schema compatible with the `connect-sqlite3` store for the Node.js `express-session` middleware. Left empty (the default) disables the publisher entirely - it is opt-in. |
+| sessionPublisher.mqtt.brokerAddress | string | Address of the MQTT broker the `mqtt` session publisher connects to. Default: `tcp://127.0.0.1:1883` |
+| sessionPublisher.mqtt.clientId | string | MQTT client identifier. Must be unique per knocknock instance connected to the same broker. Default: `knocknock` |
+| sessionPublisher.mqtt.userName | string | User name used to authenticate with the broker. When empty (the default), the `sessionPublisher.mqtt.clientId` is sent as the user name. |
+| sessionPublisher.mqtt.password | string | Password used to authenticate with the broker. When empty (the default), no password is sent. |
+| sessionPublisher.mqtt.topic | string | Topic the active sessions are published to, as a retained message with QoS 1. The payload is a JSON array of the active (VALID) sessions (`sessionId`, `userId`, `userName`, `state`, `roles`, `privileges`); the last payload is re-published after a reconnect to the broker. Default: `userSessions` |
 
 ## Features
 ### HTTPS
     The support TLS/HTTPS shall be facilitated by utilizing the reverse proxies that can provide the TLS termination.
 
 ### Session publisher (Node.js / express-session integration)
-When `sqlite3.SessionExpressPublisher.dbPath` is configured (see Configuration above), knocknock periodically publishes its currently active (`VALID`) sessions into a dedicated SQLite file, using the same table schema as the [`connect-sqlite3`](https://www.npmjs.com/package/connect-sqlite3) session store for the [`express-session`](https://www.npmjs.com/package/express-session) middleware. A Node.js/Express application can point `express-session` at that same file and read sessions created by knocknock directly, with no glue code of its own.
+When `sessionPublisher.sqlite.dbPath` is configured (see Configuration above), knocknock periodically publishes its currently active (`VALID`) sessions into a dedicated SQLite file, using the same table schema as the [`connect-sqlite3`](https://www.npmjs.com/package/connect-sqlite3) session store for the [`express-session`](https://www.npmjs.com/package/express-session) middleware. A Node.js/Express application can point `express-session` at that same file and read sessions created by knocknock directly, with no glue code of its own.
 
 Install the two packages:
 ```
 $ npm install express-session connect-sqlite3
 ```
 
-Wire them up, pointing at the same file and table configured in knocknock's `sqlite3.SessionExpressPublisher.dbPath`:
+Wire them up, pointing at the same file and table configured in knocknock's `sessionPublisher.sqlite.dbPath`:
 ```js
 const express = require('express');
 const session = require('express-session');
@@ -112,8 +128,8 @@ const SQLiteStore = require('connect-sqlite3')(session);
 
 app.use(session({
   store: new SQLiteStore({
-    db: 'sessionPublisher.db',   // filename part of sqlite3.SessionExpressPublisher.dbPath
-    dir: 'autoTest/testData',    // directory part of sqlite3.SessionExpressPublisher.dbPath
+    db: 'sessionPublisher.db',   // filename part of sessionPublisher.sqlite.dbPath
+    dir: 'autoTest/testData',    // directory part of sessionPublisher.sqlite.dbPath
     table: 'sessions',           // default table name used by the publisher
   }),
   secret: 'whatever',

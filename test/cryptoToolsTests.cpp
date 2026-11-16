@@ -44,6 +44,35 @@ TEST( CAESCipherWrapper, Basic)
 
 }
 
+TEST( CAESCipherWrapper, EncryptString_MalformedHexRejected)
+{
+  const std::string validIV(32, 'a');   // 16 bytes
+  const std::string validKey(64, 'b');  // 32 bytes
+  std::string cipher;
+
+  ASSERT_TRUE(knocknock::CAESCipherWrapper::EncryptString("text", validIV, validKey, cipher));
+
+  // odd length
+  EXPECT_FALSE(knocknock::CAESCipherWrapper::EncryptString("text", validIV, validKey.substr(1), cipher));
+  // non-hex characters
+  EXPECT_FALSE(knocknock::CAESCipherWrapper::EncryptString("text", validIV, std::string(64, 'z'), cipher));
+  EXPECT_FALSE(knocknock::CAESCipherWrapper::EncryptString("text", std::string(32, 'g'), validKey, cipher));
+}
+
+TEST( CAESCipherWrapper, ShortIVRejected)
+{
+  const std::string shortIV(8, 'a');    // 4 bytes, AES needs 16
+  const std::string validKey(64, 'b');
+  std::string cipher;
+
+  EXPECT_FALSE(knocknock::CAESCipherWrapper::EncryptString("text", shortIV, validKey, cipher));
+
+  std::string plain;
+  EXPECT_FALSE(knocknock::CAESCipherWrapper::Decrypt("00", std::string(4, 'x'), std::string(32, 'k'), plain));
+  // malformed cipher hex
+  EXPECT_FALSE(knocknock::CAESCipherWrapper::Decrypt("0", std::string(16, 'x'), std::string(32, 'k'), plain));
+}
+
 TEST( CArgon2idWrapper, Basic_InOut)
 {
   std::string password("ThisIsThePassword");

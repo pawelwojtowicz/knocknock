@@ -20,6 +20,9 @@ public:
 
   static void SetLogger( ILogger* pLogger );
 
+  // Clears the active logger, but only if it is still pLogger
+  static void UnsetLogger( ILogger* pLogger );
+
   static void SetDebugZone( const uint16_t dzMask);
 
   const char* GetDBGZone() const;

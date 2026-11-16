@@ -1,4 +1,5 @@
 #include "CConfiguration.h"
+#include "CTokenizer.h"
 #include <filesystem>
 #include <fstream>
 
@@ -28,9 +29,11 @@ bool CConfiguration::LoadConfig(const std::string& filename)
   }
 
   std::ifstream configurationFile(filename);
-  std::string line{};
-  while (std::getline(configurationFile, line))
+  std::string rawLine{};
+  while (std::getline(configurationFile, rawLine))
   {
+    // Trimming also strips the '\r' left over from files with CRLF line endings
+    const std::string line = CTokenizer::Trim(rawLine);
     if (line.empty() || line[0] == '#')
     {
       continue;
@@ -42,8 +45,8 @@ bool CConfiguration::LoadConfig(const std::string& filename)
       continue;
     }
 
-    std::string paramName = line.substr(0, pos);
-    std::string paramValue = line.substr(pos + 1);
+    std::string paramName = CTokenizer::Trim(line.substr(0, pos));
+    std::string paramValue = CTokenizer::Trim(line.substr(pos + 1));
     m_parameters.insert_or_assign(paramName, paramValue);
   }
   configurationFile.close();

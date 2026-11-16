@@ -1,6 +1,8 @@
 #include "CMain.h"
 #include "Logger.h"
 #include "KnocknockConst.h"
+#include <CSecurityIndustrialComplex.h>
+
 #include <filesystem>
 
 namespace knocknock
@@ -8,13 +10,13 @@ namespace knocknock
 CMain globalMain;
 
 CMain::CMain()
-: m_arguments()
+: m_logger( ALL, Logger::CSimpleLogger::eComplete )
+, m_arguments()
 , m_configuration()
 , m_sqliteDriver()
 , m_database(m_sqliteDriver)
 , m_sessionManager( m_database,m_configuration)
 , m_httpChannel( m_sessionManager )
-, m_logger( ALL, Logger::CSimpleLogger::eComplete )
 {
 	__pExecutable = this;
 }
@@ -59,6 +61,8 @@ bool CMain::Initialize()
 	}
 	LOG( INFO, "Configuration file %s loaded successfully", configFileName.c_str() );
 
+	m_pluginManager.Initialize( m_configuration);
+
 	std::string dbLocation = m_configuration.GetParamString(cParamNamePrimaryDBLocation, cDefaultDBLocation);
 	if ( !std::filesystem::exists(dbLocation) )
 	{
@@ -81,7 +85,10 @@ bool CMain::Initialize()
 		return false;
 	}
 
-	if ( !m_sessionManager.Initialize() )
+	CSecurityIndustrialComplex securityFactoriesCompound;
+	securityFactoriesCompound.ImportPlugins(m_pluginManager);
+
+	if ( !m_sessionManager.Initialize( securityFactoriesCompound ) )
 	{
 		LOG( ERROR, "Failed to initialize session manager" );
 		return false;
@@ -121,6 +128,8 @@ void CMain::Shutdown()
 	m_httpChannel.Shutdown();
 
 	m_sessionManager.Shutdown();
+
+	m_pluginManager.Shutdown();
 	LOG( INFO, "CMain::Shutdown() called" );
 }
 

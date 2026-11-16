@@ -13,6 +13,7 @@ constexpr auto cParamName_DefaultAuthenticationString = "defaultAuthenticationSt
 constexpr auto cParamName_AllowedAuthMethods = "allowedAuthMethods";
 constexpr auto cParamName_MaxLoginAttempts = "maxLoginAttempts";
 constexpr auto cParamName_LoginLockoutSeconds = "loginLockoutSeconds";
+constexpr auto cParamName_LoginFailureResetSeconds = "loginFailureResetSeconds";
 
 constexpr auto cParamValue_AnonymousUserTemplate = "";
 constexpr auto cParamValue_DefaultAuthenticationMethod = "";
@@ -21,6 +22,9 @@ constexpr auto cParamValue_AllowedAuthMethods = "simpledb,sha256,scr";
 
 constexpr int cParamValue_MaxLoginAttempts = 5;
 constexpr int64_t cParamValue_LoginLockoutSeconds = 30;
+constexpr int64_t cParamValue_LoginFailureResetSeconds = 3600;
 
 
+constexpr auto cParamName_SessionPublishers = "sessionPublishers";
+constexpr auto cParamValue_DefaultSessionPublishers = "express";
 }
